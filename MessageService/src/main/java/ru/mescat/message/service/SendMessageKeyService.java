@@ -8,7 +8,6 @@ import ru.mescat.message.dto.ResponseEncryptMessageKeyForUser;
 import ru.mescat.message.dto.SendEncryptKeyDto;
 import ru.mescat.message.dto.kafka.KeyDelete;
 import ru.mescat.message.entity.SendMessageKeyEntity;
-import ru.mescat.message.exception.ChatNotFoundException;
 import ru.mescat.message.exception.NotFoundException;
 import ru.mescat.message.exception.SaveToDatabaseException;
 import ru.mescat.message.exception.UserBlockedException;
@@ -32,9 +31,9 @@ public class SendMessageKeyService {
                                  WebSocketService webSocketService,
                                  ChatUserService chatUserService,
                                  UsersBlackListService usersBlackListService) {
-        this.usersBlackListService=usersBlackListService;
-        this.chatUserService=chatUserService;
-        this.webSocketService=webSocketService;
+        this.usersBlackListService = usersBlackListService;
+        this.chatUserService = chatUserService;
+        this.webSocketService = webSocketService;
         this.sendMessageKeyRepository = sendMessageKeyRepository;
     }
 
@@ -87,52 +86,95 @@ public class SendMessageKeyService {
     }
 
     @Transactional
-    public void deleteAllById(List<KeyDelete> keyDeletes){
-        sendMessageKeyRepository.deleteAllById(keyDeletes.stream().map(k -> k.getKeyId()).toList());
+    public void deleteAllById(List<KeyDelete> keyDeletes) {
+        sendMessageKeyRepository.deleteAllById(
+                keyDeletes.stream().map(KeyDelete::getKeyId).toList()
+        );
     }
 
-    public void sendEncryptKey(SendEncryptKeyDto sendEncryptKeyDto){
-        UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName());
-        if(!chatUserService.existsByChatIdAndUserId(sendEncryptKeyDto.getChatId(),userId)) {
-            throw new NotFoundException("Группа не найдена.");
-        };
+    @Transactional
+    public void sendEncryptKey(SendEncryptKeyDto sendEncryptKeyDto) {
+        if (sendEncryptKeyDto == null) {
+            throw new IllegalArgumentException("sendEncryptKeyDto не должен быть null.");
+        }
 
-        if(usersBlackListService.isBlockedInChat(sendEncryptKeyDto.getChatId(),userId)){
+        if (sendEncryptKeyDto.getChatId() == null) {
+            throw new IllegalArgumentException("chatId не должен быть null.");
+        }
+
+        if (sendEncryptKeyDto.getRequestEncryptMessageKeyForUsers() == null
+                || sendEncryptKeyDto.getRequestEncryptMessageKeyForUsers().isEmpty()) {
+            throw new IllegalArgumentException("Список получателей ключей пуст.");
+        }
+
+        UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        if (!chatUserService.existsByChatIdAndUserId(sendEncryptKeyDto.getChatId(), userId)) {
+            throw new NotFoundException("Группа не найдена.");
+        }
+
+        if (usersBlackListService.isBlockedInChat(sendEncryptKeyDto.getChatId(), userId)) {
             throw new UserBlockedException("Пользователь заблокирован в данной группе.");
         }
 
-        sendEncryptKeyDto.setEncryptName(UUID.randomUUID());
+        UUID encryptName = UUID.randomUUID();
+        sendEncryptKeyDto.setEncryptName(encryptName);
+
         List<UUID> userIds = chatUserService.findAllUserIdNotBlocksByChatId(sendEncryptKeyDto.getChatId());
-
         Set<UUID> userIdsSet = new HashSet<>(userIds);
-        List<RequestEncryptMessageKeyForUser> verifiedUsers = sendEncryptKeyDto.getRequestEncryptMessageKeyForUsers();
 
+        List<RequestEncryptMessageKeyForUser> verifiedUsers = sendEncryptKeyDto.getRequestEncryptMessageKeyForUsers();
         Iterator<RequestEncryptMessageKeyForUser> iterator = verifiedUsers.iterator();
 
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             RequestEncryptMessageKeyForUser r = iterator.next();
 
-            if(!userIdsSet.contains(r.getUserTarget())){
-                verifiedUsers.remove(r);
+            if (r == null || r.getUserTarget() == null || !userIdsSet.contains(r.getUserTarget())) {
+                iterator.remove();
             }
         }
 
-        List<SendMessageKeyEntity> sendMessageKeyEntities = saveAll(verifiedUsers.stream().map(v -> new SendMessageKeyEntity(
-                userId,v.getKey(),v.getPublicKeyUser(),v.getUserTarget()
-        )).toList());
+        if (verifiedUsers.isEmpty()) {
+            throw new NotFoundException("Нет доступных получателей для отправки ключей.");
+        }
 
-        if(sendMessageKeyEntities==null){
+        List<SendMessageKeyEntity> entitiesToSave = verifiedUsers.stream()
+                .map(v -> new SendMessageKeyEntity(
+                        userId,
+                        v.getKey(),
+                        v.getPublicKeyUser(),
+                        v.getUserTarget(),
+                        encryptName.toString()
+                ))
+                .toList();
+
+        List<SendMessageKeyEntity> sendMessageKeyEntities;
+        try {
+            sendMessageKeyEntities = saveAll(entitiesToSave);
+        } catch (Exception e) {
             throw new SaveToDatabaseException("Не удалось сохранить в бд!");
         }
 
-        for(SendMessageKeyEntity m: sendMessageKeyEntities){
-            webSocketService.sendJson(objectMapper.writeValueAsString(new ResponseEncryptMessageKeyForUser(
-                    m.getUserTargetId(),m.getKey(),m.getEncryptName(),m.getPublicKey()
-            )),m.getUserTargetId());
-
+        if (sendMessageKeyEntities.isEmpty()) {
+            throw new SaveToDatabaseException("Не удалось сохранить в бд!");
         }
 
-
+        for (SendMessageKeyEntity m : sendMessageKeyEntities) {
+            try {
+                webSocketService.sendJson(
+                        objectMapper.writeValueAsString(
+                                new ResponseEncryptMessageKeyForUser(
+                                        m.getUserTargetId(),
+                                        m.getKey(),
+                                        m.getEncryptName(),
+                                        m.getPublicKey()
+                                )
+                        ),
+                        m.getUserTargetId()
+                );
+            } catch (Exception e) {
+                throw new RuntimeException("Не удалось отправить ключ по websocket.", e);
+            }
+        }
     }
-
 }

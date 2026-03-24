@@ -139,7 +139,7 @@ public class MessageService {
     }
 
     public MessageEntity findLatestMessageByChatId(Long chatId){
-        return repository.findLatestMessageByChatId(chatId);
+        return repository.findFirstByChat_ChatIdOrderByCreatedAtDesc(chatId);
     }
 
     public ChatDto sendMessageAndCreateChat(NewMessageToNewChat message){

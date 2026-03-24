@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   kafka:
     image: apache/kafka:4.1.2
@@ -8,50 +10,40 @@ services:
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
-
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+
+      # внешний listener для приложений на хосте
+      # внутренний listener для контейнеров
+      KAFKA_LISTENERS: EXTERNAL://:9092,INTERNAL://:29092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:9092,INTERNAL://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
 
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
 
-    healthcheck:
-      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"]
-      interval: 5s
-      timeout: 5s
-      retries: 12
-      start_period: 10s
+      CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
 
-  kafka-init:
+  kafka-init-topics:
     image: apache/kafka:4.1.2
-    container_name: kafka-init
     depends_on:
-      kafka:
-        condition: service_healthy
-    entrypoint: ["/bin/sh", "-c"]
-    command: |
-      echo "Waiting for Kafka admin operations..."
+      - kafka
+    command:
+      - /bin/bash
+      - -c
+      - |
+        until /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --list; do
+          sleep 2
+        done
 
-      until /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --list > /dev/null 2>&1; do
-        echo "Kafka is not ready yet, retrying..."
-        sleep 2
-      done
-
-      echo "Creating topics..."
-
-      /opt/kafka/bin/kafka-topics.sh --create --if-not-exists \
-        --topic delete-encrypt-keys\
-        --bootstrap-server kafka:9092 \
-        --partitions 3 \
-        --replication-factor 1
-
-      echo "Topics created"
-
-volumes: {}
+        /opt/kafka/bin/kafka-topics.sh \
+          --bootstrap-server kafka:29092 \
+          --create \
+          --if-not-exists \
+          --topic delete-encrypt-keys \
+          --partitions 3 \
+          --replication-factor 1
+    restart: "no"

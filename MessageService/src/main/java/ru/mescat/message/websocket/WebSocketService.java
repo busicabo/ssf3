@@ -41,7 +41,7 @@ public class WebSocketService {
     }
 
     public void sendToTopic(String json, Long chatId){
-        template.convertAndSend("/topic/"+chatId.toString(),json);
+        template.convertAndSend("/topic/chat/"+chatId.toString(),json);
     }
 
 }

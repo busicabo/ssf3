@@ -20,13 +20,15 @@ public class DeleteSentKeysService {
     private String topic;
 
     public DeleteSentKeysService(SendMessageKeyService sendMessageKeyService,
-                                 @Qualifier("kafkaTemplateEncryptKeyDelete") KafkaTemplate<String,KeyDelete> kafkaTemplate,
-                                 @Value("${spring.kafka.encrypt-keys.topic}") String topic){
+                                 @Qualifier("kafkaTemplateEncryptKeyDelete") KafkaTemplate<String,KeyDelete> kafkaTemplate){
         this.kafkaTemplate=kafkaTemplate;
         this.sendMessageKeyService=sendMessageKeyService;
     }
 
-    @KafkaListener(topics = "${spring.kafka.encrypt-keys.topic}", containerFactory = "kafkaListenerEncryptKeyDelete")
+    @KafkaListener(
+            topics = "${spring.kafka.encrypt-keys.topic}",
+            containerFactory = "kafkaListenerEncryptKeyDelete"
+    )
     public void listen(List<KeyDelete> messages, Acknowledgment acknowledgment) {
         if (messages.isEmpty()) {
             return;

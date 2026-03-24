@@ -49,11 +49,7 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
                                            @Param("messageId") Long messageId,
                                            org.springframework.data.domain.Pageable pageable);
 
-    @Query("SELECT m FROM MessageEntity m " +
-            "WHERE m.chat.chatId = :chatId " +
-            "ORDER BY m.createdAt DESC " +
-            "LIMIT 1"
-            )
-    MessageEntity findLatestMessageByChatId(Long chatId);
+
+    MessageEntity findFirstByChat_ChatIdOrderByCreatedAtDesc(Long chatId);
 
 }

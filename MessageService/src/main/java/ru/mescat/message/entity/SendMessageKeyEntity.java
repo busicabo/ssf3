@@ -46,4 +46,12 @@ public class SendMessageKeyEntity {
 
     @Column(name = "send_at", nullable = false,insertable = false, updatable = false)
     private OffsetDateTime sendAt;
+
+    public SendMessageKeyEntity(UUID userId, byte[] key, UUID publicKey, UUID userTargetId, String encryptName) {
+        this.userId = userId;
+        this.key = key;
+        this.publicKey = publicKey;
+        this.userTargetId = userTargetId;
+        this.encryptName = encryptName;
+    }
 }
