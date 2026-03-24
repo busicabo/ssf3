@@ -38,19 +38,11 @@ public class DeleteSentKeysService {
     }
 
     public void addKeyInQueue(UUID id) {
-        kafkaTemplate.send(topic, new KeyDelete(id))
-                .whenComplete((result, ex) -> {
-                    if (ex != null) {
-                        log.error("Ошибка отправки в Kafka", ex);
-                        return;
-                    }
-
-                    var metadata = result.getRecordMetadata();
-                    log.info("Сообщение отправлено: topic={}, partition={}, offset={}",
-                            metadata.topic(),
-                            metadata.partition(),
-                            metadata.offset());
-                });
+        try {
+            var result = kafkaTemplate.send(topic, new KeyDelete(id)).get();
+        } catch (Exception e) {
+            throw new RuntimeException("Не удалось отправить ключ на удаление.", e);
+        }
     }
 
 

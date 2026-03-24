@@ -9,7 +9,10 @@ import ru.mescat.message.dto.NewMessageToNewChat;
 import ru.mescat.message.entity.ChatEntity;
 import ru.mescat.message.entity.MessageEntity;
 import ru.mescat.message.entity.enums.ChatType;
+import ru.mescat.message.exception.ChatNotFoundException;
+import ru.mescat.message.exception.NotFoundException;
 import ru.mescat.message.exception.RemoteServiceException;
+import ru.mescat.message.exception.UserBlockedException;
 import ru.mescat.message.map.MessageEntityMessageDtoMapper;
 import ru.mescat.message.repository.MessageRepository;
 import ru.mescat.message.websocket.WebSocketService;
@@ -17,6 +20,7 @@ import ru.mescat.user.dto.User;
 import ru.mescat.user.service.UserService;
 import tools.jackson.databind.ObjectMapper;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -63,23 +67,21 @@ public class MessageService {
 
     public void sendMessage(MessageEntity message){
         if(!chatUserService.existsByChatIdAndUserId(message.getChat().getChatId(),message.getSenderId())){
-            throw new RemoteServiceException(1,"Чат недоступен.");
+            throw new ChatNotFoundException("Чат не существует.");
         }
-        if (message.getChat().getChatType()== ChatType.PERSONAL){
-            if(blackListService.findById(message.getChat().getChatId())!=null){
-                throw new RemoteServiceException(1,"Вы заблокированы.");
-            }
-        } else {
-            if(blackListService.isBlockedInChat(message.getChat().getChatId(),message.getSenderId())){
-                throw new RemoteServiceException(1,"Вы заблокированы.");
-            }
+
+        if(blackListService.isBlockedInChat(message.getChat().getChatId(),message.getSenderId())){
+            throw new UserBlockedException("Вас заблокировали в данном чате.");
         }
+
         MessageEntity messageEntity;
+
         try{
             messageEntity = repository.save(message);
         } catch (Exception e){
             throw new RemoteServiceException(1,"Не удалось сохранить сообщение.");
         }
+
         MessageDto messageDto = MessageEntityMessageDtoMapper.convert(messageEntity);
 
         String json;
@@ -93,7 +95,7 @@ public class MessageService {
 
     public List<MessageEntity> getLastNMessagesForEachUserChat(UUID userId, int limit) {
         if (limit <= 0) {
-            throw new IllegalArgumentException("limit must be greater than 0");
+            throw new IllegalArgumentException("Лимит должно быть больше 0.");
         }
         return repository.findLastNMessagesForEachUserChat(userId, limit);
     }
@@ -103,9 +105,19 @@ public class MessageService {
             return List.of();
         }
 
-        MessageEntity anchorMessage = repository.findById(messageId)
-                .orElseThrow(() -> new RuntimeException("Message not found: " + messageId));
+        UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName());
 
+        MessageEntity message = findById(messageId);
+        if(message==null){
+            throw new NotFoundException("Сообщение не найдено.");
+        }
+
+        if(!chatUserService.existsByChatIdAndUserId(message.getChat().getChatId(),userId)){
+            throw new ChatNotFoundException("Чат не найден.");
+        };
+
+        MessageEntity anchorMessage = repository.findById(messageId)
+                .orElseThrow(() -> new NotFoundException("Message not found: " + messageId));
         Long chatId = anchorMessage.getChat().getChatId();
         int limit = Math.abs(count);
 
@@ -116,7 +128,6 @@ public class MessageService {
                     PageRequest.of(0, limit)
             );
         }
-
         List<MessageEntity> result = repository.findMessagesBefore(
                 chatId,
                 messageId,
@@ -140,6 +151,7 @@ public class MessageService {
 
         if(chat==null){
             chat = new ChatEntity(ChatType.PERSONAL);
+            chat = chatService.save(chat);
         }
         sendMessage(new MessageEntity(chat,message.getMessage(),message.getKeyName()));
 

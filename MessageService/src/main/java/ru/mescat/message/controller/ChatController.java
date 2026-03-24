@@ -42,20 +42,16 @@ public class ChatController {
     }
 
     @GetMapping("/chats")
-    public ResponseEntity<List<ChatDto>> getChats(Authentication authentication){
+    public ResponseEntity<?> getChats(Authentication authentication){
         UUID userId = UUID.fromString(authentication.getName());
         List<ChatUserEntity> chats = chatUserService.findAllByUserId(userId);
         if(chats==null){
-            webSocketService.sendNotification(
-                    new ApiResponse(1,"Не удалось загрузить чаты!",false,OffsetDateTime.now()),userId);
-            return null;
+            return ResponseEntity.notFound().build();
         }
 
         List<ChatDto> chatDtos = toChatDtoMapper.convert(chats,userId);
         if(chatDtos==null){
-            webSocketService.sendNotification(
-                    new ApiResponse(1,"Не удалось загрузить чаты!",false,OffsetDateTime.now()),userId);
-            return null;
+            return ResponseEntity.status(500).body("Не удалось распарсить чаты");
         }
 
         return ResponseEntity.ok(chatDtos);

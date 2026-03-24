@@ -5,6 +5,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.mescat.message.dto.MessageDto;
 import ru.mescat.message.entity.MessageEntity;
+import ru.mescat.message.exception.ChatNotFoundException;
+import ru.mescat.message.exception.NotFoundException;
 import ru.mescat.message.map.MessageEntityMessageDtoMapper;
 import ru.mescat.message.service.MessageService;
 
@@ -22,12 +24,19 @@ public class MessageController {
     }
 
     @GetMapping("/getLastMessages/{count}")
-    public ResponseEntity<List<MessageDto>> getLastMessage(@PathVariable Integer count){
-        UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName());
+    public ResponseEntity<?> getLastMessage(@PathVariable Integer count){
         if(count==null){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(400).build();
         }
-        List<MessageEntity> messages = messageService.getLastNMessagesForEachUserChat(userId, count);
+        UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        List<MessageEntity> messages;
+        try{
+            messages = messageService.getLastNMessagesForEachUserChat(userId, count);
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+
         if (messages==null){
             return ResponseEntity.notFound().build();
         }
@@ -38,9 +47,16 @@ public class MessageController {
     @GetMapping("/getMessageInChatWithLimit/{messageId}/{count}")
     public ResponseEntity<List<MessageEntity>> getMessageInChatWithLimit(@PathVariable Long messageId, @PathVariable Integer count){
         if(messageId==null || count==null){
+            return ResponseEntity.status(400).build();
+        }
+        List<MessageEntity> messages;
+        try{
+            messages = messageService.getMessagesRelativeToMessage(messageId, count);
+        } catch (NotFoundException e){
+            return ResponseEntity.notFound().build();
+        } catch (ChatNotFoundException e){
             return ResponseEntity.notFound().build();
         }
-        List<MessageEntity> messages = messageService.getMessagesRelativeToMessage(messageId, count);
         if (messages==null){
             return ResponseEntity.notFound().build();
         }

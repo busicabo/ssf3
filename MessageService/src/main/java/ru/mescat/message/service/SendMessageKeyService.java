@@ -8,6 +8,10 @@ import ru.mescat.message.dto.ResponseEncryptMessageKeyForUser;
 import ru.mescat.message.dto.SendEncryptKeyDto;
 import ru.mescat.message.dto.kafka.KeyDelete;
 import ru.mescat.message.entity.SendMessageKeyEntity;
+import ru.mescat.message.exception.ChatNotFoundException;
+import ru.mescat.message.exception.NotFoundException;
+import ru.mescat.message.exception.SaveToDatabaseException;
+import ru.mescat.message.exception.UserBlockedException;
 import ru.mescat.message.repository.SendMessageKeyRepository;
 import ru.mescat.message.websocket.WebSocketService;
 import tools.jackson.databind.ObjectMapper;
@@ -89,7 +93,13 @@ public class SendMessageKeyService {
 
     public void sendEncryptKey(SendEncryptKeyDto sendEncryptKeyDto){
         UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName());
-        if(!chatUserService.existsByChatIdAndUserId(sendEncryptKeyDto.getChatId(),userId)) return;
+        if(!chatUserService.existsByChatIdAndUserId(sendEncryptKeyDto.getChatId(),userId)) {
+            throw new NotFoundException("Группа не найдена.");
+        };
+
+        if(usersBlackListService.isBlockedInChat(sendEncryptKeyDto.getChatId(),userId)){
+            throw new UserBlockedException("Пользователь заблокирован в данной группе.");
+        }
 
         sendEncryptKeyDto.setEncryptName(UUID.randomUUID());
         List<UUID> userIds = chatUserService.findAllUserIdNotBlocksByChatId(sendEncryptKeyDto.getChatId());
@@ -112,7 +122,7 @@ public class SendMessageKeyService {
         )).toList());
 
         if(sendMessageKeyEntities==null){
-            throw new IllegalStateException("Не удалось сохранить в бд!");
+            throw new SaveToDatabaseException("Не удалось сохранить в бд!");
         }
 
         for(SendMessageKeyEntity m: sendMessageKeyEntities){

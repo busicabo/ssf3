@@ -1,50 +1,99 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mescat Chat</title>
-    <link rel="stylesheet" href="/css/chat.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Messenger</title>
+  <link rel="stylesheet" href="/css/chat.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 </head>
 <body>
-    <div id="notification" class="notification" aria-live="polite" aria-atomic="true"></div>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div>
+          <h1>Messenger</h1>
+          <p id="current-user">Загрузка профиля...</p>
+        </div>
+        <button id="refresh-btn" class="ghost-btn" title="Обновить">↻</button>
+      </div>
 
-    <main class="app-shell">
-        <section class="chat-sidebar" aria-label="Панель чатов">
-            <header class="chat-sidebar__topbar">
-                <button class="icon-button" type="button" aria-label="Открыть настройки">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.49-.42h-3.84a.5.5 0 0 0-.49.42l-.36 2.54c-.58.23-1.12.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.5.4 1.05.71 1.63.94l.36 2.54a.5.5 0 0 0 .49.42h3.84a.5.5 0 0 0 .49-.42l.36-2.54c.58-.23 1.12-.54 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58ZM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7Z"/>
-                    </svg>
-                </button>
+      <section class="search-panel">
+        <label for="user-search">Поиск пользователей</label>
+        <div class="search-row">
+          <input id="user-search" type="text" placeholder="Введите username" autocomplete="off" />
+          <button id="search-btn">Найти</button>
+        </div>
+        <div id="search-results" class="search-results empty">Введите имя пользователя для поиска</div>
+      </section>
 
-                <label class="search-field" aria-label="Поиск чатов">
-                    <input id="chat-search-input" type="text" placeholder="Поиск" autocomplete="off">
-                </label>
+      <section class="chat-list-panel">
+        <div class="section-title-row">
+          <h2>Чаты</h2>
+          <span id="chat-count" class="badge">0</span>
+        </div>
+        <div id="chat-list" class="chat-list empty">Чаты не найдены</div>
+      </section>
+    </aside>
 
-                <button class="icon-button" type="button" aria-label="Поиск">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M10.5 3a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Zm8.85 12.44 1.41 1.41-3.1 3.1-1.41-1.41 3.1-3.1Z"/>
-                    </svg>
-                </button>
-            </header>
+    <main class="chat-stage">
+      <header class="chat-header">
+        <div>
+          <h2 id="chat-title">Выберите чат</h2>
+          <p id="chat-subtitle">Сообщения появятся здесь</p>
+        </div>
+        <div id="connection-state" class="status-pill offline">offline</div>
+      </header>
 
-            <div class="chat-sidebar__content">
-                <div class="empty-state">
-                    <p class="empty-state__title">Чаты появятся позже</p>
-                    <p class="empty-state__text">Сейчас подготовлен только каркас интерфейса.</p>
-                </div>
-            </div>
-        </section>
+      <section id="message-list" class="message-list empty-state">
+        <div class="empty-hint">
+          <h3>Добро пожаловать</h3>
+          <p>Выбери чат слева или найди пользователя.</p>
+        </div>
+      </section>
 
-        <section class="chat-main" aria-label="Область сообщений">
-            <div class="chat-main__placeholder">
-                <h1 class="chat-main__title">Сообщения</h1>
-                <p class="chat-main__text">Здесь будут отображаться сообщения выбранного чата.</p>
-            </div>
-        </section>
+      <footer class="composer">
+        <div id="composer-warning" class="composer-warning hidden"></div>
+        <div class="composer-row">
+          <textarea id="message-input" rows="1" placeholder="Введите сообщение" disabled></textarea>
+          <button id="send-btn" disabled>Отправить</button>
+        </div>
+      </footer>
     </main>
+  </div>
 
-    <script type="module" src="/js/app/chat-init.js"></script>
+  <template id="chat-item-template">
+    <button class="chat-item" type="button">
+      <div class="chat-item-main">
+        <div class="chat-item-title"></div>
+        <div class="chat-item-preview"></div>
+      </div>
+      <div class="chat-item-meta">
+        <span class="chat-item-time"></span>
+      </div>
+    </button>
+  </template>
+
+  <template id="user-result-template">
+    <div class="user-result">
+      <div>
+        <div class="user-result-title"></div>
+        <div class="user-result-subtitle"></div>
+      </div>
+      <button class="ghost-btn small-btn" type="button">Открыть</button>
+    </div>
+  </template>
+
+  <template id="message-template">
+    <article class="message-item">
+      <div class="message-bubble">
+        <div class="message-text"></div>
+        <div class="message-meta"></div>
+      </div>
+    </article>
+  </template>
+
+  <script src="/js/chat.js"></script>
 </body>
 </html>

@@ -6,6 +6,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import ru.mescat.message.dto.ApiResponse;
+import ru.mescat.message.dto.MessageDto;
 import ru.mescat.message.entity.MessageEntity;
 import ru.mescat.message.exception.RemoteServiceException;
 import ru.mescat.message.service.ChatService;
@@ -29,7 +30,7 @@ public class WebSocketController {
     }
 
     @MessageMapping("/send.chat")
-    public void sendMessageToGroupChat(@Payload NewMessageDto newMessageDto, Authentication authentication) {
+    public void sendMessageToGroupChat(@Payload MessageDto newMessageDto, Authentication authentication) {
 
         MessageEntity message;
         try{

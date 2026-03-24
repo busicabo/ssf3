@@ -3,6 +3,7 @@ package ru.mescat.message.websocket;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import ru.mescat.message.dto.ApiResponse;
+import ru.mescat.message.dto.MessageDto;
 import ru.mescat.message.entity.ChatEntity;
 import ru.mescat.message.entity.MessageEntity;
 import ru.mescat.message.exception.RemoteServiceException;
@@ -30,7 +31,7 @@ public class WebSocketService {
         template.convertAndSendToUser(userId.toString(),"/queue/system",json);
     }
 
-    public MessageEntity newMessageDtoConvertToMessageEntity(NewMessageDto newMessageDto){
+    public MessageEntity newMessageDtoConvertToMessageEntity(MessageDto newMessageDto){
         ChatEntity chat = chatService.findById(newMessageDto.getChatId());
         if(chat==null){
             throw  new RemoteServiceException(1,"Чат не найден.");

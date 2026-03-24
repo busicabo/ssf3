@@ -2,6 +2,7 @@ package ru.mescat.message.map;
 
 
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import ru.mescat.message.dto.ChatDto;
 import ru.mescat.message.dto.auxiliary.ChatUserDto;
 import ru.mescat.message.entity.ChatEntity;
@@ -17,6 +18,7 @@ import ru.mescat.user.dto.User;
 import java.util.List;
 import java.util.UUID;
 
+@Component
 public class UserChatDtoMap {
 
     private ChatService chatService;

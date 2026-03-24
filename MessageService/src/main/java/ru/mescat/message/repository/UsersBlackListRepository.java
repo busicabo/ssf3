@@ -27,7 +27,7 @@ public interface UsersBlackListRepository extends JpaRepository<UsersBlackListEn
 
     @Query("""
             select ubl.userTarget
-            from UserBlackListEntity ubl
+            from UsersBlackListEntity ubl
             where ubl.chat.chatId = :chatId
             """)
     List<UUID> getAllUserIdBlocksByChatId(@Param("chatId") Long chatId);

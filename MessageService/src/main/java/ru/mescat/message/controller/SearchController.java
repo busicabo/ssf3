@@ -25,16 +25,21 @@ public class SearchController {
     }
 
     @GetMapping("/search_by_username")
-    public ResponseEntity<List<ChatDto>> searchByUsername(@RequestParam String username){
+    public ResponseEntity<?> searchByUsername(@RequestParam String username){
         if(username == null || username.isBlank()){
-            return ResponseEntity.ok(List.of());
+            return ResponseEntity.status(400).build();
         }
         List<User> users = userService.findByUsernameContaining(username);
+
         if(users==null || users.isEmpty()){
             return ResponseEntity.ok(List.of());
         }
         List<ChatDto> chatDtos = userChatDtoMap.convert(users);
 
-        return ResponseEntity.ok(chatDtos != null ? chatDtos : List.of());
+        if(chatDtos==null){
+            return ResponseEntity.status(500).body("Не удалось подготовить чаты.");
+        }
+
+        return ResponseEntity.ok(chatDtos);
     }
 }

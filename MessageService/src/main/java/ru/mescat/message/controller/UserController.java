@@ -30,8 +30,8 @@ public class UserController {
             UUID userId = userService.getIdByUsername(username);
 
             return ResponseEntity.ok(userId);
-        } catch (RemoteServiceException e){
-            return ResponseEntity.status(e.getStatus()).body(e.getResponseBody());
+        } catch (Exception e){
+            return ResponseEntity.status(502).body("Не удалось получить данные от сервера.");
         }
 
     }
