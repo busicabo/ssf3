@@ -31,6 +31,13 @@ public class MessageEntity {
     @Column(name = "message", nullable = false)
     private byte[] message;
 
+    public MessageEntity(ChatEntity chat, byte[] message, String encryptionName, UUID senderId) {
+        this.chat = chat;
+        this.message = message;
+        this.encryptionName = encryptionName;
+        this.senderId = senderId;
+    }
+
     @Column(name = "encryption_name", nullable = false)
     private String encryptionName;
 

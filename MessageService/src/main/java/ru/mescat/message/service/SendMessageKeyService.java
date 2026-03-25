@@ -121,22 +121,8 @@ public class SendMessageKeyService {
         sendEncryptKeyDto.setEncryptName(encryptName);
 
         List<UUID> userIds = chatUserService.findAllUserIdNotBlocksByChatId(sendEncryptKeyDto.getChatId());
-        Set<UUID> userIdsSet = new HashSet<>(userIds);
 
-        List<RequestEncryptMessageKeyForUser> verifiedUsers = sendEncryptKeyDto.getRequestEncryptMessageKeyForUsers();
-        Iterator<RequestEncryptMessageKeyForUser> iterator = verifiedUsers.iterator();
-
-        while (iterator.hasNext()) {
-            RequestEncryptMessageKeyForUser r = iterator.next();
-
-            if (r == null || r.getUserTarget() == null || !userIdsSet.contains(r.getUserTarget())) {
-                iterator.remove();
-            }
-        }
-
-        if (verifiedUsers.isEmpty()) {
-            throw new NotFoundException("Нет доступных получателей для отправки ключей.");
-        }
+        List<RequestEncryptMessageKeyForUser> verifiedUsers = getRequestEncryptMessageKeyForUsers(sendEncryptKeyDto, userIds);
 
         List<SendMessageKeyEntity> entitiesToSave = verifiedUsers.stream()
                 .map(v -> new SendMessageKeyEntity(
@@ -176,5 +162,25 @@ public class SendMessageKeyService {
                 throw new RuntimeException("Не удалось отправить ключ по websocket.", e);
             }
         }
+    }
+
+    private static List<RequestEncryptMessageKeyForUser> getRequestEncryptMessageKeyForUsers(SendEncryptKeyDto sendEncryptKeyDto, List<UUID> userIds) {
+        Set<UUID> userIdsSet = new HashSet<>(userIds);
+
+        List<RequestEncryptMessageKeyForUser> verifiedUsers = sendEncryptKeyDto.getRequestEncryptMessageKeyForUsers();
+        Iterator<RequestEncryptMessageKeyForUser> iterator = verifiedUsers.iterator();
+
+        while (iterator.hasNext()) {
+            RequestEncryptMessageKeyForUser r = iterator.next();
+
+            if (r == null || r.getUserTarget() == null || !userIdsSet.contains(r.getUserTarget())) {
+                iterator.remove();
+            }
+        }
+
+        if (verifiedUsers.isEmpty()) {
+            throw new NotFoundException("Нет доступных получателей для отправки ключей.");
+        }
+        return verifiedUsers;
     }
 }

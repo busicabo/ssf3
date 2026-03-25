@@ -32,7 +32,7 @@ public class CreateKeyVault {
         this.keyVaultService=keyVaultService;
     }
 
-    public boolean addNewKey(@RequestBody byte[] publicKey, Authentication authentication){
+    public boolean addNewKey(byte[] publicKey, Authentication authentication){
         Integer countAccounts = keyVaultService.getActiveCountPublicKey(authentication.getName());
         if(countAccounts==null){
             throw new NotFoundException("Не смогли получить существующие ключи");

@@ -3,24 +3,24 @@ package ru.mescat.message.service;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.mescat.message.dto.ChatDto;
 import ru.mescat.message.dto.MessageDto;
+import ru.mescat.message.dto.MessageForUser;
 import ru.mescat.message.dto.NewMessageToNewChat;
 import ru.mescat.message.entity.ChatEntity;
+import ru.mescat.message.entity.ChatUserEntity;
 import ru.mescat.message.entity.MessageEntity;
 import ru.mescat.message.entity.enums.ChatType;
-import ru.mescat.message.exception.ChatNotFoundException;
-import ru.mescat.message.exception.NotFoundException;
-import ru.mescat.message.exception.RemoteServiceException;
-import ru.mescat.message.exception.UserBlockedException;
-import ru.mescat.message.map.MessageEntityMessageDtoMapper;
+import ru.mescat.message.exception.*;
+import ru.mescat.message.map.MessageDtoToMessageEntity;
+import ru.mescat.message.map.MessageEntityToMessageForUser;
 import ru.mescat.message.repository.MessageRepository;
 import ru.mescat.message.websocket.WebSocketService;
 import ru.mescat.user.dto.User;
 import ru.mescat.user.service.UserService;
 import tools.jackson.databind.ObjectMapper;
 
-import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +33,7 @@ public class MessageService {
     private WebSocketService webSocketService;
     private ChatService chatService;
     private UserService userService;
+    private MessageDtoToMessageEntity messageDtoToMessageEntityConvert;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public MessageService(MessageRepository messageRepository,
@@ -40,7 +41,10 @@ public class MessageService {
                           UsersBlackListService usersBlackListService,
                           WebSocketService webSocketService,
                           ChatService chatService,
-                          UserService userService){
+                          UserService userService,
+                          MessageDtoToMessageEntity messageDtoToMessageEntity
+                          ){
+        this.messageDtoToMessageEntityConvert=messageDtoToMessageEntity;
         this.userService=userService;
         this.chatService=chatService;
         this.webSocketService=webSocketService;
@@ -65,30 +69,37 @@ public class MessageService {
         repository.deleteById(messageId);
     }
 
-    public void sendMessage(MessageEntity message){
-        if(!chatUserService.existsByChatIdAndUserId(message.getChat().getChatId(),message.getSenderId())){
+    public void sendMessage(MessageDto messageDto){
+
+        UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        if(!chatUserService.existsByChatIdAndUserId(messageDto.getChatId(),userId)){
             throw new ChatNotFoundException("Чат не существует.");
         }
 
-        if(blackListService.isBlockedInChat(message.getChat().getChatId(),message.getSenderId())){
+        if(blackListService.isBlockedInChat(messageDto.getChatId(),userId)){
             throw new UserBlockedException("Вас заблокировали в данном чате.");
         }
 
-        MessageEntity messageEntity;
+        MessageEntity messageEntity = messageDtoToMessageEntityConvert.convert(messageDto);
 
         try{
-            messageEntity = repository.save(message);
+            messageEntity = repository.save(messageEntity);
         } catch (Exception e){
-            throw new RemoteServiceException(1,"Не удалось сохранить сообщение.");
+            throw new SaveToDatabaseException("Не удалось сохранить сообщение.");
         }
 
-        MessageDto messageDto = MessageEntityMessageDtoMapper.convert(messageEntity);
+        if(messageEntity.getMessageId()==null || messageEntity.getCreatedAt()==null){
+            throw new DataBaseException("Проблема с постановкой данных.");
+        }
+
+        MessageForUser message = MessageEntityToMessageForUser.convert(messageEntity);
 
         String json;
         try {
             json = objectMapper.writeValueAsString(messageDto);
         } catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+            throw new ParsingException("Не удалось запарсить данные.");
         }
         webSocketService.sendToTopic(json,messageDto.getChatId());
     }
@@ -117,7 +128,7 @@ public class MessageService {
         };
 
         MessageEntity anchorMessage = repository.findById(messageId)
-                .orElseThrow(() -> new NotFoundException("Message not found: " + messageId));
+                .orElseThrow(() -> new NotFoundException("Сообщение не найдено."));
         Long chatId = anchorMessage.getChat().getChatId();
         int limit = Math.abs(count);
 
@@ -142,6 +153,7 @@ public class MessageService {
         return repository.findFirstByChat_ChatIdOrderByCreatedAtDesc(chatId);
     }
 
+    @Transactional
     public ChatDto sendMessageAndCreateChat(NewMessageToNewChat message){
 
         User user = userService.findById(message.getUserId());
@@ -152,11 +164,14 @@ public class MessageService {
         if(chat==null){
             chat = new ChatEntity(ChatType.PERSONAL);
             chat = chatService.save(chat);
+            chatUserService.save(new ChatUserEntity(chat,userId));
+            chatUserService.save(new ChatUserEntity(chat,userId));
         }
-        sendMessage(new MessageEntity(chat,message.getMessage(),message.getKeyName()));
+
+        sendMessage(new MessageDto(chat.getChatId(),message.getMessage(),message.getEncryptName()));
 
         return new ChatDto(chat.getChatId(),chat.getChatType(),user.getUsername(),
-                user.getAvatarUrl(),message.getMessage(),message.getKeyName());
+                user.getAvatarUrl(),message.getMessage(),message.getEncryptName());
 
     }
 }

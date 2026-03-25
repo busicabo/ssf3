@@ -31,15 +31,6 @@ public class WebSocketService {
         template.convertAndSendToUser(userId.toString(),"/queue/system",json);
     }
 
-    public MessageEntity newMessageDtoConvertToMessageEntity(MessageDto newMessageDto){
-        ChatEntity chat = chatService.findById(newMessageDto.getChatId());
-        if(chat==null){
-            throw  new RemoteServiceException(1,"Чат не найден.");
-        }
-
-        return new MessageEntity(chat,newMessageDto.getMessage(),newMessageDto.getEncryptionName());
-    }
-
     public void sendToTopic(String json, Long chatId){
         template.convertAndSend("/topic/chat/"+chatId.toString(),json);
     }

@@ -3,11 +3,9 @@ package ru.mescat.message.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import ru.mescat.message.dto.MessageDto;
 import ru.mescat.message.entity.MessageEntity;
 import ru.mescat.message.exception.ChatNotFoundException;
 import ru.mescat.message.exception.NotFoundException;
-import ru.mescat.message.map.MessageEntityMessageDtoMapper;
 import ru.mescat.message.service.MessageService;
 
 import java.util.List;
