@@ -5,12 +5,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.mescat.message.dto.ApiResponse;
 import ru.mescat.message.dto.ChatDto;
+import ru.mescat.message.dto.NewMessageToNewChat;
 import ru.mescat.message.entity.ChatEntity;
 import ru.mescat.message.entity.ChatUserEntity;
 import ru.mescat.message.entity.enums.ChatType;
 import ru.mescat.message.map.ToChatDtoMapper;
 import ru.mescat.message.service.ChatService;
 import ru.mescat.message.service.ChatUserService;
+import ru.mescat.message.service.MessageService;
 import ru.mescat.message.websocket.WebSocketService;
 import ru.mescat.user.dto.User;
 import ru.mescat.user.service.UserService;
@@ -28,12 +30,15 @@ public class ChatController {
     private UserService userService;
     private WebSocketService webSocketService;
     private ToChatDtoMapper toChatDtoMapper;
+    private MessageService messageService;
 
     public ChatController(ChatService chatService,
                           ChatUserService chatUserService,
                           UserService userService,
                           WebSocketService webSocketService,
-                          ToChatDtoMapper toChatDtoMapper){
+                          ToChatDtoMapper toChatDtoMapper,
+                          MessageService messageService){
+        this.messageService=messageService;
         this.toChatDtoMapper=toChatDtoMapper;
         this.webSocketService=webSocketService;
         this.userService=userService;
@@ -56,5 +61,6 @@ public class ChatController {
 
         return ResponseEntity.ok(chatDtos);
     }
+
 
 }

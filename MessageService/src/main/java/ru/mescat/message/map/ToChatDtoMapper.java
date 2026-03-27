@@ -52,13 +52,12 @@ public class ToChatDtoMapper {
 
         List<ChatUserDto> chatUserDtos = chatUserService.findAllChatUsersByChatIds(chatIds, userMain);
 
-        if (chatUserDtos ==null || chatUserDtos.isEmpty()) {
+        if (chatUserDtos == null || chatUserDtos.isEmpty()) {
             return List.of();
         }
 
         List<UUID> userIds = chatUserDtos.stream()
                 .map(ChatUserDto::getUserId)
-                .distinct()
                 .toList();
 
         List<User> users = userService.findAllByIds(userIds);
@@ -91,14 +90,12 @@ public class ToChatDtoMapper {
             byte[] message = null;
             String encryptName = null;
 
-            if(messageEntities==null){
-                MessageEntity messageEntity = messageEntities.stream()
-                        .filter(m -> m.getChat().getChatId().equals(currentChatId))
-                        .findFirst().orElse(null);
-                if(messageEntity!=null){
-                    message=messageEntity.getMessage();
-                    encryptName=messageEntity.getEncryptionName();
-                }
+            MessageEntity messageEntity = messageEntities.stream()
+                    .filter(m -> m.getChat().getChatId().equals(currentChatId))
+                    .findFirst().orElse(null);
+            if(messageEntity!=null){
+                message=messageEntity.getMessage();
+                encryptName=messageEntity.getEncryptionName();
             }
 
             result.add(new ChatDto(

@@ -127,9 +127,8 @@ public class MessageService {
             throw new ChatNotFoundException("Чат не найден.");
         };
 
-        MessageEntity anchorMessage = repository.findById(messageId)
-                .orElseThrow(() -> new NotFoundException("Сообщение не найдено."));
-        Long chatId = anchorMessage.getChat().getChatId();
+
+        Long chatId = message.getChat().getChatId();
         int limit = Math.abs(count);
 
         if (count > 0) {
@@ -168,10 +167,10 @@ public class MessageService {
             chatUserService.save(new ChatUserEntity(chat,user.getId()));
         }
 
-        sendMessage(new MessageDto(chat.getChatId(),message.getMessage(),message.getEncryptName()));
+        sendMessage(new MessageDto(chat.getChatId(),message.getMessage(),message.getKeyName()));
 
         return new ChatDto(chat.getChatId(),chat.getChatType(),user.getUsername(),
-                user.getAvatarUrl(),message.getMessage(),message.getEncryptName());
+                user.getAvatarUrl(),message.getMessage(),message.getKeyName());
 
     }
 }

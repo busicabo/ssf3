@@ -9,6 +9,7 @@ import ru.mescat.message.entity.ChatEntity;
 import ru.mescat.message.entity.ChatUserEntity;
 import ru.mescat.message.entity.MessageEntity;
 import ru.mescat.message.entity.enums.ChatType;
+import ru.mescat.message.exception.ChatNotFoundException;
 import ru.mescat.message.exception.RemoteServiceException;
 import ru.mescat.message.service.ChatService;
 import ru.mescat.message.service.ChatUserService;
@@ -43,7 +44,7 @@ public class UserChatDtoMap {
 
         ChatEntity chat = chatService.findPersonalChatBetween(userId,userTarget);
         if(chat==null){
-            return new ChatDto(ChatType.PERSONAL,chat.getTitle(),chat.getAvatarUrl());
+            throw new ChatNotFoundException("Чат не найден.");
         }
         ChatDto chatDto = new ChatDto(chat.getChatId(),chat.getChatType(),user.getUsername(),user.getAvatarUrl());
 

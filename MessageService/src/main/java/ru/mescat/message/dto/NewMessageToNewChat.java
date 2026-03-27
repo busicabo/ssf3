@@ -12,5 +12,5 @@ import java.util.UUID;
 public class NewMessageToNewChat {
     private UUID userId;
     private byte[] message;
-    private String encryptName;
+    private String keyName;
 }
