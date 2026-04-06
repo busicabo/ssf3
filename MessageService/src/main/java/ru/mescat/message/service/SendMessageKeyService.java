@@ -11,7 +11,6 @@ import ru.mescat.message.exception.NotFoundException;
 import ru.mescat.message.exception.SaveToDatabaseException;
 import ru.mescat.message.exception.UserBlockedException;
 import ru.mescat.message.repository.SendMessageKeyRepository;
-import ru.mescat.message.websocket.WebSocketService;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.*;
@@ -21,18 +20,15 @@ import java.util.*;
 public class SendMessageKeyService {
 
     private final SendMessageKeyRepository sendMessageKeyRepository;
-    private final WebSocketService webSocketService;
     private final ChatUserService chatUserService;
     private final UsersBlackListService usersBlackListService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public SendMessageKeyService(SendMessageKeyRepository sendMessageKeyRepository,
-                                 WebSocketService webSocketService,
                                  ChatUserService chatUserService,
                                  UsersBlackListService usersBlackListService) {
         this.usersBlackListService = usersBlackListService;
         this.chatUserService = chatUserService;
-        this.webSocketService = webSocketService;
         this.sendMessageKeyRepository = sendMessageKeyRepository;
     }
 
@@ -142,23 +138,6 @@ public class SendMessageKeyService {
             throw new SaveToDatabaseException("Не удалось сохранить в бд!");
         }
 
-        for (SendMessageKeyEntity m : sendMessageKeyEntities) {
-            try {
-                webSocketService.sendJson(
-                        objectMapper.writeValueAsString(
-                                new ResponseEncryptMessageKeyForUser(
-                                        m.getUserTargetId(),
-                                        m.getKey(),
-                                        m.getEncryptName(),
-                                        m.getPublicKey()
-                                )
-                        ),
-                        m.getUserTargetId()
-                );
-            } catch (Exception e) {
-                throw new RuntimeException("Не удалось отправить ключ по websocket.", e);
-            }
-        }
     }
 
     private static List<RequestEncryptMessageKeyForUser> getRequestEncryptMessageKeyForUsers(SendEncryptKeyDto sendEncryptKeyDto, List<UUID> userIds) {

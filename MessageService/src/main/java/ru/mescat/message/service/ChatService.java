@@ -1,5 +1,6 @@
 package ru.mescat.message.service;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,12 @@ import java.util.UUID;
 public class ChatService {
     private ChatRepository repository;
     private ChatUserService chatUserService;
+    private ApplicationEventPublisher applicationEventPublisher;
 
-    public ChatService(ChatRepository repository, ChatUserService chatUserService){
+    public ChatService(ChatRepository repository,
+                       ChatUserService chatUserService,
+                       ApplicationEventPublisher applicationEventPublisher){
+        this.applicationEventPublisher=applicationEventPublisher;
         this.chatUserService=chatUserService;
         this.repository=repository;
     }

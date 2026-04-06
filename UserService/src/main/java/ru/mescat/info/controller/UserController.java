@@ -53,7 +53,7 @@ public class UserController {
 
     @PatchMapping("/{id}/password")
     public ResponseEntity<Void> updatePassword(@PathVariable UUID id,
-                                               @RequestParam String password) {
+                                               @RequestBody String password) {
         boolean updated = userService.updatePassword(id, password);
         return updated
                 ? ResponseEntity.ok().build()

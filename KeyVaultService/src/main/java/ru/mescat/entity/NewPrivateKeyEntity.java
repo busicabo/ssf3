@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "public_keys")
+@Table(name = "send_new_key")
 @Getter
 @Setter
 @NoArgsConstructor

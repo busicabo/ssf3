@@ -14,7 +14,6 @@ import ru.mescat.message.exception.*;
 import ru.mescat.message.map.MessageDtoToMessageEntity;
 import ru.mescat.message.map.MessageEntityToMessageForUser;
 import ru.mescat.message.repository.MessageRepository;
-import ru.mescat.message.websocket.WebSocketService;
 import ru.mescat.user.dto.User;
 import ru.mescat.user.service.UserService;
 import tools.jackson.databind.ObjectMapper;
