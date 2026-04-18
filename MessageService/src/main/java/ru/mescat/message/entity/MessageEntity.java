@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -44,6 +45,7 @@ public class MessageEntity {
     @Column(name = "sender_id", nullable = false)
     private UUID senderId;
 
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false,insertable = false, updatable = false)
     private OffsetDateTime createdAt;
 

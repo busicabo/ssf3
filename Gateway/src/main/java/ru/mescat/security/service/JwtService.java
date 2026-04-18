@@ -32,21 +32,25 @@ public class JwtService {
     }
 
     public String generateAccessToken(UUID userId) {
+        long now = System.currentTimeMillis();
         return Jwts.builder()
                 .subject(userId.toString())
                 .claim("type", "access")
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
+                .claim("iat_ms", now)
+                .issuedAt(new Date(now))
+                .expiration(new Date(now + accessTokenExpiration))
                 .signWith(key)
                 .compact();
     }
 
     public String generateRefreshToken(UUID userId) {
+        long now = System.currentTimeMillis();
         return Jwts.builder()
                 .subject(userId.toString())
                 .claim("type", "refresh")
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
+                .claim("iat_ms", now)
+                .issuedAt(new Date(now))
+                .expiration(new Date(now + refreshTokenExpiration))
                 .signWith(key)
                 .compact();
     }

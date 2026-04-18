@@ -31,8 +31,12 @@ public class NewPrivateKeyEntity {
     @Column(name = "public_key",nullable = false)
     private UUID publicKey;
 
-    public NewPrivateKeyEntity(UUID userId, byte[] key, UUID public_key) {
-        this.publicKey =public_key;
+    @Column(name = "encrypting_public_key", nullable = false)
+    private UUID encryptingPublicKey;
+
+    public NewPrivateKeyEntity(UUID userId, byte[] key, UUID publicKey, UUID encryptingPublicKey) {
+        this.publicKey = publicKey;
+        this.encryptingPublicKey = encryptingPublicKey;
         this.userId = userId;
         this.key = key;
     }

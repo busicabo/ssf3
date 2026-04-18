@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Вход</title>
+    <title>Р’С…РѕРґ</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f4f6f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
         .card { background: white; padding: 32px; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.08); width: 360px; }
@@ -20,32 +20,52 @@
 </head>
 <body>
 <div class="card">
-    <h1>Вход</h1>
+    <h1>Р’С…РѕРґ</h1>
 
     <form id="loginForm">
         <div class="field">
-            <label for="username">Логин</label>
+            <label for="username">Р›РѕРіРёРЅ</label>
             <input id="username" type="text" required>
         </div>
 
         <div class="field">
-            <label for="password">Пароль</label>
+            <label for="password">РџР°СЂРѕР»СЊ</label>
             <input id="password" type="password" required>
         </div>
 
-        <button type="submit">Войти</button>
+        <button type="submit">Р’РѕР№С‚Рё</button>
     </form>
 
     <div id="message"></div>
 
     <div class="link">
-        Нет аккаунта? <a href="/auth/reg">Регистрация</a>
+        РќРµС‚ Р°РєРєР°СѓРЅС‚Р°? <a href="/auth/reg">Р РµРіРёСЃС‚СЂР°С†РёСЏ</a>
     </div>
 </div>
 
 <script>
     const form = document.getElementById("loginForm");
     const message = document.getElementById("message");
+
+    async function waitForSessionReady() {
+        const started = Date.now();
+        const timeoutMs = 15000;
+
+        while (Date.now() - started < timeoutMs) {
+            try {
+                const check = await fetch("/api/getId", { credentials: "include" });
+                if (check.ok) {
+                    return true;
+                }
+            } catch (error) {
+                // retry
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, 200));
+        }
+
+        return false;
+    }
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -70,9 +90,16 @@
                 return;
             }
 
+            const ready = await waitForSessionReady();
+            if (!ready) {
+                message.className = "error";
+                message.textContent = "Сессия пока не готова. Повторите вход.";
+                return;
+            }
+
             message.className = "success";
             message.textContent = text || "Успешный вход";
-            window.location.href = "/message";
+            window.location.href = "/chat.html";
         } catch (error) {
             message.className = "error";
             message.textContent = "Сервер недоступен";
@@ -81,3 +108,5 @@
 </script>
 </body>
 </html>
+
+

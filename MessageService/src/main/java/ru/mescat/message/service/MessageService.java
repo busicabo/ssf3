@@ -1,19 +1,22 @@
 package ru.mescat.message.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.mescat.message.dto.*;
+import ru.mescat.message.dto.ChatDto;
+import ru.mescat.message.dto.DeleteMessageDto;
+import ru.mescat.message.dto.LatestChatEncryptionUsageDto;
+import ru.mescat.message.dto.MessageDto;
+import ru.mescat.message.dto.MessageForUser;
+import ru.mescat.message.dto.NewMessageToNewChat;
 import ru.mescat.message.entity.ChatEntity;
 import ru.mescat.message.entity.ChatUserEntity;
 import ru.mescat.message.entity.MessageEntity;
 import ru.mescat.message.entity.enums.ChatType;
 import ru.mescat.message.event.dto.DeleteMessage;
 import ru.mescat.message.event.dto.NewMessage;
-import ru.mescat.message.event.dto.NewUserInChat;
 import ru.mescat.message.exception.*;
 import ru.mescat.message.map.MessageDtoToMessageEntity;
 import ru.mescat.message.map.MessageEntityToMessageForUser;
@@ -27,6 +30,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class MessageService {
     private MessageRepository repository;
     private ChatUserService chatUserService;
@@ -72,13 +76,18 @@ public class MessageService {
 
     @Transactional
     public MessageForUser sendMessage(UUID userId, MessageDto messageDto){
+        log.info("Р—Р°РїСЂРѕСЃ РЅР° РѕС‚РїСЂР°РІРєСѓ СЃРѕРѕР±С‰РµРЅРёСЏ: userId={}, chatId={}", userId, messageDto.getChatId());
 
         if(!chatUserService.existsByChatIdAndUserId(messageDto.getChatId(),userId)){
-            throw new ChatNotFoundException("Чат не существует.");
+            log.warn("РћС‚РїСЂР°РІРєР° СЃРѕРѕР±С‰РµРЅРёСЏ РѕС‚РєР»РѕРЅРµРЅР°: РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ СЃРѕСЃС‚РѕРёС‚ РІ С‡Р°С‚Рµ. userId={}, chatId={}",
+                    userId, messageDto.getChatId());
+            throw new ChatNotFoundException("Р§Р°С‚ РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚.");
         }
 
         if(blackListService.isBlockedInChat(messageDto.getChatId(),userId)){
-            throw new UserBlockedException("Вас заблокировали в данном чате.");
+            log.warn("РћС‚РїСЂР°РІРєР° СЃРѕРѕР±С‰РµРЅРёСЏ РѕС‚РєР»РѕРЅРµРЅР°: РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ РІ С‡Р°С‚Рµ. userId={}, chatId={}",
+                    userId, messageDto.getChatId());
+            throw new UserBlockedException("Р’Р°СЃ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°Р»Рё РІ РґР°РЅРЅРѕРј С‡Р°С‚Рµ.");
         }
 
         MessageEntity messageEntity = messageDtoToMessageEntityConvert.convert(messageDto, userId);
@@ -86,73 +95,120 @@ public class MessageService {
         try{
             messageEntity = repository.save(messageEntity);
         } catch (Exception e){
-            throw new SaveToDatabaseException("Не удалось сохранить сообщение.");
+            log.error("РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ: userId={}, chatId={}, error={}",
+                    userId, messageDto.getChatId(), e.getMessage());
+            throw new SaveToDatabaseException("РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ.");
         }
 
         if(messageEntity.getMessageId()==null || messageEntity.getCreatedAt()==null){
-            throw new DataBaseException("Проблема с постановкой данных.");
+            log.error("РЎРѕРѕР±С‰РµРЅРёРµ СЃРѕС…СЂР°РЅРµРЅРѕ РЅРµРєРѕСЂСЂРµРєС‚РЅРѕ: РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ messageId РёР»Рё createdAt. userId={}, chatId={}",
+                    userId, messageDto.getChatId());
+            throw new DataBaseException("РџСЂРѕР±Р»РµРјР° СЃ РїРѕСЃС‚Р°РЅРѕРІРєРѕР№ РґР°РЅРЅС‹С….");
         }
 
         MessageForUser message = MessageEntityToMessageForUser.convert(messageEntity);
 
         applicationEventPublisher.publishEvent(new NewMessage(messageEntity));
+        log.info("РЎРѕРѕР±С‰РµРЅРёРµ РѕС‚РїСЂР°РІР»РµРЅРѕ: messageId={}, chatId={}, senderId={}",
+                messageEntity.getMessageId(), messageEntity.getChat().getChatId(), userId);
 
         return message;
     }
 
     public List<MessageEntity> getLastNMessagesForEachUserChat(UUID userId, int limit) {
         if (limit <= 0) {
-            throw new IllegalArgumentException("Лимит должно быть больше 0.");
+            throw new IllegalArgumentException("Р›РёРјРёС‚ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ Р±РѕР»СЊС€Рµ 0.");
         }
         return repository.findLastNMessagesForEachUserChat(userId, limit);
     }
 
+    @Transactional(readOnly = true)
+    public List<MessageForUser> getLastNMessagesForEachUserChatDto(UUID userId, int limit) {
+        return getLastNMessagesForEachUserChat(userId, limit).stream()
+                .map(MessageEntityToMessageForUser::convert)
+                .toList();
+    }
+
+    public List<MessageEntity> getRecentMessagesInChat(UUID userId, Long chatId, int limit) {
+        if (limit <= 0) {
+            throw new IllegalArgumentException("Р›РёРјРёС‚ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ Р±РѕР»СЊС€Рµ 0.");
+        }
+        if (!chatUserService.existsByChatIdAndUserId(chatId, userId)) {
+            throw new ChatNotFoundException("Р§Р°С‚ РЅРµ РЅР°Р№РґРµРЅ.");
+        }
+
+        List<MessageEntity> desc = repository.findRecentMessagesInChat(
+                chatId,
+                PageRequest.of(0, limit)
+        );
+
+        Collections.reverse(desc);
+        return desc;
+    }
+
+    @Transactional(readOnly = true)
+    public List<MessageForUser> getRecentMessagesInChatDto(UUID userId, Long chatId, int limit) {
+        return getRecentMessagesInChat(userId, chatId, limit).stream()
+                .map(MessageEntityToMessageForUser::convert)
+                .toList();
+    }
+
+    @Transactional
     public void deleteMessage(DeleteMessageDto deleteMessage, UUID userId){
+        log.info("Р—Р°РїСЂРѕСЃ РЅР° СѓРґР°Р»РµРЅРёРµ СЃРѕРѕР±С‰РµРЅРёСЏ: userId={}, chatId={}, messageId={}",
+                userId, deleteMessage.getChatId(), deleteMessage.getMessageId());
+
         ChatUserEntity chatUserEntity = chatUserService.findByUserIdAndChatId(deleteMessage.getChatId(),userId);
         if(chatUserEntity==null){
-            throw new ChatNotFoundException("Чат не найден.");
+            log.warn("РЈРґР°Р»РµРЅРёРµ СЃРѕРѕР±С‰РµРЅРёСЏ РѕС‚РєР»РѕРЅРµРЅРѕ: С‡Р°С‚ РЅРµ РЅР°Р№РґРµРЅ РґР»СЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ. userId={}, chatId={}",
+                    userId, deleteMessage.getChatId());
+            throw new ChatNotFoundException("Р§Р°С‚ РЅРµ РЅР°Р№РґРµРЅ.");
         }
 
         MessageEntity message = findById(deleteMessage.getMessageId());
 
         if(message==null){
-            throw new NotFoundException("Сообщение не найдено.");
+            log.warn("РЈРґР°Р»РµРЅРёРµ СЃРѕРѕР±С‰РµРЅРёСЏ РѕС‚РєР»РѕРЅРµРЅРѕ: СЃРѕРѕР±С‰РµРЅРёРµ РЅРµ РЅР°Р№РґРµРЅРѕ. messageId={}", deleteMessage.getMessageId());
+            throw new NotFoundException("РЎРѕРѕР±С‰РµРЅРёРµ РЅРµ РЅР°Р№РґРµРЅРѕ.");
         }
 
         if(chatUserEntity.getChat().getChatType()==ChatType.PERSONAL){
             if(!message.getSenderId().equals(userId)){
-                throw new AccessDeniedException("Вы не можете удалить не свое сообщение.");
+                log.warn("РЈРґР°Р»РµРЅРёРµ СЃРѕРѕР±С‰РµРЅРёСЏ РѕС‚РєР»РѕРЅРµРЅРѕ: РїРѕРїС‹С‚РєР° СѓРґР°Р»РёС‚СЊ С‡СѓР¶РѕРµ СЃРѕРѕР±С‰РµРЅРёРµ РІ Р»РёС‡РЅРѕРј С‡Р°С‚Рµ. userId={}, messageId={}",
+                        userId, deleteMessage.getMessageId());
+                throw new AccessDeniedException("Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ СѓРґР°Р»РёС‚СЊ РЅРµ СЃРІРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ.");
             }
         } else if(chatUserEntity.getChat().getChatType()==ChatType.GROUP){
             if(!chatUserEntity.getRole().equalsIgnoreCase("ADMIN")
                     && !chatUserEntity.getRole().equalsIgnoreCase("CREATOR")
                     && !message.getSenderId().equals(userId)){
-                throw new AccessDeniedException("Вы не можете удалить сообщение.");
+                log.warn("РЈРґР°Р»РµРЅРёРµ СЃРѕРѕР±С‰РµРЅРёСЏ РѕС‚РєР»РѕРЅРµРЅРѕ: РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РїСЂР°РІ. userId={}, chatId={}, role={}",
+                        userId, deleteMessage.getChatId(), chatUserEntity.getRole());
+                throw new AccessDeniedException("Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ СѓРґР°Р»РёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ.");
             }
         }
 
         deleteById(deleteMessage.getMessageId());
 
         applicationEventPublisher.publishEvent(new DeleteMessage(message));
+        log.info("РЎРѕРѕР±С‰РµРЅРёРµ СѓРґР°Р»РµРЅРѕ: messageId={}, chatId={}, deletedBy={}",
+                deleteMessage.getMessageId(), deleteMessage.getChatId(), userId);
     }
 
     @Transactional
-    public List<MessageEntity> getMessagesRelativeToMessage(Long messageId, int count) {
+    public List<MessageEntity> getMessagesRelativeToMessage(Long messageId, int count, UUID userId) {
         if (count == 0) {
             return List.of();
         }
 
-        UUID userId = UUID.fromString(SecurityContextHolder.getContext().getAuthentication().getName());
-
         MessageEntity message = findById(messageId);
         if(message==null){
-            throw new NotFoundException("Сообщение не найдено.");
+            throw new NotFoundException("РЎРѕРѕР±С‰РµРЅРёРµ РЅРµ РЅР°Р№РґРµРЅРѕ.");
         }
 
         if(!chatUserService.existsByChatIdAndUserId(message.getChat().getChatId(),userId)){
-            throw new ChatNotFoundException("Чат не найден.");
-        };
-
+            throw new ChatNotFoundException("Р§Р°С‚ РЅРµ РЅР°Р№РґРµРЅ.");
+        }
 
         Long chatId = message.getChat().getChatId();
         int limit = Math.abs(count);
@@ -174,17 +230,42 @@ public class MessageService {
         return result;
     }
 
+    @Transactional(readOnly = true)
+    public List<MessageForUser> getMessagesRelativeToMessageDto(Long messageId, int count, UUID userId) {
+        return getMessagesRelativeToMessage(messageId, count, userId).stream()
+                .map(MessageEntityToMessageForUser::convert)
+                .toList();
+    }
+
     public MessageEntity findLatestMessageByChatId(Long chatId){
         return repository.findFirstByChat_ChatIdOrderByCreatedAtDesc(chatId);
     }
 
+    @Transactional(readOnly = true)
+    public LatestChatEncryptionUsageDto getLatestEncryptionUsage(UUID userId, Long chatId) {
+        if (!chatUserService.existsByChatIdAndUserId(chatId, userId)) {
+            throw new ChatNotFoundException("Р§Р°С‚ РЅРµ РЅР°Р№РґРµРЅ.");
+        }
+
+        MessageEntity latestMessage = findLatestMessageByChatId(chatId);
+        if (latestMessage == null || latestMessage.getEncryptionName() == null || latestMessage.getEncryptionName().isBlank()) {
+            return new LatestChatEncryptionUsageDto(chatId, null, 0L);
+        }
+
+        long count = repository.countByChat_ChatIdAndEncryptionName(chatId, latestMessage.getEncryptionName());
+        return new LatestChatEncryptionUsageDto(chatId, latestMessage.getEncryptionName(), count);
+    }
+
     @Transactional
     public ChatDto sendMessageAndCreateChat(UUID userId,NewMessageToNewChat message){
+        log.info("Р—Р°РїСЂРѕСЃ РЅР° СЃРѕР·РґР°РЅРёРµ Р»РёС‡РЅРѕРіРѕ С‡Р°С‚Р° Рё РѕС‚РїСЂР°РІРєСѓ РїРµСЂРІРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ: initiatorId={}, targetId={}",
+                userId, message.getUserId());
 
         User user = userService.findById(message.getUserId());
 
         if(user==null){
-            throw new NotFoundException("Пользователь не найден.");
+            log.warn("РЎРѕР·РґР°РЅРёРµ Р»РёС‡РЅРѕРіРѕ С‡Р°С‚Р° РѕС‚РєР»РѕРЅРµРЅРѕ: С†РµР»РµРІРѕР№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ РЅР°Р№РґРµРЅ. targetId={}", message.getUserId());
+            throw new NotFoundException("РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ РЅР°Р№РґРµРЅ.");
         }
 
         ChatEntity chat = chatUserService.findPersonalBetween(message.getUserId(),userId,ChatType.PERSONAL);
@@ -194,16 +275,41 @@ public class MessageService {
             chat = chatService.save(chat);
             chatUserService.save(new ChatUserEntity(chat,userId));
             chatUserService.save(new ChatUserEntity(chat,user.getId()));
+            log.info("РЎРѕР·РґР°РЅ РЅРѕРІС‹Р№ Р»РёС‡РЅС‹Р№ С‡Р°С‚: chatId={}, userA={}, userB={}",
+                    chat.getChatId(), userId, user.getId());
         }
 
         if(chat==null){
-            throw  new RuntimeException("Не удалось создать чат.");
+            throw  new RuntimeException("РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕР·РґР°С‚СЊ С‡Р°С‚.");
         }
 
         sendMessage(userId, new MessageDto(chat.getChatId(),message.getMessage(),message.getKeyName()));
+        log.info("РџРµСЂРІРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ РІ Р»РёС‡РЅРѕРј С‡Р°С‚Рµ РѕС‚РїСЂР°РІР»РµРЅРѕ: chatId={}, senderId={}", chat.getChatId(), userId);
 
         return new ChatDto(chat.getChatId(),chat.getChatType(),user.getUsername(),
                 user.getAvatarUrl(),message.getMessage(),message.getKeyName());
 
+    }
+
+    @Transactional
+    public ChatDto createPersonalChat(UUID userId, UUID targetUserId) {
+        log.info("Запрос на создание личного чата без сообщения: initiatorId={}, targetId={}", userId, targetUserId);
+
+        User user = userService.findById(targetUserId);
+        if (user == null) {
+            throw new NotFoundException("Пользователь не найден.");
+        }
+
+        ChatEntity chat = chatUserService.findPersonalBetween(targetUserId, userId, ChatType.PERSONAL);
+        if (chat == null) {
+            chat = new ChatEntity(ChatType.PERSONAL);
+            chat = chatService.save(chat);
+            chatUserService.save(new ChatUserEntity(chat, userId));
+            chatUserService.save(new ChatUserEntity(chat, user.getId()));
+            log.info("Создан новый личный чат без сообщения: chatId={}, userA={}, userB={}",
+                    chat.getChatId(), userId, user.getId());
+        }
+
+        return new ChatDto(chat.getChatId(), chat.getChatType(), user.getUsername(), user.getAvatarUrl());
     }
 }

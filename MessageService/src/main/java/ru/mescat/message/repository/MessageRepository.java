@@ -56,4 +56,15 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
 
     MessageEntity findFirstByChat_ChatIdOrderByCreatedAtDesc(Long chatId);
 
+    long countByChat_ChatIdAndEncryptionName(Long chatId, String encryptionName);
+
+    @Query("""
+            SELECT m
+            FROM MessageEntity m
+            WHERE m.chat.chatId = :chatId
+            ORDER BY m.createdAt DESC
+            """)
+    List<MessageEntity> findRecentMessagesInChat(@Param("chatId") Long chatId,
+                                                 org.springframework.data.domain.Pageable pageable);
+
 }

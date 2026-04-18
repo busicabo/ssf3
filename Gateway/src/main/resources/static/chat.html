@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mescat Chat</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/chat.css">
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div class="title-block">
+      <h1>Mescat</h1>
+      <p>Клиент чата</p>
+    </div>
+    <div class="meta">
+      <div>user: <span id="userId">-</span></div>
+      <div>ws: <span id="wsState" class="bad">offline</span></div>
+      <div>keys: <span id="keyState" class="bad">не синхронизированы</span></div>
+    </div>
+    <div class="actions">
+      <button id="bootstrapKeysBtn" type="button">Ключи</button>
+      <button id="reloadBtn" type="button">Обновить</button>
+      <button id="logoutBtn" type="button" class="danger">Выйти</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="left">
+      <section class="panel">
+        <h2>Поиск пользователя</h2>
+        <div class="row">
+          <input id="searchInput" placeholder="username">
+          <button id="searchBtn" type="button">Поиск</button>
+        </div>
+        <div id="searchResult"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Новая группа</h2>
+        <div class="row">
+          <input id="groupTitleInput" placeholder="Название группы">
+          <button id="createGroupBtn" type="button">Создать</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Чаты</h2>
+        <div class="row">
+          <button id="refreshChatsBtn" type="button">Обновить чаты</button>
+          <button id="wsReconnectBtn" type="button">WS reconnect</button>
+        </div>
+        <div id="chatList" class="chat-list"></div>
+      </section>
+    </aside>
+
+    <section class="center">
+      <section class="panel">
+        <h2 id="chatTitle">Выберите чат</h2>
+        <div id="messageList" class="messages"></div>
+        <div class="composer">
+          <textarea id="messageInput" rows="4" placeholder="Введите сообщение"></textarea>
+          <button id="sendBtn" type="button">Отправить</button>
+        </div>
+      </section>
+    </section>
+
+    <aside class="right">
+      <section class="panel">
+        <h2>Участники чата</h2>
+        <div id="membersList" class="members"></div>
+        <div class="row">
+          <input id="memberInput" placeholder="username">
+        </div>
+        <div class="row">
+          <button id="addMemberBtn" type="button">Добавить</button>
+          <button id="removeMemberBtn" type="button">Удалить</button>
+          <button id="blockMemberBtn" type="button" class="danger">Блок</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Системный статус</h2>
+        <div id="statusList" class="status"></div>
+      </section>
+    </aside>
+  </main>
+</div>
+<script type="module" src="/js/chat/app.js"></script>
+</body>
+</html>

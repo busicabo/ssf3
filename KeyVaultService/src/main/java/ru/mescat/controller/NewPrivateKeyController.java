@@ -6,7 +6,6 @@ import ru.mescat.dto.NewPrivateKeyDto;
 import ru.mescat.entity.NewPrivateKeyEntity;
 import ru.mescat.service.NewPrivateKeyService;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,8 +21,11 @@ public class NewPrivateKeyController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findAllByUserId(@PathVariable UUID id){
         try{
-            List<NewPrivateKeyEntity> list = newPrivateKeyService.findAllByUserId(id);
-            return ResponseEntity.ok(list);
+            NewPrivateKeyEntity entity = newPrivateKeyService.findLatestByUserId(id);
+            if (entity == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(entity);
         } catch (Exception e){
             return ResponseEntity.status(500).body(e.getMessage());
         }
@@ -31,8 +33,20 @@ public class NewPrivateKeyController {
 
     @PostMapping("/")
     public ResponseEntity<?> save(@RequestBody NewPrivateKeyDto newPrivateKeyDto){
+        if (newPrivateKeyDto == null
+                || newPrivateKeyDto.getUserId() == null
+                || newPrivateKeyDto.getKey() == null
+                || newPrivateKeyDto.getKey().length == 0
+                || newPrivateKeyDto.getPublicKey() == null
+                || newPrivateKeyDto.getEncryptingPublicKey() == null) {
+            return ResponseEntity.badRequest().body("Некорректные данные нового приватного ключа.");
+        }
+
         NewPrivateKeyEntity newPrivateKeyEntity = new NewPrivateKeyEntity(
-                newPrivateKeyDto.getUserId(),newPrivateKeyDto.getKey(),newPrivateKeyDto.getPublicKey());
+                newPrivateKeyDto.getUserId(),
+                newPrivateKeyDto.getKey(),
+                newPrivateKeyDto.getPublicKey(),
+                newPrivateKeyDto.getEncryptingPublicKey());
 
         try{
             NewPrivateKeyEntity result = newPrivateKeyService.save(newPrivateKeyEntity);

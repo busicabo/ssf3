@@ -1,6 +1,5 @@
 package ru.mescat.message.map;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import ru.mescat.message.dto.MessageDto;
 import ru.mescat.message.entity.ChatEntity;

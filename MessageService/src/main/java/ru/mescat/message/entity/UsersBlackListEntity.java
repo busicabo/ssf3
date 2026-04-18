@@ -2,6 +2,7 @@ package ru.mescat.message.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import ru.mescat.message.entity.ChatEntity;
 
 import java.time.OffsetDateTime;
@@ -36,6 +37,7 @@ public class UsersBlackListEntity {
     @Column(name = "user_target")
     private UUID userTarget;
 
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private OffsetDateTime createdAt;
 

@@ -2,15 +2,18 @@ package ru.mescat.message.config;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
@@ -20,6 +23,7 @@ import ru.mescat.message.dto.kafka.ChatEventDto;
 import ru.mescat.message.dto.kafka.EncryptKeyEventDto;
 import ru.mescat.message.dto.kafka.KeyDelete;
 import ru.mescat.message.dto.kafka.MessageEventDto;
+import ru.mescat.message.dto.kafka.UserOnlineEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,8 +35,20 @@ public class KafkaConfig {
     private String bootstrapServers;
     @Value("${spring.kafka.encrypt-keys.group}")
     private String encryptKeyGroup;
-    @Value("${spring.kafka.message-service.group}")
+    @Value("${spring.kafka.message.group}")
     private String messageServiceGroup;
+    @Value("${spring.kafka.user-online.group}")
+    private String userOnlineGroup;
+    @Value("${spring.kafka.delete-encrypt-keys.topic}")
+    private String deleteEncryptKeysTopic;
+    @Value("${spring.kafka.message.topic}")
+    private String messageTopic;
+    @Value("${spring.kafka.chat.topic}")
+    private String chatTopic;
+    @Value("${spring.kafka.encrypt-keys.topic}")
+    private String encryptKeysTopic;
+    @Value("${spring.kafka.user-online.topic}")
+    private String userOnlineTopic;
 
     @Bean("producerFactoryKeyDelete")
     public ProducerFactory<String, KeyDelete> producerFactoryKeyDelete() {
@@ -155,7 +171,52 @@ public class KafkaConfig {
         return new KafkaTemplate<>(producerFactoryEncrypt());
     }
 
+    @Bean("consumerFactoryUserOnline")
+    public ConsumerFactory<String, UserOnlineEvent> consumerFactoryUserOnline() {
+        Map<String, Object> props = new HashMap<>();
 
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, userOnlineGroup);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "ru.mescat");
+        props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
+        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "ru.mescat.message.dto.kafka.UserOnlineEvent");
+        return new DefaultKafkaConsumerFactory<>(props);
+    }
 
+    @Bean("kafkaListenerUserOnline")
+    public ConcurrentKafkaListenerContainerFactory<String, UserOnlineEvent> kafkaListenerUserOnline() {
+        ConcurrentKafkaListenerContainerFactory<String, UserOnlineEvent> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactoryUserOnline());
+        return factory;
+    }
 
+    @Bean
+    public KafkaAdmin.NewTopics mescatTopics() {
+        NewTopic deleteEncryptKeys = TopicBuilder.name(deleteEncryptKeysTopic)
+                .partitions(3)
+                .replicas(1)
+                .build();
+        NewTopic message = TopicBuilder.name(messageTopic)
+                .partitions(3)
+                .replicas(1)
+                .build();
+        NewTopic chat = TopicBuilder.name(chatTopic)
+                .partitions(3)
+                .replicas(1)
+                .build();
+        NewTopic encryptKeys = TopicBuilder.name(encryptKeysTopic)
+                .partitions(3)
+                .replicas(1)
+                .build();
+        NewTopic userOnline = TopicBuilder.name(userOnlineTopic)
+                .partitions(3)
+                .replicas(1)
+                .build();
+
+        return new KafkaAdmin.NewTopics(deleteEncryptKeys, message, chat, encryptKeys, userOnline);
+    }
 }

@@ -3,7 +3,7 @@ package ru.mescat.message.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.mescat.message.dto.ChatDto;
-import ru.mescat.message.map.UserChatDtoMap;
+import ru.mescat.message.service.ChatQueryService;
 import ru.mescat.user.dto.User;
 import ru.mescat.user.service.UserService;
 
@@ -15,10 +15,10 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
-    private final UserChatDtoMap userChatDtoMap;
+    private final ChatQueryService chatQueryService;
 
-    public UserController(UserService userService, UserChatDtoMap userChatDtoMap) {
-        this.userChatDtoMap = userChatDtoMap;
+    public UserController(UserService userService, ChatQueryService chatQueryService) {
+        this.chatQueryService = chatQueryService;
         this.userService = userService;
     }
 
@@ -44,13 +44,7 @@ public class UserController {
             return ResponseEntity.badRequest().body("Имя пользователя не должно быть пустым.");
         }
 
-        List<User> users = userService.findByUsernameContaining(username);
-
-        if (users == null || users.isEmpty()) {
-            return ResponseEntity.ok(List.of());
-        }
-
-        List<ChatDto> chatDtos = userChatDtoMap.convert(users, userId);
+        List<ChatDto> chatDtos = chatQueryService.searchUsersAsChats(userId, username);
 
         if (chatDtos == null) {
             return ResponseEntity.status(500).body("Не удалось подготовить чаты.");

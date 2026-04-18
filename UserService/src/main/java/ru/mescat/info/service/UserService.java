@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.mescat.info.dto.UserCover;
 import ru.mescat.info.entity.UserEntity;
 import ru.mescat.info.repository.UserRepository;
 
@@ -36,6 +35,7 @@ public class UserService {
 
     public void delete(UUID id){
         userRepository.deleteById(id);
+        log.info("Пользователь удален: userId={}", id);
     }
 
     @Transactional(readOnly = true)
@@ -49,15 +49,21 @@ public class UserService {
     }
 
     public boolean updatePassword(UUID userId, String password){
-        return userRepository.updatePasswordById(userId, passwordEncoder.encode(password)) == 1;
+        boolean updated = userRepository.updatePasswordById(userId, passwordEncoder.encode(password)) == 1;
+        log.info("Обновление пароля: userId={}, updated={}", userId, updated);
+        return updated;
     }
 
     public boolean updateBlocked(UUID userId, boolean blocked){
-        return userRepository.updateBlockedById(userId, blocked) == 1;
+        boolean updated = userRepository.updateBlockedById(userId, blocked) == 1;
+        log.info("Обновление статуса блокировки: userId={}, blocked={}, updated={}", userId, blocked, updated);
+        return updated;
     }
 
     public boolean updateOnline(UUID userId, boolean online){
-        return userRepository.updateOnlineById(userId, online) == 1;
+        boolean updated = userRepository.updateOnlineById(userId, online) == 1;
+        log.info("Обновление статуса online: userId={}, online={}, updated={}", userId, online, updated);
+        return updated;
     }
 
     public List<UserEntity> findAllByIds(List<UUID> userIds){
@@ -65,7 +71,9 @@ public class UserService {
     }
 
     public boolean updateUsername(UUID userId, String username){
-        return userRepository.updateUsernameById(userId, username) == 1;
+        boolean updated = userRepository.updateUsernameById(userId, username) == 1;
+        log.info("Обновление username: userId={}, newUsername={}, updated={}", userId, username, updated);
+        return updated;
     }
 
     public UserEntity findByUsername(String username){
@@ -82,6 +90,10 @@ public class UserService {
                 passwordEncoder.encode(password)
         );
 
-        return save(entity);
+        UserEntity saved = save(entity);
+        if (saved != null) {
+            log.info("Создан новый пользователь: userId={}, username={}", saved.getId(), saved.getUsername());
+        }
+        return saved;
     }
 }

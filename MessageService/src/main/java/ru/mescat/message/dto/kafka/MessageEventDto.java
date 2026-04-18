@@ -1,7 +1,6 @@
 package ru.mescat.message.dto.kafka;
 
 import lombok.*;
-import tools.jackson.databind.JsonNode;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -10,5 +9,5 @@ import tools.jackson.databind.JsonNode;
 @Getter
 public class MessageEventDto {
     private MessageEventType type;
-    private JsonNode payload;
+    private Object payload;
 }

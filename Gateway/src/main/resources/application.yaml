@@ -1,18 +1,37 @@
-spring:
+﻿spring:
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
   application:
     name: mescat
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    user-online:
+      topic: ${KAFKA_USER_ONLINE_TOPIC:user-online}
+    message:
+      topic: ${KAFKA_MESSAGE_TOPIC:message-service}
+      group: ${KAFKA_GATEWAY_MESSAGE_GROUP:gateway-message-service}
+    chat:
+      topic: ${KAFKA_CHAT_TOPIC:chat-service}
+      group: ${KAFKA_GATEWAY_CHAT_GROUP:gateway-chat-service}
+    encrypt-keys:
+      topic: ${KAFKA_ENCRYPT_KEYS_TOPIC:encrypt-keys-service}
+      group: ${KAFKA_GATEWAY_ENCRYPT_KEYS_GROUP:gateway-encrypt-keys-service}
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
   forward-headers-strategy: framework
+
+services:
+  user:
+    base-url: ${USER_SERVICE_URL:http://localhost:8081}
+  message:
+    base-url: ${MESSAGE_SERVICE_URL:http://localhost:8082}
 
 app:
   security:
     jwt:
-      secret: "my-super-secret-key-my-super-secret-key-my-super-secret-key"
-      access-token-expiration: 900000      # 15 минут в миллисекундах
-      refresh-token-expiration: 604800000  # 7 дней в миллисекундах
+      secret: ${JWT_SECRET:my-super-secret-key-my-super-secret-key-my-super-secret-key}
+      access-token-expiration: 900000
+      refresh-token-expiration: 604800000

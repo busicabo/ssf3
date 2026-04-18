@@ -1,19 +1,19 @@
 package ru.mescat.message.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.mescat.message.dto.DeleteMessageDto;
 import ru.mescat.message.dto.MessageDto;
 import ru.mescat.message.dto.MessageForUser;
 import ru.mescat.message.dto.NewMessageToNewChat;
-import ru.mescat.message.entity.MessageEntity;
-import ru.mescat.message.event.dto.DeleteMessage;
-import ru.mescat.message.exception.ChatNotFoundException;
-import ru.mescat.message.exception.NotFoundException;
-import ru.mescat.message.exception.SaveToDatabaseException;
-import ru.mescat.message.exception.UserBlockedException;
-import ru.mescat.message.map.MessageEntityToMessageForUser;
+import ru.mescat.message.exception.*;
 import ru.mescat.message.service.MessageService;
 
 import java.util.List;
@@ -29,7 +29,6 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-    //Получить последние n сообщения каждого чата
     @GetMapping("/getLastMessages/{count}")
     public ResponseEntity<?> getLastMessage(@RequestHeader("X-User-Id") UUID userId,
                                             @PathVariable Integer count) {
@@ -37,55 +36,55 @@ public class MessageController {
             return ResponseEntity.badRequest().body("Количество сообщений должно быть больше нуля.");
         }
 
-        List<MessageEntity> messages;
         try {
-            messages = messageService.getLastNMessagesForEachUserChat(userId, count);
+            List<MessageForUser> messages = messageService.getLastNMessagesForEachUserChatDto(userId, count);
+            if (messages == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(messages);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        if (messages == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        List<MessageForUser> result = messages.stream()
-                .map(MessageEntityToMessageForUser::convert)
-                .toList();
-
-        return ResponseEntity.ok(result);
     }
 
-    //Получить предыдущие n сообщений в отношение
-    // сообщения и чата которому принадлежит это
-    // сообщение(если n отрицательный, то показываються все сообщения после)
+    @GetMapping("/messages/{chatId}")
+    public ResponseEntity<?> getRecentMessagesInChat(@RequestHeader("X-User-Id") UUID userId,
+                                                     @PathVariable Long chatId,
+                                                     @RequestParam(defaultValue = "50") Integer limit) {
+        if (chatId == null || limit == null || limit <= 0) {
+            return ResponseEntity.badRequest().body("Некорректные параметры запроса.");
+        }
+
+        try {
+            return ResponseEntity.ok(messageService.getRecentMessagesInChatDto(userId, chatId, limit));
+        } catch (ChatNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @GetMapping("/getMessageInChatWithLimit/{messageId}/{count}")
-    public ResponseEntity<?> getMessageInChatWithLimit(@PathVariable Long messageId,
+    public ResponseEntity<?> getMessageInChatWithLimit(@RequestHeader("X-User-Id") UUID userId,
+                                                       @PathVariable Long messageId,
                                                        @PathVariable Integer count) {
-        if (messageId == null || count == null || count <= 0) {
+        if (messageId == null || count == null || count == 0) {
             return ResponseEntity.badRequest().body("Идентификатор сообщения или количество указаны некорректно.");
         }
 
-        List<MessageEntity> messages;
         try {
-            messages = messageService.getMessagesRelativeToMessage(messageId, count);
+            List<MessageForUser> messages = messageService.getMessagesRelativeToMessageDto(messageId, count, userId);
+            if (messages == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(messages);
         } catch (NotFoundException | ChatNotFoundException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        if (messages == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        List<MessageForUser> result = messages.stream()
-                .map(MessageEntityToMessageForUser::convert)
-                .toList();
-
-        return ResponseEntity.ok(result);
     }
 
-    //Отправить сообщение
     @PostMapping("/sendMessage")
     public ResponseEntity<?> sendMessage(@RequestHeader("X-User-Id") UUID userId,
                                          @RequestBody MessageDto messageDto) {
@@ -94,8 +93,8 @@ public class MessageController {
         }
 
         try {
-            messageService.sendMessage(userId, messageDto);
-            return ResponseEntity.ok("Сообщение успешно отправлено.");
+            MessageForUser createdMessage = messageService.sendMessage(userId, messageDto);
+            return ResponseEntity.ok(createdMessage);
         } catch (ChatNotFoundException | NotFoundException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         } catch (UserBlockedException e) {
@@ -109,7 +108,6 @@ public class MessageController {
         }
     }
 
-    //При отправке сообщения пользователю с которым не было чата создаеться новый чат и сообщения.
     @PostMapping("/newMessageAndNewChat")
     public ResponseEntity<?> newMessageAndNewChat(@RequestHeader("X-User-Id") UUID userId,
                                                   @RequestBody NewMessageToNewChat newMessageToNewChat) {
@@ -128,15 +126,15 @@ public class MessageController {
 
     @PostMapping("/delete")
     public ResponseEntity<?> deleteMessage(@RequestHeader("X-User-Id") UUID userId,
-                                           @RequestBody DeleteMessageDto deleteMessageDto){
-        try{
-            messageService.deleteMessage(deleteMessageDto,userId);
+                                           @RequestBody DeleteMessageDto deleteMessageDto) {
+        try {
+            messageService.deleteMessage(deleteMessageDto, userId);
             return ResponseEntity.ok().build();
-        } catch (ChatNotFoundException | NotFoundException e){
+        } catch (ChatNotFoundException | NotFoundException e) {
             return ResponseEntity.status(404).body(e.getMessage());
-        } catch (AccessDeniedException e){
+        } catch (AccessDeniedException e) {
             return ResponseEntity.status(403).body(e.getMessage());
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }

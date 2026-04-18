@@ -5,8 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-
 @Service
 @RequiredArgsConstructor
 public class BlackListTokens {
@@ -37,9 +35,16 @@ public class BlackListTokens {
             return false;
         }
 
-        Instant blockTime = Instant.ofEpochMilli(Long.parseLong(blockTimeString));
-        Instant tokenIat = claims.getIssuedAt().toInstant();
+        long blockTimeMillis = Long.parseLong(blockTimeString);
 
-        return !tokenIat.isBefore(blockTime);
+        Long tokenIatMillis = claims.get("iat_ms", Long.class);
+        if (tokenIatMillis == null && claims.getIssuedAt() != null) {
+            tokenIatMillis = claims.getIssuedAt().toInstant().toEpochMilli();
+        }
+        if (tokenIatMillis == null) {
+            return false;
+        }
+
+        return tokenIatMillis >= blockTimeMillis;
     }
 }

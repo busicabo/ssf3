@@ -1,13 +1,11 @@
 package ru.mescat.client.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import ru.mescat.message.dto.SendEncryptKeyDto;
-import ru.mescat.message.exception.ChatNotFoundException;
-import ru.mescat.message.exception.SaveToDatabaseException;
-import ru.mescat.message.exception.UserBlockedException;
-import ru.mescat.message.service.DeleteSentKeysService;
-import ru.mescat.message.service.SendMessageKeyService;
+import ru.mescat.client.dto.SendEncryptKeyDto;
+import ru.mescat.client.dto.kafka.KeyDelete;
+import ru.mescat.client.service.MessageServiceProxy;
 
 import java.util.UUID;
 
@@ -15,39 +13,30 @@ import java.util.UUID;
 @RequestMapping("/api/encrypt_message_key")
 public class EncryptMessageKeyController {
 
-    private DeleteSentKeysService deleteSentKeysService;
-    private SendMessageKeyService sendMessageKeyService;
+    private final MessageServiceProxy proxy;
 
-    public EncryptMessageKeyController(DeleteSentKeysService deleteSentKeysService,
-                                       SendMessageKeyService sendMessageKeyService){
-        this.sendMessageKeyService=sendMessageKeyService;
-        this.deleteSentKeysService=deleteSentKeysService;
+    public EncryptMessageKeyController(MessageServiceProxy proxy) {
+        this.proxy = proxy;
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<?> addNewKey(@RequestBody UUID id){
-        try{
-            deleteSentKeysService.addKeyInQueue(id);
-            return ResponseEntity.ok().build();
-        } catch (Exception e){
-            return ResponseEntity.status(500).build();
-        }
+    public ResponseEntity<?> deleteMessageKey(@RequestBody KeyDelete keyDelete,
+                                              Authentication authentication) {
+        return proxy.post("/api/encrypt_message_key/delete", userId(authentication), keyDelete);
     }
 
     @PostMapping("/send")
-    public ResponseEntity<?> sendKeys(@RequestBody SendEncryptKeyDto sendEncryptKeyDtos){
-        try{
-            sendMessageKeyService.sendEncryptKey(sendEncryptKeyDtos);
-            return ResponseEntity.ok().build();
-        } catch (SaveToDatabaseException e){
-            return ResponseEntity.status(500).body(e.getMessage());
-        } catch (ChatNotFoundException e){
-            return ResponseEntity.status(404).body(e.getMessage());
-        } catch (UserBlockedException e){
-            return ResponseEntity.status(403).body(e.getMessage());
-        }
+    public ResponseEntity<?> sendKeys(@RequestBody SendEncryptKeyDto sendEncryptKeyDto,
+                                      Authentication authentication) {
+        return proxy.post("/api/encrypt_message_key/send", userId(authentication), sendEncryptKeyDto);
     }
 
-    @GetMapping
+    @GetMapping("/pending")
+    public ResponseEntity<?> getPendingKeys(Authentication authentication) {
+        return proxy.get("/api/encrypt_message_key/pending", userId(authentication));
+    }
 
+    private UUID userId(Authentication authentication) {
+        return UUID.fromString(authentication.getName());
+    }
 }

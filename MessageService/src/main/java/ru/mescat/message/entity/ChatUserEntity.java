@@ -2,6 +2,7 @@ package ru.mescat.message.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import ru.mescat.message.service.ChatUserService;
 
 import java.time.OffsetDateTime;
@@ -41,11 +42,13 @@ public class ChatUserEntity {
     @Column(name = "role", nullable = false)
     private String role;
 
+    @CreationTimestamp
     @Column(name = "joined_at", nullable = false, insertable = false, updatable = false)
     private OffsetDateTime joinedAt;
 
     public ChatUserEntity(ChatEntity chat, UUID userId){
-        this.chat=chat;
-        this.userId=userId;
+        this.chat = chat;
+        this.userId = userId;
+        this.role = "MEMBER";
     }
 }

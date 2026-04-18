@@ -13,7 +13,7 @@ import ru.mescat.message.service.SendMessageKeyService;
 import java.util.List;
 import java.util.UUID;
 
-//Контроллер отвечающий за ключи шифрования сообщений.
+//РљРѕРЅС‚СЂРѕР»Р»РµСЂ РѕС‚РІРµС‡Р°СЋС‰РёР№ Р·Р° РєР»СЋС‡Рё С€РёС„СЂРѕРІР°РЅРёСЏ СЃРѕРѕР±С‰РµРЅРёР№.
 
 @RestController
 @RequestMapping("/api/encrypt_message_key")
@@ -28,24 +28,25 @@ public class EncryptMessageKeyController {
         this.deleteSentKeysService = deleteSentKeysService;
     }
 
-    //Удалить ключ если прочитал
+    //РЈРґР°Р»РёС‚СЊ РєР»СЋС‡ РµСЃР»Рё РїСЂРѕС‡РёС‚Р°Р»
     @PostMapping("/delete")
-    public ResponseEntity<?> deleteMessageKey(@RequestBody KeyDelete keyDelete) {
+    public ResponseEntity<?> deleteMessageKey(
+            @RequestHeader("X-User-Id") UUID userId,
+            @RequestBody KeyDelete keyDelete) {
         try {
-            deleteSentKeysService.addKeyInQueue(keyDelete);
-            return ResponseEntity.ok("Ключи добавлены в очередь на удаление.");
+            deleteSentKeysService.addKeyInQueue(keyDelete,userId);
+            return ResponseEntity.ok("РљР»СЋС‡Рё РґРѕР±Р°РІР»РµРЅС‹ РІ РѕС‡РµСЂРµРґСЊ РЅР° СѓРґР°Р»РµРЅРёРµ.");
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Не удалось добавить ключи в очередь.");
+            return ResponseEntity.status(500).body("РќРµ СѓРґР°Р»РѕСЃСЊ РґРѕР±Р°РІРёС‚СЊ РєР»СЋС‡Рё РІ РѕС‡РµСЂРµРґСЊ.");
         }
     }
 
-    //Отправить ключи всем пользователям
+    //РћС‚РїСЂР°РІРёС‚СЊ РєР»СЋС‡Рё РІСЃРµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРј
     @PostMapping("/send")
     public ResponseEntity<?> sendKeys(@RequestHeader("X-User-Id") UUID userId,
                                       @RequestBody SendEncryptKeyDto sendEncryptKeyDto) {
         try {
-            sendMessageKeyService.sendEncryptKey(userId, sendEncryptKeyDto);
-            return ResponseEntity.ok("Ключи успешно отправлены.");
+            return ResponseEntity.ok(sendMessageKeyService.sendEncryptKey(userId, sendEncryptKeyDto));
         } catch (SaveToDatabaseException e) {
             return ResponseEntity.status(500).body(e.getMessage());
         } catch (ChatNotFoundException e) {
@@ -53,5 +54,10 @@ public class EncryptMessageKeyController {
         } catch (UserBlockedException e) {
             return ResponseEntity.status(403).body(e.getMessage());
         }
+    }
+
+    @GetMapping("/pending")
+    public ResponseEntity<?> getPendingKeys(@RequestHeader("X-User-Id") UUID userId) {
+        return ResponseEntity.ok(sendMessageKeyService.getPendingKeysForUser(userId));
     }
 }

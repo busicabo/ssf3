@@ -17,4 +17,5 @@ public class NewPrivateKeyEntity {
     private byte[] key;
     private OffsetDateTime createdAt;
     private UUID publicKey;
+    private UUID encryptingPublicKey;
 }

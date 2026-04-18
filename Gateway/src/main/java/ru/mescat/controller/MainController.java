@@ -11,11 +11,6 @@ public class MainController {
         return "index";
     }
 
-//    @GetMapping("/message")
-//    public String m() {
-//        return "chat";
-//    }
-
     @GetMapping("/auth/login")
     public String login() {
         return "auth";

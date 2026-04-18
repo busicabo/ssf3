@@ -1,6 +1,7 @@
 package ru.mescat.message.map;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.mescat.message.dto.ChatDto;
 import ru.mescat.message.dto.auxiliary.ChatUserDto;
 import ru.mescat.message.entity.ChatUserEntity;
@@ -35,6 +36,7 @@ public class ToChatDtoMapper {
         return chatDtos;
     }
 
+    @Transactional
     private List<ChatDto> personalConvert(List<ChatUserEntity> chatUserEntities, UUID userMain) {
         List<ChatUserEntity> personalChats = chatUserEntities.stream()
                 .filter(c -> c.getChat().getChatType().equals(ChatType.PERSONAL))

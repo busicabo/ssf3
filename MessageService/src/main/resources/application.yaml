@@ -1,68 +1,70 @@
-server:
-  port: 8082                     # порт приложения
+﻿server:
+  port: ${SERVER_PORT:8082}
   servlet:
-    context-path: /              # общий префикс приложения
+    context-path: /
   error:
-    include-message: always      # добавлять message в error response
-    include-binding-errors: always # добавлять ошибки валидации в ответ
+    include-message: always
+    include-binding-errors: always
 
 spring:
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    user-online:
+      topic: ${KAFKA_USER_ONLINE_TOPIC:user-online}
+      group: ${KAFKA_USER_ONLINE_GROUP:user-online-message-service}
     delete-encrypt-keys:
-      topic: "delete-encrypt-keys"
-      group: "delete-encrypt-keys"
+      topic: ${KAFKA_DELETE_ENCRYPT_KEYS_TOPIC:delete-encrypt-keys}
+      group: ${KAFKA_DELETE_ENCRYPT_KEYS_GROUP:delete-encrypt-keys}
     message:
-      topic: "message-service"
-      group: "message-service"
+      topic: ${KAFKA_MESSAGE_TOPIC:message-service}
+      group: ${KAFKA_MESSAGE_GROUP:message-service}
     chat:
-      topic: "chat-service"
-      group: "chat-service"
+      topic: ${KAFKA_CHAT_TOPIC:chat-service}
+      group: ${KAFKA_CHAT_GROUP:chat-service}
     encrypt-keys:
-      topic: "encrypt-keys-service"
-      group: "encrypt-keys-service"
-
+      topic: ${KAFKA_ENCRYPT_KEYS_TOPIC:encrypt-keys-service}
+      group: ${KAFKA_ENCRYPT_KEYS_GROUP:encrypt-keys-service}
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
   application:
     name: mescat
   datasource:
-    url: jdbc:postgresql://localhost:5435/postgres  # JDBC URL PostgreSQL
-    username: postgres            # пользователь БД
-    password: postgres          # пароль БД
-    driver-class-name: org.postgresql.Driver # драйвер PostgreSQL
+    url: ${MESSAGE_DB_URL:jdbc:postgresql://localhost:5435/postgres}
+    username: ${MESSAGE_DB_USERNAME:postgres}
+    password: ${MESSAGE_DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
     hikari:
-      pool-name: app-pool         # имя пула соединений
-      maximum-pool-size: 10       # максимум соединений в пуле
-      minimum-idle: 2             # минимум idle-соединений
-      connection-timeout: 15000   # ожидание соединения из пула, мс
-      idle-timeout: 300000        # сколько idle соединение живет, мс
-      max-lifetime: 1200000       # максимальная жизнь соединения, мс
+      pool-name: app-pool
+      maximum-pool-size: ${DB_MAX_POOL_SIZE:10}
+      minimum-idle: ${DB_MIN_IDLE:2}
+      connection-timeout: ${DB_CONNECTION_TIMEOUT:15000}
+      idle-timeout: ${DB_IDLE_TIMEOUT:300000}
+      max-lifetime: ${DB_MAX_LIFETIME:1200000}
 
   jpa:
-    open-in-view: false           # отключает Open Session in View
-    show-sql: false               # логировать SQL
+    open-in-view: false
+    show-sql: false
     hibernate:
-      ddl-auto: validate          # validate | update | create | create-drop | none
+      ddl-auto: validate
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect # dialect PostgreSQL
-        format_sql: true          # красиво форматировать SQL в логах
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
         jdbc:
-          batch_size: 50          # batch insert/update
-        order_inserts: true       # группировать INSERT
-        order_updates: true       # группировать UPDATE
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
 
   mvc:
     problemdetails:
-      enabled: true               # RFC7807 Problem Details для ошибок
+      enabled: true
     format:
-      date: iso                   # LocalDate в ISO формате
-      date-time: iso              # LocalDateTime в ISO формате
-      time: iso                   # LocalTime в ISO формате
+      date: iso
+      date-time: iso
+      time: iso
 
   jackson:
     datatype:
@@ -71,6 +73,7 @@ spring:
     deserialization:
       fail-on-unknown-properties: false
     default-property-inclusion: non_null
+
   sql:
     init:
       mode: always
@@ -78,14 +81,20 @@ spring:
 
 logging:
   level:
-    org.springframework.web: INFO # логи Spring MVC
-    org.hibernate.SQL: DEBUG      # SQL Hibernate
-    org.hibernate.orm.jdbc.bind: TRACE # bind-параметры Hibernate
+    org.springframework.web: INFO
+    org.hibernate.SQL: OFF
+    org.hibernate.orm.jdbc.bind: OFF
 
 app:
-  max-active-key: 3
+  max-active-key: ${MAX_ACTIVE_KEY:3}
   security:
     jwt:
-      secret: "my-super-secret-key-my-super-secret-key-my-super-secret-key"
-      access-token-expiration: 900000      # 15 минут в миллисекундах
-      refresh-token-expiration: 604800000  # 7 дней в миллисекундах
+      secret: ${JWT_SECRET:my-super-secret-key-my-super-secret-key-my-super-secret-key}
+      access-token-expiration: ${JWT_ACCESS_TOKEN_EXPIRATION:900000}
+      refresh-token-expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:604800000}
+
+services:
+  user:
+    base-url: ${USER_SERVICE_URL:http://localhost:8081}
+  key-vault:
+    base-url: ${KEY_VAULT_SERVICE_URL:http://localhost:8085}

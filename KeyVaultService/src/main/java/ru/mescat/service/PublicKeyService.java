@@ -1,5 +1,6 @@
 package ru.mescat.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mescat.entity.PublicKeyEntity;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class PublicKeyService {
 
     private PublicKeyRepository repository;
@@ -28,12 +30,15 @@ public class PublicKeyService {
 
     @Transactional
     public PublicKeyEntity save(PublicKeyEntity entity){
-        return repository.save(entity);
+        PublicKeyEntity saved = repository.save(entity);
+        log.info("Сохранен публичный ключ: keyId={}, userId={}", saved.getId(), saved.getUserId());
+        return saved;
     }
 
     @Transactional
     public void deleteById(UUID id){
         repository.deleteById(id);
+        log.info("Удален публичный ключ: keyId={}", id);
     }
 
    public PublicKeyEntity findById(UUID id){
@@ -41,11 +46,11 @@ public class PublicKeyService {
    }
 
    public PublicKeyEntity findByUserId(UUID userId){
-        return repository.findByUserId(userId);
+        return repository.findTopByUserIdOrderByCreatedAtDescIdDesc(userId);
    }
 
    public List<PublicKeyEntity> findAllByUserIdIn(List<UUID> userIds){
-        return repository.findAllByUserIdIn(userIds);
+        return repository.findLatestByUserIdIn(userIds);
    }
 
 }

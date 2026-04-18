@@ -9,6 +9,7 @@ import ru.mescat.message.entity.ChatEntity;
 import ru.mescat.message.entity.ChatUserEntity;
 import ru.mescat.message.entity.enums.ChatType;
 import ru.mescat.message.event.dto.NewUserInChat;
+import ru.mescat.message.exception.AccessDeniedException;
 import ru.mescat.message.exception.ChatNotFoundException;
 import ru.mescat.message.exception.NotFoundException;
 import ru.mescat.message.repository.ChatUserRepository;
@@ -101,6 +102,28 @@ public class ChatUserService {
         applicationEventPublisher.publishEvent(new NewUserInChat(chatUserEntity));
 
         return chatUserEntity;
+    }
+
+    public void deleteUserFromChat(AddUserInChatDto dto, UUID userId) {
+        ChatUserEntity initiator = findByUserIdAndChatId(dto.getChatId(), userId);
+        if (initiator == null) {
+            throw new ChatNotFoundException("Чат не найден.");
+        }
+
+        ChatUserEntity target = findByUserIdAndChatId(dto.getChatId(), dto.getUserTarget());
+        if (target == null) {
+            throw new NotFoundException("Пользователь не найден в чате.");
+        }
+
+        boolean canManageChat = initiator.getRole() != null
+                && (initiator.getRole().equalsIgnoreCase("CREATOR")
+                || initiator.getRole().equalsIgnoreCase("ADMIN"));
+
+        if (!canManageChat && !userId.equals(dto.getUserTarget())) {
+            throw new AccessDeniedException("Недостаточно прав для удаления участника из чата.");
+        }
+
+        deleteById(target.getId());
     }
 
 }

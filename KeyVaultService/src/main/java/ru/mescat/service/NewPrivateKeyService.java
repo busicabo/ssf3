@@ -1,5 +1,6 @@
 package ru.mescat.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.mescat.entity.NewPrivateKeyEntity;
 import ru.mescat.repository.NewPrivateKeyRepository;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class NewPrivateKeyService {
 
     private NewPrivateKeyRepository newPrivateKeyRepository;
@@ -21,8 +23,14 @@ public class NewPrivateKeyService {
         return newPrivateKeyRepository.findByUserId(userId);
     }
 
+    public NewPrivateKeyEntity findLatestByUserId(UUID userId) {
+        return newPrivateKeyRepository.findFirstByUserIdOrderByCreatedAtDesc(userId);
+    }
+
     public NewPrivateKeyEntity save(NewPrivateKeyEntity newPrivateKeyEntity){
-        return newPrivateKeyRepository.save(newPrivateKeyEntity);
+        NewPrivateKeyEntity saved = newPrivateKeyRepository.save(newPrivateKeyEntity);
+        log.info("Сохранен приватный ключ: keyId={}, userId={}", saved.getId(), saved.getUserId());
+        return saved;
     }
 
     public List<UUID> findIdsByCreatedAtBefore(OffsetDateTime offsetDateTime){
@@ -31,5 +39,6 @@ public class NewPrivateKeyService {
 
     public void deleteAllById(List<UUID> uuids){
         newPrivateKeyRepository.deleteAllById(uuids);
+        log.info("Удалены приватные ключи: count={}", uuids != null ? uuids.size() : 0);
     }
 }

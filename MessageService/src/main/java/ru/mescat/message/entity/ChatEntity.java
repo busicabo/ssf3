@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import ru.mescat.message.entity.enums.ChatType;
 
 import java.time.OffsetDateTime;
@@ -28,6 +29,7 @@ public class ChatEntity {
     @Column(name = "chat_type", nullable = false)
     private ChatType chatType;
 
+    @CreationTimestamp
     @Column(name = "created_at", nullable = false,insertable = false, updatable = false)
     private OffsetDateTime createdAt;
 

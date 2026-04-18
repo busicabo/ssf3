@@ -1,11 +1,18 @@
 package ru.mescat.rest;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 
 @Configuration
 public class Rest {
+
+    @Value("${services.user.base-url:http://localhost:8081}")
+    private String userServiceBaseUrl;
+
+    @Value("${services.key-vault.base-url:http://localhost:8085}")
+    private String keyVaultServiceBaseUrl;
 
     @Bean
     public RestClient.Builder restClientBuilder() {
@@ -15,14 +22,14 @@ public class Rest {
     @Bean("user")
     public RestClient userServiceRestClient(RestClient.Builder builder) {
         return builder
-                .baseUrl("http://localhost:8081")
+                .baseUrl(userServiceBaseUrl)
                 .build();
     }
 
     @Bean("key_vault")
     public RestClient keyvaultRestClient(RestClient.Builder builder) {
         return builder
-                .baseUrl("http://localhost:8085")
+                .baseUrl(keyVaultServiceBaseUrl)
                 .build();
     }
 }

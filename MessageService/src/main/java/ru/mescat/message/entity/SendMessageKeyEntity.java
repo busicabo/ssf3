@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.OffsetDateTime;
@@ -44,6 +45,7 @@ public class SendMessageKeyEntity {
     @Column(name="encrypt_name", nullable = false)
     private String encryptName;
 
+    @CreationTimestamp
     @Column(name = "send_at", nullable = false,insertable = false, updatable = false)
     private OffsetDateTime sendAt;
 

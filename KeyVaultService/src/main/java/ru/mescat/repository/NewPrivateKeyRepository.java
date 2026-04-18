@@ -13,6 +13,8 @@ public interface NewPrivateKeyRepository extends JpaRepository<NewPrivateKeyEnti
 
     List<NewPrivateKeyEntity> findByUserId(UUID userId);
 
+    NewPrivateKeyEntity findFirstByUserIdOrderByCreatedAtDesc(UUID userId);
+
     @Query("""
         select e.id
         from NewPrivateKeyEntity e

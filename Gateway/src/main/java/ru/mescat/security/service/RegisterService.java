@@ -1,11 +1,13 @@
 package ru.mescat.security.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.mescat.security.User;
 import ru.mescat.security.dto.AuthResponse;
 import ru.mescat.security.dto.RegDto;
 
 @Service
+@Slf4j
 public class RegisterService {
 
     private final JwtService jwtService;
@@ -19,6 +21,7 @@ public class RegisterService {
     }
 
     public AuthResponse registration(RegDto regDto) {
+        log.info("Регистрация нового пользователя: username={}", regDto.getUsername());
         User user = userService.registration(regDto);
 
         blackListTokens.initIfAbsent(user.getId().toString());
@@ -26,6 +29,7 @@ public class RegisterService {
         String accessToken = jwtService.generateAccessToken(user.getId());
         String refreshToken = jwtService.generateRefreshToken(user.getId());
 
+        log.info("Пользователь зарегистрирован: userId={}, username={}", user.getId(), user.getUsername());
         return new AuthResponse(accessToken, refreshToken);
     }
 }

@@ -1,5 +1,6 @@
 package ru.mescat.security.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,7 @@ import ru.mescat.security.dto.LoginDto;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class LoginService {
 
     private final AuthenticationManager authenticationManager;
@@ -24,6 +26,7 @@ public class LoginService {
     }
 
     public AuthResponse login(LoginDto request) {
+        log.info("Попытка входа пользователя: username={}", request.getUsername());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -39,6 +42,7 @@ public class LoginService {
         String accessToken = jwtService.generateAccessToken(userId);
         String refreshToken = jwtService.generateRefreshToken(userId);
 
+        log.info("Вход выполнен успешно: userId={}", userId);
         return new AuthResponse(accessToken, refreshToken);
     }
 }

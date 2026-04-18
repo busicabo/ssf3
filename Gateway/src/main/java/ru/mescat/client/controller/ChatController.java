@@ -1,57 +1,68 @@
 package ru.mescat.client.controller;
 
-
-import org.apache.kafka.common.KafkaException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import ru.mescat.client.dto.AddUserInChatDto;
+import ru.mescat.client.dto.CreatePersonalChatDto;
 import ru.mescat.client.dto.CreateGroupChatDto;
-import ru.mescat.client.dto.NewTask;
-import ru.mescat.client.dto.TaskType;
 import ru.mescat.client.dto.UserBlockDto;
-import ru.mescat.client.service.SendNewTask;
-import tools.jackson.databind.ObjectMapper;
+import ru.mescat.client.service.MessageServiceProxy;
 
-import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
 public class ChatController {
 
-    private SendNewTask sendNewTask;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final MessageServiceProxy proxy;
 
-    public ChatController(SendNewTask sendNewTask){
-        this.sendNewTask=sendNewTask;
+    public ChatController(MessageServiceProxy proxy) {
+        this.proxy = proxy;
     }
 
     @GetMapping("/chats")
-    public ResponseEntity<?> getChats(Authentication authentication){
-        UUID userId = UUID.fromString(authentication.getName());
-
-
-        return ResponseEntity.ok(chatDtos);
+    public ResponseEntity<?> getChats(Authentication authentication) {
+        return proxy.get("/api/chats", userId(authentication));
     }
 
-    @PostMapping("/createGroupChat")
-    public ResponseEntity<?> createGroutChat(@RequestBody CreateGroupChatDto dto, Authentication authentication){
-        UUID userId = UUID.fromString(authentication.getName());
-        try{
-            sendNewTask.sendNewTask(
-                    new NewTask(userId, TaskType.NEW_MESSAGE_AND_NEW_CHAT, OffsetDateTime.now(),objectMapper.valueToTree(dto)));
-            return ResponseEntity.ok().build();
-        } catch (KafkaException e){
-            return ResponseEntity.status(500).body("Не удалось добавить задачу. Попробуйте еще раз.");
-        }
+    @GetMapping("/chats/{chatId}/members")
+    public ResponseEntity<?> getChatMembers(@PathVariable Long chatId,
+                                            Authentication authentication) {
+        return proxy.get("/api/chats/" + chatId + "/members", userId(authentication));
     }
 
-    @PostMapping("/blockUser")
-    private ResponseEntity<?> blockUser(@RequestBody UserBlockDto userBlockDto, Authentication authentication){
-        usersBlackListService.addBlock(userBlockDto);
+    @PostMapping("/personal_chat")
+    public ResponseEntity<?> createPersonalChat(@RequestBody CreatePersonalChatDto dto,
+                                                Authentication authentication) {
+        return proxy.post("/api/personal_chat", userId(authentication), dto);
     }
 
+    @PostMapping("/group_chat")
+    public ResponseEntity<?> createGroupChat(@RequestBody CreateGroupChatDto dto,
+                                             Authentication authentication) {
+        return proxy.post("/api/group_chat", userId(authentication), dto);
+    }
 
+    @PostMapping("/block_user")
+    public ResponseEntity<?> blockUser(@RequestBody UserBlockDto userBlockDto,
+                                       Authentication authentication) {
+        return proxy.post("/api/block_user", userId(authentication), userBlockDto);
+    }
 
+    @PostMapping("/add_user_in_chat")
+    public ResponseEntity<?> addUserInChat(@RequestBody AddUserInChatDto dto,
+                                           Authentication authentication) {
+        return proxy.post("/api/add_user_in_chat", userId(authentication), dto);
+    }
+
+    @PostMapping("/delete_user_in_chat")
+    public ResponseEntity<?> deleteUserInChat(@RequestBody AddUserInChatDto dto,
+                                              Authentication authentication) {
+        return proxy.post("/api/delete_user_in_chat", userId(authentication), dto);
+    }
+
+    private UUID userId(Authentication authentication) {
+        return UUID.fromString(authentication.getName());
+    }
 }

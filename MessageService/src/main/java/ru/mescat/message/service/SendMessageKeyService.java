@@ -1,10 +1,13 @@
 package ru.mescat.message.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.mescat.message.dto.RequestEncryptMessageKeyForUser;
+import ru.mescat.message.dto.EncryptMessageKeySendResultDto;
 import ru.mescat.message.dto.MessageKeyForUser;
+import ru.mescat.message.dto.PendingMessageKeyDto;
+import ru.mescat.message.dto.RequestEncryptMessageKeyForUser;
 import ru.mescat.message.dto.SendEncryptKeyDto;
 import ru.mescat.message.dto.kafka.KeyDelete;
 import ru.mescat.message.entity.SendMessageKeyEntity;
@@ -15,10 +18,15 @@ import ru.mescat.message.exception.UserBlockedException;
 import ru.mescat.message.repository.SendMessageKeyRepository;
 import tools.jackson.databind.ObjectMapper;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class SendMessageKeyService {
 
     private final SendMessageKeyRepository sendMessageKeyRepository;
@@ -63,6 +71,20 @@ public class SendMessageKeyService {
         return sendMessageKeyRepository.findAllByUserTargetId(userTargetId);
     }
 
+    public List<PendingMessageKeyDto> getPendingKeysForUser(UUID userTargetId) {
+        return findAllByUserTargetId(userTargetId).stream()
+                .map(entity -> new PendingMessageKeyDto(
+                        entity.getId(),
+                        entity.getUserId(),
+                        entity.getUserTargetId(),
+                        entity.getKey(),
+                        entity.getPublicKey(),
+                        entity.getEncryptName(),
+                        entity.getSendAt()
+                ))
+                .toList();
+    }
+
     public SendMessageKeyEntity findByUserIdAndUserTargetId(UUID userId, UUID userTargetId) {
         return sendMessageKeyRepository.findByUserIdAndUserTargetId(userId, userTargetId).orElse(null);
     }
@@ -93,7 +115,10 @@ public class SendMessageKeyService {
     }
 
     @Transactional
-    public void sendEncryptKey(UUID userId, SendEncryptKeyDto sendEncryptKeyDto) {
+    public EncryptMessageKeySendResultDto sendEncryptKey(UUID userId, SendEncryptKeyDto sendEncryptKeyDto) {
+        log.info("Запрос на отправку ключей сообщений: userId={}, chatId={}",
+                userId, sendEncryptKeyDto != null ? sendEncryptKeyDto.getChatId() : null);
+
         if (sendEncryptKeyDto == null) {
             throw new IllegalArgumentException("sendEncryptKeyDto не должен быть null.");
         }
@@ -108,10 +133,12 @@ public class SendMessageKeyService {
         }
 
         if (!chatUserService.existsByChatIdAndUserId(sendEncryptKeyDto.getChatId(), userId)) {
+            log.warn("Отправка ключей отклонена: группа не найдена. userId={}, chatId={}", userId, sendEncryptKeyDto.getChatId());
             throw new NotFoundException("Группа не найдена.");
         }
 
         if (usersBlackListService.isBlockedInChat(sendEncryptKeyDto.getChatId(), userId)) {
+            log.warn("Отправка ключей отклонена: пользователь заблокирован. userId={}, chatId={}", userId, sendEncryptKeyDto.getChatId());
             throw new UserBlockedException("Пользователь заблокирован в данной группе.");
         }
 
@@ -136,6 +163,8 @@ public class SendMessageKeyService {
         try {
             sendMessageKeyEntities = saveAll(entitiesToSave);
         } catch (Exception e) {
+            log.error("Не удалось сохранить ключи сообщений в БД: userId={}, chatId={}, error={}",
+                    userId, sendEncryptKeyDto.getChatId(), e.getMessage());
             throw new SaveToDatabaseException("Не удалось сохранить в бд!");
         }
 
@@ -152,6 +181,14 @@ public class SendMessageKeyService {
                         m.getPublicKey()
                 )).toList()));
 
+        log.info("Ключи сообщений отправлены: fromUser={}, chatId={}, recipients={}, encryptName={}",
+                userId, sendEncryptKeyDto.getChatId(), sendMessageKeyEntities.size(), encryptName);
+
+        return new EncryptMessageKeySendResultDto(
+                sendEncryptKeyDto.getChatId(),
+                encryptName,
+                sendMessageKeyEntities.size()
+        );
     }
 
     private static List<RequestEncryptMessageKeyForUser> getRequestEncryptMessageKeyForUsers(SendEncryptKeyDto sendEncryptKeyDto, List<UUID> userIds) {

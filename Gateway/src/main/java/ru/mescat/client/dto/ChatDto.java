@@ -1,7 +1,6 @@
 package ru.mescat.client.dto;
 
 import lombok.*;
-import ru.mescat.message.entity.enums.ChatType;
 
 @AllArgsConstructor
 @NoArgsConstructor

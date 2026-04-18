@@ -1,13 +1,14 @@
 package ru.mescat.message.service;
 
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import ru.mescat.message.dto.UserBlockDto;
 import ru.mescat.message.entity.ChatEntity;
 import ru.mescat.message.entity.ChatUserEntity;
 import ru.mescat.message.entity.UsersBlackListEntity;
+import ru.mescat.message.entity.enums.ChatType;
 import ru.mescat.message.event.dto.NewUserBlockInChat;
+import ru.mescat.message.exception.AccessDeniedException;
 import ru.mescat.message.exception.ChatNotFoundException;
 import ru.mescat.message.exception.NotFoundException;
 import ru.mescat.message.repository.UsersBlackListRepository;
@@ -28,14 +29,14 @@ public class UsersBlackListService {
                                  ChatUserService chatUserService,
                                  ChatService chatService,
                                  ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher=applicationEventPublisher;
-        this.chatService=chatService;
-        this.chatUserService=chatUserService;
+        this.applicationEventPublisher = applicationEventPublisher;
+        this.chatService = chatService;
+        this.chatUserService = chatUserService;
         this.repository = repository;
     }
 
     public UsersBlackListEntity save(UsersBlackListEntity entity) {
-        UsersBlackListEntity result =  repository.save(entity);
+        UsersBlackListEntity result = repository.save(entity);
         applicationEventPublisher.publishEvent(new NewUserBlockInChat(result));
         return result;
     }
@@ -64,7 +65,7 @@ public class UsersBlackListService {
         return repository.findAllByChat_ChatId(chatId);
     }
 
-    public List<UUID> getAllUserIdBlocksByChatId(Long chatId){
+    public List<UUID> getAllUserIdBlocksByChatId(Long chatId) {
         return repository.getAllUserIdBlocksByChatId(chatId);
     }
 
@@ -80,33 +81,48 @@ public class UsersBlackListService {
         repository.deleteByUserInitiatorAndChat_ChatIdAndUserTarget(userInitiator, chatId, userTarget);
     }
 
-    public UsersBlackListEntity addBlock(UUID userId, UserBlockDto userBlockDto){
-        ChatEntity chat = chatService.findById(userBlockDto.getChatId());
+    public UsersBlackListEntity addBlock(UUID userId, UserBlockDto userBlockDto) {
+        if (userBlockDto == null || userBlockDto.getChatId() == null || userBlockDto.getUserId() == null) {
+            throw new IllegalArgumentException("Некорректные параметры блокировки.");
+        }
 
-        if(chat==null){
+        if (userId.equals(userBlockDto.getUserId())) {
+            throw new IllegalArgumentException("Нельзя заблокировать самого себя.");
+        }
+
+        Long chatId = userBlockDto.getChatId();
+        UUID targetUserId = userBlockDto.getUserId();
+
+        ChatEntity chat = chatService.findById(chatId);
+        if (chat == null) {
             throw new ChatNotFoundException("Чат не найден.");
         }
 
-        ChatUserEntity initiator = chatUserService.findByUserIdAndChatId(userBlockDto.getChatId(),userId);
-
-        if(initiator==null){
+        ChatUserEntity initiator = chatUserService.findByUserIdAndChatId(chatId, userId);
+        if (initiator == null) {
             throw new NotFoundException("Вы не состоите в данном чате.");
         }
 
-        ChatUserEntity target= chatUserService.findByUserIdAndChatId(userBlockDto.getChatId(),userBlockDto.getUserId());
-
-        if(target==null){
+        ChatUserEntity target = chatUserService.findByUserIdAndChatId(chatId, targetUserId);
+        if (target == null) {
             throw new NotFoundException("Этот участник не состоит в чате.");
         }
 
-        if(!initiator.getRole().equalsIgnoreCase("ADMIN") && !initiator.getRole().equalsIgnoreCase("CREATOR")){
-            throw new AccessDeniedException("Нет прав исключать из группы.");
+        Optional<UsersBlackListEntity> existingBlock = findBlock(userId, chatId, targetUserId);
+        if (existingBlock.isPresent()) {
+            return existingBlock.get();
         }
 
-        if(target.getRole().equalsIgnoreCase("CREATOR")){
-            throw new AccessDeniedException("Вы не можете исключить создателя группы.");
+        if (chat.getChatType() == ChatType.GROUP) {
+            if (!initiator.getRole().equalsIgnoreCase("ADMIN") && !initiator.getRole().equalsIgnoreCase("CREATOR")) {
+                throw new AccessDeniedException("Нет прав исключать из группы.");
+            }
+
+            if (target.getRole().equalsIgnoreCase("CREATOR")) {
+                throw new AccessDeniedException("Вы не можете исключить создателя группы.");
+            }
         }
 
-        return save(new UsersBlackListEntity(initiator.getUserId(),chat,target.getUserId()));
+        return save(new UsersBlackListEntity(initiator.getUserId(), chat, target.getUserId()));
     }
 }

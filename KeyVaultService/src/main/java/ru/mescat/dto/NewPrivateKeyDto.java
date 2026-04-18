@@ -15,4 +15,5 @@ public class NewPrivateKeyDto {
     private UUID userId;
     private byte[] key;
     private UUID publicKey;
+    private UUID encryptingPublicKey;
 }
