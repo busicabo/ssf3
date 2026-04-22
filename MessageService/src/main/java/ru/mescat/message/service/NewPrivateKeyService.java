@@ -30,6 +30,13 @@ public class NewPrivateKeyService {
         return key;
     }
 
+    public List<NewPrivateKeyEntity> findChainByUserId(UUID userId){
+        List<NewPrivateKeyEntity> keys = keyVaultService.getPrivateKeyChain(userId);
+        log.info("Получена цепочка приватных ключей пользователя: userId={}, count={}",
+                userId, keys != null ? keys.size() : 0);
+        return keys;
+    }
+
     public NewPrivateKeyEntity save(NewPrivateKeyDto newPrivateKeyDto){
         log.info("Запрос на сохранение приватного ключа: userId={}", newPrivateKeyDto.getUserId());
         NewPrivateKeyEntity newPrivateKeyEntity = keyVaultService.saveNewPrivateKey(newPrivateKeyDto);

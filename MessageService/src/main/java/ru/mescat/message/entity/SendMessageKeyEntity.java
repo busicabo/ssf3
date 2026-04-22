@@ -17,8 +17,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class SendMessageKeyEntity {
 
-    public SendMessageKeyEntity(UUID userId, byte[] key, UUID publicKey, UUID userTargetId) {
+    public SendMessageKeyEntity(UUID userId, Long chatId, byte[] key, UUID publicKey, UUID userTargetId) {
         this.userId = userId;
+        this.chatId = chatId;
         this.key = key;
         this.publicKey = publicKey;
         this.userTargetId = userTargetId;
@@ -32,6 +33,9 @@ public class SendMessageKeyEntity {
 
     @Column(name = "user_id", nullable = false)
     private UUID userId;
+
+    @Column(name = "chat_id")
+    private Long chatId;
 
     @Column(name = "key", nullable = false)
     private byte[] key;
@@ -49,8 +53,9 @@ public class SendMessageKeyEntity {
     @Column(name = "send_at", nullable = false,insertable = false, updatable = false)
     private OffsetDateTime sendAt;
 
-    public SendMessageKeyEntity(UUID userId, byte[] key, UUID publicKey, UUID userTargetId, String encryptName) {
+    public SendMessageKeyEntity(UUID userId, Long chatId, byte[] key, UUID publicKey, UUID userTargetId, String encryptName) {
         this.userId = userId;
+        this.chatId = chatId;
         this.key = key;
         this.publicKey = publicKey;
         this.userTargetId = userTargetId;

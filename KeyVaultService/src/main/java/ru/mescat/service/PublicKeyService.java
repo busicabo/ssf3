@@ -30,7 +30,15 @@ public class PublicKeyService {
 
     @Transactional
     public PublicKeyEntity save(PublicKeyEntity entity){
-        PublicKeyEntity saved = repository.save(entity);
+        if (entity == null || entity.getUserId() == null) {
+            throw new IllegalArgumentException("Public key userId must not be empty.");
+        }
+
+        repository.upsertByUserId(entity.getUserId(), entity.getKey());
+        PublicKeyEntity saved = repository.findTopByUserIdOrderByCreatedAtDescIdDesc(entity.getUserId());
+        if (saved == null) {
+            throw new IllegalStateException("Public key was not saved.");
+        }
         log.info("Сохранен публичный ключ: keyId={}, userId={}", saved.getId(), saved.getUserId());
         return saved;
     }
@@ -50,7 +58,7 @@ public class PublicKeyService {
    }
 
    public List<PublicKeyEntity> findAllByUserIdIn(List<UUID> userIds){
-        return repository.findLatestByUserIdIn(userIds);
+        return repository.findAllByUserIdInOrderByCreatedAtDesc(userIds);
    }
 
 }

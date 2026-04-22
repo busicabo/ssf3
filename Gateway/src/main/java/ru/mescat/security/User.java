@@ -16,5 +16,6 @@ public class User {
     private String password;
     private boolean blocked;
     private OffsetDateTime createdAt;
+    private String avatarUrl;
     private boolean online;
 }

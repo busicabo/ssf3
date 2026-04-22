@@ -20,7 +20,7 @@ public class NewPrivateKeyService {
     }
 
     public List<NewPrivateKeyEntity> findAllByUserId(UUID userId){
-        return newPrivateKeyRepository.findByUserId(userId);
+        return newPrivateKeyRepository.findByUserIdOrderByCreatedAtAsc(userId);
     }
 
     public NewPrivateKeyEntity findLatestByUserId(UUID userId) {

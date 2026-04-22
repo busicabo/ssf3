@@ -75,6 +75,7 @@ public class SendMessageKeyService {
         return findAllByUserTargetId(userTargetId).stream()
                 .map(entity -> new PendingMessageKeyDto(
                         entity.getId(),
+                        entity.getChatId(),
                         entity.getUserId(),
                         entity.getUserTargetId(),
                         entity.getKey(),
@@ -108,10 +109,26 @@ public class SendMessageKeyService {
     }
 
     @Transactional
-    public void deleteAllById(List<KeyDelete> keyDeletes) {
-        sendMessageKeyRepository.deleteAllById(
-                keyDeletes.stream().map(KeyDelete::getKeyId).toList()
-        );
+    public boolean deleteByIdForUser(UUID keyId, UUID userTargetId) {
+        if (keyId == null || userTargetId == null) {
+            return false;
+        }
+
+        return sendMessageKeyRepository.deleteOwnedById(keyId, userTargetId) > 0;
+    }
+
+    @Transactional
+    public int deleteAllByIdForUsers(List<KeyDelete> keyDeletes) {
+        int deleted = 0;
+        for (KeyDelete keyDelete : keyDeletes) {
+            if (keyDelete == null) {
+                continue;
+            }
+            if (deleteByIdForUser(keyDelete.getKeyId(), keyDelete.getUserTargetId())) {
+                deleted++;
+            }
+        }
+        return deleted;
     }
 
     @Transactional
@@ -142,7 +159,9 @@ public class SendMessageKeyService {
             throw new UserBlockedException("Пользователь заблокирован в данной группе.");
         }
 
-        UUID encryptName = UUID.randomUUID();
+        UUID encryptName = sendEncryptKeyDto.getEncryptName() != null
+                ? sendEncryptKeyDto.getEncryptName()
+                : UUID.randomUUID();
         sendEncryptKeyDto.setEncryptName(encryptName);
 
         List<UUID> userIds = chatUserService.findAllUserIdNotBlocksByChatId(sendEncryptKeyDto.getChatId());
@@ -152,6 +171,7 @@ public class SendMessageKeyService {
         List<SendMessageKeyEntity> entitiesToSave = verifiedUsers.stream()
                 .map(v -> new SendMessageKeyEntity(
                         userId,
+                        sendEncryptKeyDto.getChatId(),
                         v.getKey(),
                         v.getPublicKeyUser(),
                         v.getUserTarget(),
@@ -176,6 +196,7 @@ public class SendMessageKeyService {
         applicationEventPublisher.publishEvent(new NewMessageKey(sendMessageKeyEntities.stream()
                 .map(m -> new MessageKeyForUser(
                         m.getUserTargetId(),
+                        m.getChatId(),
                         m.getKey(),
                         m.getEncryptName(),
                         m.getPublicKey()

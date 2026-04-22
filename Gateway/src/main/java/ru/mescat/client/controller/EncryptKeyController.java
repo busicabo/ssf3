@@ -46,6 +46,11 @@ public class EncryptKeyController {
         return proxy.get("/api/encrypt_key/new_private_key", userId(authentication));
     }
 
+    @GetMapping("/new_private_key/all")
+    public ResponseEntity<?> getNewPrivateKeyChain(Authentication authentication) {
+        return proxy.get("/api/encrypt_key/new_private_key/all", userId(authentication));
+    }
+
     @PostMapping("/new_private_key")
     public ResponseEntity<?> saveNewPrivateKeyEntities(@RequestBody Object newPrivateKeyDto,
                                                        Authentication authentication) {

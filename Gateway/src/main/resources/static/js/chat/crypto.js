@@ -25,16 +25,61 @@ export class CryptoEngine {
 
   async encryptForPublicKey(dataB64, publicKeyB64) {
     const publicKey = await this.importPublicKey(publicKeyB64);
-    const encrypted = await crypto.subtle.encrypt(
-      { name: 'RSA-OAEP' },
-      publicKey,
+    const aesRaw = crypto.getRandomValues(new Uint8Array(32));
+    const aesKey = await crypto.subtle.importKey(
+      'raw',
+      aesRaw,
+      { name: 'AES-GCM' },
+      false,
+      ['encrypt']
+    );
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const cipher = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv },
+      aesKey,
       this.base64ToBytes(dataB64)
     );
-    return this.bytesToBase64(new Uint8Array(encrypted));
+    const encryptedKey = await crypto.subtle.encrypt(
+      { name: 'RSA-OAEP' },
+      publicKey,
+      aesRaw
+    );
+
+    const payload = {
+      alg: 'RSA-OAEP+AES-GCM',
+      key: this.bytesToBase64(new Uint8Array(encryptedKey)),
+      iv: this.bytesToBase64(iv),
+      cipher: this.bytesToBase64(new Uint8Array(cipher))
+    };
+
+    return this.stringToBase64(JSON.stringify(payload));
   }
 
   async decryptWithPrivateKey(encryptedB64, privateKeyB64) {
     const privateKey = await this.importPrivateKey(privateKeyB64);
+    const payload = this.tryParseEnvelope(encryptedB64);
+
+    if (payload?.alg === 'RSA-OAEP+AES-GCM') {
+      const aesRaw = await crypto.subtle.decrypt(
+        { name: 'RSA-OAEP' },
+        privateKey,
+        this.base64ToBytes(payload.key)
+      );
+      const aesKey = await crypto.subtle.importKey(
+        'raw',
+        aesRaw,
+        { name: 'AES-GCM' },
+        false,
+        ['decrypt']
+      );
+      const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: this.base64ToBytes(payload.iv) },
+        aesKey,
+        this.base64ToBytes(payload.cipher)
+      );
+      return this.bytesToBase64(new Uint8Array(decrypted));
+    }
+
     const decrypted = await crypto.subtle.decrypt(
       { name: 'RSA-OAEP' },
       privateKey,
@@ -135,5 +180,18 @@ export class CryptoEngine {
 
   base64ToString(value) {
     return decodeURIComponent(escape(atob(value || '')));
+  }
+
+  tryParseEnvelope(value) {
+    try {
+      const raw = this.base64ToString(value);
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        return parsed;
+      }
+      return null;
+    } catch {
+      return null;
+    }
   }
 }

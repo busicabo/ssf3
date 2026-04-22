@@ -22,6 +22,7 @@ import ru.mescat.message.map.MessageDtoToMessageEntity;
 import ru.mescat.message.map.MessageEntityToMessageForUser;
 import ru.mescat.message.repository.MessageRepository;
 import ru.mescat.user.dto.User;
+import ru.mescat.user.dto.UserSettings;
 import ru.mescat.user.service.UserService;
 import tools.jackson.databind.ObjectMapper;
 
@@ -88,6 +89,12 @@ public class MessageService {
             log.warn("РћС‚РїСЂР°РІРєР° СЃРѕРѕР±С‰РµРЅРёСЏ РѕС‚РєР»РѕРЅРµРЅР°: РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ РІ С‡Р°С‚Рµ. userId={}, chatId={}",
                     userId, messageDto.getChatId());
             throw new UserBlockedException("Р’Р°СЃ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°Р»Рё РІ РґР°РЅРЅРѕРј С‡Р°С‚Рµ.");
+        }
+
+        ChatEntity chat = chatService.findById(messageDto.getChatId());
+        if (chat != null && chat.getChatType() == ChatType.PERSONAL) {
+            UUID targetUserId = findOtherUserIdInPersonalChat(messageDto.getChatId(), userId);
+            ensureWritingAllowed(targetUserId);
         }
 
         MessageEntity messageEntity = messageDtoToMessageEntityConvert.convert(messageDto, userId);
@@ -268,6 +275,8 @@ public class MessageService {
             throw new NotFoundException("РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ РЅР°Р№РґРµРЅ.");
         }
 
+        ensureAddChatAllowed(user.getId());
+
         ChatEntity chat = chatUserService.findPersonalBetween(message.getUserId(),userId,ChatType.PERSONAL);
 
         if(chat==null){
@@ -300,6 +309,8 @@ public class MessageService {
             throw new NotFoundException("Пользователь не найден.");
         }
 
+        ensureAddChatAllowed(user.getId());
+
         ChatEntity chat = chatUserService.findPersonalBetween(targetUserId, userId, ChatType.PERSONAL);
         if (chat == null) {
             chat = new ChatEntity(ChatType.PERSONAL);
@@ -311,5 +322,26 @@ public class MessageService {
         }
 
         return new ChatDto(chat.getChatId(), chat.getChatType(), user.getUsername(), user.getAvatarUrl());
+    }
+
+    private UUID findOtherUserIdInPersonalChat(Long chatId, UUID userId) {
+        return chatUserService.findAllUserIdNotBlocksByChatId(chatId).stream()
+                .filter(candidate -> !candidate.equals(userId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void ensureAddChatAllowed(UUID targetUserId) {
+        UserSettings userSettings = targetUserId != null ? userService.getSettingsById(targetUserId) : null;
+        if (userSettings != null && !userSettings.isAllowAddChat()) {
+            throw new AccessDeniedException("Пользователь запретил добавлять себя в чаты.");
+        }
+    }
+
+    private void ensureWritingAllowed(UUID targetUserId) {
+        UserSettings userSettings = targetUserId != null ? userService.getSettingsById(targetUserId) : null;
+        if (userSettings != null && !userSettings.isAllowWriting()) {
+            throw new AccessDeniedException("Пользователь запретил писать ему в личные сообщения.");
+        }
     }
 }

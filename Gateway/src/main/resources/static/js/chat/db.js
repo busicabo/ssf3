@@ -66,6 +66,10 @@ export class FrontendDb {
     return this.#getById(STORE.senderKeys, this.#key(userId, encryptName));
   }
 
+  async listSenderKeys(userId) {
+    return this.#getAllByIndex(STORE.senderKeys, 'userId', userId);
+  }
+
   async getUsage(userId, chatId) {
     return this.#getById(STORE.usage, this.#key(userId, String(chatId)));
   }

@@ -1,0 +1,52 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.3)
+
+2026-04-21T22:36:53.328+03:00  INFO 36532 --- [mescat] [           main] ru.mescat.KeyVaultApplication            : Starting KeyVaultApplication using Java 21.0.7 with PID 36532 (C:\Users\ivano\OneDrive\Рабочий стол\project\KeyVaultService\target\classes started by ivano in C:\Users\ivano\OneDrive\Рабочий стол\project\KeyVaultService)
+2026-04-21T22:36:53.332+03:00  INFO 36532 --- [mescat] [           main] ru.mescat.KeyVaultApplication            : No active profile set, falling back to 1 default profile: "default"
+2026-04-21T22:36:54.230+03:00  INFO 36532 --- [mescat] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-21T22:36:54.502+03:00  INFO 36532 --- [mescat] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 228 ms. Found 2 JPA repository interfaces.
+2026-04-21T22:36:55.569+03:00  INFO 36532 --- [mescat] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8085 (http)
+2026-04-21T22:36:55.604+03:00  INFO 36532 --- [mescat] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-21T22:36:55.605+03:00  INFO 36532 --- [mescat] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.18]
+2026-04-21T22:36:55.753+03:00  INFO 36532 --- [mescat] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 2357 ms
+2026-04-21T22:36:56.013+03:00  INFO 36532 --- [mescat] [           main] com.zaxxer.hikari.HikariDataSource       : app-pool - Starting...
+2026-04-21T22:36:56.450+03:00  INFO 36532 --- [mescat] [           main] com.zaxxer.hikari.pool.HikariPool        : app-pool - Added connection org.postgresql.jdbc.PgConnection@704067c6
+2026-04-21T22:36:56.452+03:00  INFO 36532 --- [mescat] [           main] com.zaxxer.hikari.HikariDataSource       : app-pool - Start completed.
+2026-04-21T22:36:56.639+03:00  INFO 36532 --- [mescat] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-04-21T22:36:56.925+03:00  INFO 36532 --- [mescat] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.4.Final
+2026-04-21T22:36:57.827+03:00  INFO 36532 --- [mescat] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-21T22:36:57.945+03:00  WARN 36532 --- [mescat] [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-21T22:36:57.979+03:00  INFO 36532 --- [mescat] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5436/postgres]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.13
+	Default catalog/schema: postgres/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-04-21T22:36:59.397+03:00  INFO 36532 --- [mescat] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-21T22:36:59.403+03:00  INFO 36532 --- [mescat] [           main] org.hibernate.orm.jdbc.batch             : HHH100501: Automatic JDBC statement batching enabled (maximum batch size 50)
+2026-04-21T22:36:59.522+03:00  INFO 36532 --- [mescat] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-21T22:36:59.645+03:00  INFO 36532 --- [mescat] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-21T22:37:01.678+03:00  INFO 36532 --- [mescat] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8085 (http) with context path '/'
+2026-04-21T22:37:01.687+03:00  INFO 36532 --- [mescat] [           main] ru.mescat.KeyVaultApplication            : Started KeyVaultApplication in 9.001 seconds (process running for 9.52)
+2026-04-21T22:37:34.638+03:00  INFO 36532 --- [mescat] [nio-8085-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-21T22:37:34.638+03:00  INFO 36532 --- [mescat] [nio-8085-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-04-21T22:37:34.640+03:00  INFO 36532 --- [mescat] [nio-8085-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-04-21T22:37:50.845+03:00  INFO 36532 --- [mescat] [nio-8085-exec-4] ru.mescat.service.PublicKeyService       : Сохранен публичный ключ: keyId=3075c727-a30d-49c5-9e98-d62666c02600, userId=bb594973-7d0b-4676-9748-fa365c6f53c6
+2026-04-21T22:41:59.515+03:00  INFO 36532 --- [mescat] [nio-8085-exec-8] ru.mescat.service.PublicKeyService       : Сохранен публичный ключ: keyId=152f3ef8-92ea-4306-983f-72e12cafc57a, userId=26a92412-ce2f-4695-8d7b-563dfab806c4
+2026-04-21T22:43:08.202+03:00  INFO 36532 --- [mescat] [io-8085-exec-10] ru.mescat.service.PublicKeyService       : Сохранен публичный ключ: keyId=3e90593a-1973-484f-a07f-844d602ba379, userId=bb594973-7d0b-4676-9748-fa365c6f53c6
+2026-04-21T22:43:25.146+03:00  INFO 36532 --- [mescat] [nio-8085-exec-2] ru.mescat.service.PublicKeyService       : Сохранен публичный ключ: keyId=edd992a9-a97e-4e55-b380-3476b3150a43, userId=908d8d44-c6f1-4d73-ae02-cad8da7c84b9
+2026-04-21T22:51:49.115+03:00  INFO 36532 --- [mescat] [nio-8085-exec-3] ru.mescat.service.PublicKeyService       : Сохранен публичный ключ: keyId=49ab4758-f4e1-4e51-a205-a11081c02abd, userId=26a92412-ce2f-4695-8d7b-563dfab806c4
+^C

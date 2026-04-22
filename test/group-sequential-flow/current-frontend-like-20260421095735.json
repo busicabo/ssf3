@@ -1,0 +1,291 @@
+{
+  "mode": "current-frontend-like",
+  "runId": "20260421095735",
+  "chatId": 147,
+  "users": [
+    {
+      "username": "seq_20260421095735_1",
+      "id": "7baa5bc3-c76b-4238-9f8b-5d7ab972938c",
+      "publicKeyId": "9722c768-6b93-4bd1-aa50-3fcd3c82309b"
+    },
+    {
+      "username": "seq_20260421095735_2",
+      "id": "c0229044-51ec-48af-8678-4728c8ce23b6",
+      "publicKeyId": "b769e9c4-622b-4185-b726-1c5cfee60142"
+    },
+    {
+      "username": "seq_20260421095735_3",
+      "id": "13718f1e-6370-4562-95a4-b6227bd3e6a2",
+      "publicKeyId": "ce7fd12b-5764-48c9-9392-69e6fb8a6769"
+    },
+    {
+      "username": "seq_20260421095735_4",
+      "id": "c66ef64b-56b9-4257-9bc2-fec41879a32c",
+      "publicKeyId": "e1ab86d9-bebb-404e-bd33-1a525b8721bb"
+    },
+    {
+      "username": "seq_20260421095735_5",
+      "id": "c57be6a4-cd06-4d94-b561-b42895ca34df",
+      "publicKeyId": "f564ea76-8ffb-4584-9e57-f938ac2ff907"
+    },
+    {
+      "username": "seq_20260421095735_6",
+      "id": "98a1444d-9014-4aa8-b678-102fae5f1dc4",
+      "publicKeyId": "06b824e2-9f33-4d10-a000-4199d4d55708"
+    }
+  ],
+  "events": [
+    {
+      "step": "owner first message",
+      "messageId": 163
+    },
+    {
+      "step": "seq_20260421095735_2 message",
+      "messageId": 164
+    },
+    {
+      "step": "seq_20260421095735_3 message",
+      "messageId": 165
+    },
+    {
+      "step": "seq_20260421095735_4 message",
+      "messageId": 166
+    },
+    {
+      "step": "seq_20260421095735_5 message",
+      "messageId": 167
+    },
+    {
+      "step": "seq_20260421095735_6 message",
+      "messageId": 168
+    }
+  ],
+  "historyChecks": [
+    {
+      "user": "seq_20260421095735_2",
+      "phase": "after add before own message",
+      "sharedEncryptNames": [
+        "1b30862a-98c4-4654-9cdf-3de10f5ef72f"
+      ],
+      "imported": [
+        "1b30862a-98c4-4654-9cdf-3de10f5ef72f"
+      ],
+      "failed": []
+    },
+    {
+      "user": "seq_20260421095735_1",
+      "phase": "after seq_20260421095735_2 message",
+      "failed": []
+    },
+    {
+      "user": "seq_20260421095735_3",
+      "phase": "after add before own message",
+      "sharedEncryptNames": [
+        "1b30862a-98c4-4654-9cdf-3de10f5ef72f"
+      ],
+      "imported": [
+        "1b30862a-98c4-4654-9cdf-3de10f5ef72f"
+      ],
+      "failed": [
+        {
+          "messageId": 164,
+          "encryptName": "ed75c1c7-1449-4b7b-b0d5-bb088675efb1",
+          "reason": "missing sender key"
+        }
+      ]
+    },
+    {
+      "user": "seq_20260421095735_1",
+      "phase": "after seq_20260421095735_3 message",
+      "failed": []
+    },
+    {
+      "user": "seq_20260421095735_4",
+      "phase": "after add before own message",
+      "sharedEncryptNames": [
+        "1b30862a-98c4-4654-9cdf-3de10f5ef72f"
+      ],
+      "imported": [
+        "1b30862a-98c4-4654-9cdf-3de10f5ef72f"
+      ],
+      "failed": [
+        {
+          "messageId": 164,
+          "encryptName": "ed75c1c7-1449-4b7b-b0d5-bb088675efb1",
+          "reason": "missing sender key"
+        },
+        {
+          "messageId": 165,
+          "encryptName": "7b8775da-a559-4841-b80d-523416355036",
+          "reason": "missing sender key"
+        }
+      ]
+    },
+    {
+      "user": "seq_20260421095735_1",
+      "phase": "after seq_20260421095735_4 message",
+      "failed": []
+    },
+    {
+      "user": "seq_20260421095735_5",
+      "phase": "after add before own message",
+      "sharedEncryptNames": [
+        "1b30862a-98c4-4654-9cdf-3de10f5ef72f"
+      ],
+      "imported": [
+        "1b30862a-98c4-4654-9cdf-3de10f5ef72f"
+      ],
+      "failed": [
+        {
+          "messageId": 164,
+          "encryptName": "ed75c1c7-1449-4b7b-b0d5-bb088675efb1",
+          "reason": "missing sender key"
+        },
+        {
+          "messageId": 165,
+          "encryptName": "7b8775da-a559-4841-b80d-523416355036",
+          "reason": "missing sender key"
+        },
+        {
+          "messageId": 166,
+          "encryptName": "29ea1a16-0a88-41fd-99e3-c9cffc302d6e",
+          "reason": "missing sender key"
+        }
+      ]
+    },
+    {
+      "user": "seq_20260421095735_1",
+      "phase": "after seq_20260421095735_5 message",
+      "failed": []
+    },
+    {
+      "user": "seq_20260421095735_6",
+      "phase": "after add before own message",
+      "sharedEncryptNames": [
+        "1b30862a-98c4-4654-9cdf-3de10f5ef72f"
+      ],
+      "imported": [
+        "1b30862a-98c4-4654-9cdf-3de10f5ef72f"
+      ],
+      "failed": [
+        {
+          "messageId": 164,
+          "encryptName": "ed75c1c7-1449-4b7b-b0d5-bb088675efb1",
+          "reason": "missing sender key"
+        },
+        {
+          "messageId": 165,
+          "encryptName": "7b8775da-a559-4841-b80d-523416355036",
+          "reason": "missing sender key"
+        },
+        {
+          "messageId": 166,
+          "encryptName": "29ea1a16-0a88-41fd-99e3-c9cffc302d6e",
+          "reason": "missing sender key"
+        },
+        {
+          "messageId": 167,
+          "encryptName": "47a0ac33-1442-41a6-8f12-d26c6ffdacec",
+          "reason": "missing sender key"
+        }
+      ]
+    },
+    {
+      "user": "seq_20260421095735_1",
+      "phase": "after seq_20260421095735_6 message",
+      "failed": []
+    }
+  ],
+  "finalChecks": [
+    {
+      "user": "seq_20260421095735_1",
+      "total": 6,
+      "decryptedCount": 6,
+      "failed": []
+    },
+    {
+      "user": "seq_20260421095735_2",
+      "total": 6,
+      "decryptedCount": 6,
+      "failed": []
+    },
+    {
+      "user": "seq_20260421095735_3",
+      "total": 6,
+      "decryptedCount": 5,
+      "failed": [
+        {
+          "messageId": 164,
+          "encryptName": "ed75c1c7-1449-4b7b-b0d5-bb088675efb1",
+          "reason": "missing sender key"
+        }
+      ]
+    },
+    {
+      "user": "seq_20260421095735_4",
+      "total": 6,
+      "decryptedCount": 4,
+      "failed": [
+        {
+          "messageId": 164,
+          "encryptName": "ed75c1c7-1449-4b7b-b0d5-bb088675efb1",
+          "reason": "missing sender key"
+        },
+        {
+          "messageId": 165,
+          "encryptName": "7b8775da-a559-4841-b80d-523416355036",
+          "reason": "missing sender key"
+        }
+      ]
+    },
+    {
+      "user": "seq_20260421095735_5",
+      "total": 6,
+      "decryptedCount": 3,
+      "failed": [
+        {
+          "messageId": 164,
+          "encryptName": "ed75c1c7-1449-4b7b-b0d5-bb088675efb1",
+          "reason": "missing sender key"
+        },
+        {
+          "messageId": 165,
+          "encryptName": "7b8775da-a559-4841-b80d-523416355036",
+          "reason": "missing sender key"
+        },
+        {
+          "messageId": 166,
+          "encryptName": "29ea1a16-0a88-41fd-99e3-c9cffc302d6e",
+          "reason": "missing sender key"
+        }
+      ]
+    },
+    {
+      "user": "seq_20260421095735_6",
+      "total": 6,
+      "decryptedCount": 2,
+      "failed": [
+        {
+          "messageId": 164,
+          "encryptName": "ed75c1c7-1449-4b7b-b0d5-bb088675efb1",
+          "reason": "missing sender key"
+        },
+        {
+          "messageId": 165,
+          "encryptName": "7b8775da-a559-4841-b80d-523416355036",
+          "reason": "missing sender key"
+        },
+        {
+          "messageId": 166,
+          "encryptName": "29ea1a16-0a88-41fd-99e3-c9cffc302d6e",
+          "reason": "missing sender key"
+        },
+        {
+          "messageId": 167,
+          "encryptName": "47a0ac33-1442-41a6-8f12-d26c6ffdacec",
+          "reason": "missing sender key"
+        }
+      ]
+    }
+  ]
+}

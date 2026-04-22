@@ -1,0 +1,432 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.3)
+
+2026-04-20T09:36:19.973+03:00  INFO 37584 --- [mescat] [           main] ru.mescat.MessageApplication             : Starting MessageApplication using Java 21.0.7 with PID 37584 (C:\Users\ivano\OneDrive\Рабочий стол\project\MessageService\target\classes started by ivano in C:\Users\ivano\OneDrive\Рабочий стол\project\MessageService)
+2026-04-20T09:36:19.979+03:00  INFO 37584 --- [mescat] [           main] ru.mescat.MessageApplication             : No active profile set, falling back to 1 default profile: "default"
+2026-04-20T09:36:20.924+03:00  INFO 37584 --- [mescat] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-20T09:36:20.927+03:00  INFO 37584 --- [mescat] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-20T09:36:21.139+03:00  INFO 37584 --- [mescat] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 200 ms. Found 5 JPA repository interfaces.
+2026-04-20T09:36:21.205+03:00  INFO 37584 --- [mescat] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-20T09:36:21.206+03:00  INFO 37584 --- [mescat] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-04-20T09:36:21.235+03:00  INFO 37584 --- [mescat] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.mescat.message.repository.ChatRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-04-20T09:36:21.235+03:00  INFO 37584 --- [mescat] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.mescat.message.repository.ChatUserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-04-20T09:36:21.236+03:00  INFO 37584 --- [mescat] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.mescat.message.repository.MessageRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-04-20T09:36:21.237+03:00  INFO 37584 --- [mescat] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.mescat.message.repository.SendMessageKeyRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-04-20T09:36:21.237+03:00  INFO 37584 --- [mescat] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.mescat.message.repository.UsersBlackListRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-04-20T09:36:21.238+03:00  INFO 37584 --- [mescat] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 16 ms. Found 0 Redis repository interfaces.
+2026-04-20T09:36:22.046+03:00  INFO 37584 --- [mescat] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 18082 (http)
+2026-04-20T09:36:22.072+03:00  INFO 37584 --- [mescat] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-20T09:36:22.073+03:00  INFO 37584 --- [mescat] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.18]
+2026-04-20T09:36:22.173+03:00  INFO 37584 --- [mescat] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 2126 ms
+2026-04-20T09:36:22.313+03:00  INFO 37584 --- [mescat] [           main] com.zaxxer.hikari.HikariDataSource       : app-pool - Starting...
+2026-04-20T09:36:22.550+03:00  INFO 37584 --- [mescat] [           main] com.zaxxer.hikari.pool.HikariPool        : app-pool - Added connection org.postgresql.jdbc.PgConnection@70b33256
+2026-04-20T09:36:22.553+03:00  INFO 37584 --- [mescat] [           main] com.zaxxer.hikari.HikariDataSource       : app-pool - Start completed.
+2026-04-20T09:36:22.727+03:00  INFO 37584 --- [mescat] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-04-20T09:36:22.840+03:00  INFO 37584 --- [mescat] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.4.Final
+2026-04-20T09:36:23.605+03:00  INFO 37584 --- [mescat] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-20T09:36:23.738+03:00  WARN 37584 --- [mescat] [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-20T09:36:23.783+03:00  INFO 37584 --- [mescat] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5435/postgres]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.13
+	Default catalog/schema: postgres/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-04-20T09:36:25.435+03:00  INFO 37584 --- [mescat] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-20T09:36:25.442+03:00  INFO 37584 --- [mescat] [           main] org.hibernate.orm.jdbc.batch             : HHH100501: Automatic JDBC statement batching enabled (maximum batch size 50)
+2026-04-20T09:36:25.557+03:00  INFO 37584 --- [mescat] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-20T09:36:25.896+03:00  INFO 37584 --- [mescat] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-20T09:36:28.775+03:00  INFO 37584 --- [mescat] [           main] o.a.kafka.common.config.AbstractConfig   : AdminClientConfig values: 
+	bootstrap.controllers = []
+	bootstrap.servers = [localhost:9092]
+	client.dns.lookup = use_all_dns_ips
+	client.id = mescat-admin-0
+	connections.max.idle.ms = 300000
+	default.api.timeout.ms = 60000
+	enable.metrics.push = false
+	metadata.max.age.ms = 300000
+	metadata.recovery.rebootstrap.trigger.ms = 300000
+	metadata.recovery.strategy = rebootstrap
+	metric.reporters = [org.apache.kafka.common.metrics.JmxReporter]
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.assertion.algorithm = RS256
+	sasl.oauthbearer.assertion.claim.aud = null
+	sasl.oauthbearer.assertion.claim.exp.seconds = 300
+	sasl.oauthbearer.assertion.claim.iss = null
+	sasl.oauthbearer.assertion.claim.jti.include = false
+	sasl.oauthbearer.assertion.claim.nbf.seconds = 60
+	sasl.oauthbearer.assertion.claim.sub = null
+	sasl.oauthbearer.assertion.file = null
+	sasl.oauthbearer.assertion.private.key.file = null
+	sasl.oauthbearer.assertion.private.key.passphrase = null
+	sasl.oauthbearer.assertion.template.file = null
+	sasl.oauthbearer.client.credentials.client.id = null
+	sasl.oauthbearer.client.credentials.client.secret = null
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.jwt.retriever.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtRetriever
+	sasl.oauthbearer.jwt.validator.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtValidator
+	sasl.oauthbearer.scope = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+
+2026-04-20T09:36:28.996+03:00  INFO 37584 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 4.1.1
+2026-04-20T09:36:28.996+03:00  INFO 37584 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: be816b82d25370ce
+2026-04-20T09:36:28.997+03:00  INFO 37584 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1776666988994
+2026-04-20T09:36:29.784+03:00  INFO 37584 --- [mescat] [           main] o.apache.kafka.common.metrics.Metrics    : Metrics scheduler closed
+2026-04-20T09:36:29.785+03:00  INFO 37584 --- [mescat] [           main] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2026-04-20T09:36:29.786+03:00  INFO 37584 --- [mescat] [           main] o.apache.kafka.common.metrics.Metrics    : Metrics reporters closed
+2026-04-20T09:36:29.787+03:00  INFO 37584 --- [mescat] [ mescat-admin-0] o.a.kafka.common.utils.AppInfoParser     : App info kafka.admin.client for mescat-admin-0 unregistered
+2026-04-20T09:36:29.793+03:00  INFO 37584 --- [mescat] [ mescat-admin-0] o.apache.kafka.common.metrics.Metrics    : Metrics scheduler closed
+2026-04-20T09:36:29.794+03:00  INFO 37584 --- [mescat] [ mescat-admin-0] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2026-04-20T09:36:29.795+03:00  INFO 37584 --- [mescat] [ mescat-admin-0] o.apache.kafka.common.metrics.Metrics    : Metrics reporters closed
+2026-04-20T09:36:29.817+03:00  INFO 37584 --- [mescat] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 18082 (http) with context path '/'
+2026-04-20T09:36:29.864+03:00  INFO 37584 --- [mescat] [           main] o.a.kafka.common.config.AbstractConfig   : ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-encrypt-keys-service-1
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = encrypt-keys-service
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 10000
+	metadata.max.age.ms = 300000
+	metadata.recovery.rebootstrap.trigger.ms = 300000
+	metadata.recovery.strategy = rebootstrap
+	metric.reporters = [org.apache.kafka.common.metrics.JmxReporter]
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.assertion.algorithm = RS256
+	sasl.oauthbearer.assertion.claim.aud = null
+	sasl.oauthbearer.assertion.claim.exp.seconds = 300
+	sasl.oauthbearer.assertion.claim.iss = null
+	sasl.oauthbearer.assertion.claim.jti.include = false
+	sasl.oauthbearer.assertion.claim.nbf.seconds = 60
+	sasl.oauthbearer.assertion.claim.sub = null
+	sasl.oauthbearer.assertion.file = null
+	sasl.oauthbearer.assertion.private.key.file = null
+	sasl.oauthbearer.assertion.private.key.passphrase = null
+	sasl.oauthbearer.assertion.template.file = null
+	sasl.oauthbearer.client.credentials.client.id = null
+	sasl.oauthbearer.client.credentials.client.secret = null
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.jwt.retriever.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtRetriever
+	sasl.oauthbearer.jwt.validator.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtValidator
+	sasl.oauthbearer.scope = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	share.acknowledgement.mode = implicit
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.JsonDeserializer
+
+2026-04-20T09:36:29.927+03:00  INFO 37584 --- [mescat] [           main] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-04-20T09:36:30.104+03:00  INFO 37584 --- [mescat] [io-18082-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-20T09:36:30.105+03:00  INFO 37584 --- [mescat] [io-18082-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-04-20T09:36:30.107+03:00  INFO 37584 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 4.1.1
+2026-04-20T09:36:30.108+03:00  INFO 37584 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: be816b82d25370ce
+2026-04-20T09:36:30.108+03:00  INFO 37584 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1776666990107
+2026-04-20T09:36:30.109+03:00  INFO 37584 --- [mescat] [io-18082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2026-04-20T09:36:30.111+03:00  INFO 37584 --- [mescat] [           main] o.a.k.c.c.i.ClassicKafkaConsumer         : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Subscribed to topic(s): delete-encrypt-keys
+2026-04-20T09:36:30.123+03:00  INFO 37584 --- [mescat] [           main] o.a.kafka.common.config.AbstractConfig   : ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-user-online-message-service-2
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = user-online-message-service
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metadata.recovery.rebootstrap.trigger.ms = 300000
+	metadata.recovery.strategy = rebootstrap
+	metric.reporters = [org.apache.kafka.common.metrics.JmxReporter]
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.assertion.algorithm = RS256
+	sasl.oauthbearer.assertion.claim.aud = null
+	sasl.oauthbearer.assertion.claim.exp.seconds = 300
+	sasl.oauthbearer.assertion.claim.iss = null
+	sasl.oauthbearer.assertion.claim.jti.include = false
+	sasl.oauthbearer.assertion.claim.nbf.seconds = 60
+	sasl.oauthbearer.assertion.claim.sub = null
+	sasl.oauthbearer.assertion.file = null
+	sasl.oauthbearer.assertion.private.key.file = null
+	sasl.oauthbearer.assertion.private.key.passphrase = null
+	sasl.oauthbearer.assertion.template.file = null
+	sasl.oauthbearer.client.credentials.client.id = null
+	sasl.oauthbearer.client.credentials.client.secret = null
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.jwt.retriever.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtRetriever
+	sasl.oauthbearer.jwt.validator.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtValidator
+	sasl.oauthbearer.scope = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	share.acknowledgement.mode = implicit
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.JsonDeserializer
+
+2026-04-20T09:36:30.124+03:00  INFO 37584 --- [mescat] [           main] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-04-20T09:36:30.135+03:00  INFO 37584 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 4.1.1
+2026-04-20T09:36:30.136+03:00  INFO 37584 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: be816b82d25370ce
+2026-04-20T09:36:30.136+03:00  INFO 37584 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1776666990135
+2026-04-20T09:36:30.138+03:00  INFO 37584 --- [mescat] [           main] o.a.k.c.c.i.ClassicKafkaConsumer         : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Subscribed to topic(s): user-online
+2026-04-20T09:36:30.151+03:00  INFO 37584 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Cluster ID: MkU3OEVBNTcwNTJENDM2Qk
+2026-04-20T09:36:30.151+03:00  INFO 37584 --- [mescat] [ntainer#0-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Cluster ID: MkU3OEVBNTcwNTJENDM2Qk
+2026-04-20T09:36:30.152+03:00  INFO 37584 --- [mescat] [           main] ru.mescat.MessageApplication             : Started MessageApplication in 10.862 seconds (process running for 11.472)
+2026-04-20T09:36:30.157+03:00  INFO 37584 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Discovered group coordinator localhost:9092 (id: 2147483646 rack: null isFenced: false)
+2026-04-20T09:36:30.157+03:00  INFO 37584 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Discovered group coordinator localhost:9092 (id: 2147483646 rack: null isFenced: false)
+2026-04-20T09:36:30.160+03:00  INFO 37584 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] (Re-)joining group
+2026-04-20T09:36:30.160+03:00  INFO 37584 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] (Re-)joining group
+2026-04-20T09:36:30.188+03:00  INFO 37584 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Request joining group due to: need to re-join with the given member-id: consumer-user-online-message-service-2-637a6b19-da25-4f23-b471-b8f6e11a6153
+2026-04-20T09:36:30.188+03:00  INFO 37584 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Request joining group due to: need to re-join with the given member-id: consumer-encrypt-keys-service-1-2fecccbb-74f4-4fbf-90e0-149b3e61f31c
+2026-04-20T09:36:30.188+03:00  INFO 37584 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] (Re-)joining group
+2026-04-20T09:36:30.189+03:00  INFO 37584 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] (Re-)joining group
+2026-04-20T09:36:30.813+03:00  INFO 37584 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Successfully joined group with generation Generation{generationId=24, memberId='consumer-user-online-message-service-2-637a6b19-da25-4f23-b471-b8f6e11a6153', protocol='range'}
+2026-04-20T09:36:30.826+03:00  INFO 37584 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Successfully synced group in generation Generation{generationId=24, memberId='consumer-user-online-message-service-2-637a6b19-da25-4f23-b471-b8f6e11a6153', protocol='range'}
+2026-04-20T09:36:30.831+03:00  INFO 37584 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Notifying assignor about the new Assignment(partitions=[user-online-0, user-online-1])
+2026-04-20T09:36:30.834+03:00  INFO 37584 --- [mescat] [ntainer#1-0-C-1] k.c.c.i.ConsumerRebalanceListenerInvoker : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Adding newly assigned partitions: [user-online-0, user-online-1]
+2026-04-20T09:36:30.844+03:00  INFO 37584 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition user-online-1 to the committed offset FetchPosition{offset=138, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null isFenced: false)], epoch=10}}
+2026-04-20T09:36:30.848+03:00  INFO 37584 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition user-online-0 to the committed offset FetchPosition{offset=309, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null isFenced: false)], epoch=10}}
+2026-04-20T09:36:30.850+03:00  INFO 37584 --- [mescat] [ntainer#1-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : user-online-message-service: partitions assigned: [user-online-0, user-online-1]
+2026-04-20T09:36:31.460+03:00  INFO 37584 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Successfully joined group with generation Generation{generationId=24, memberId='consumer-encrypt-keys-service-1-2fecccbb-74f4-4fbf-90e0-149b3e61f31c', protocol='range'}
+2026-04-20T09:36:31.469+03:00  INFO 37584 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Successfully synced group in generation Generation{generationId=24, memberId='consumer-encrypt-keys-service-1-2fecccbb-74f4-4fbf-90e0-149b3e61f31c', protocol='range'}
+2026-04-20T09:36:31.470+03:00  INFO 37584 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Notifying assignor about the new Assignment(partitions=[delete-encrypt-keys-0, delete-encrypt-keys-1])
+2026-04-20T09:36:31.470+03:00  INFO 37584 --- [mescat] [ntainer#0-0-C-1] k.c.c.i.ConsumerRebalanceListenerInvoker : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Adding newly assigned partitions: [delete-encrypt-keys-0, delete-encrypt-keys-1]
+2026-04-20T09:36:31.474+03:00  INFO 37584 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition delete-encrypt-keys-0 to the committed offset FetchPosition{offset=68, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null isFenced: false)], epoch=10}}
+2026-04-20T09:36:31.475+03:00  INFO 37584 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition delete-encrypt-keys-1 to the committed offset FetchPosition{offset=16, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null isFenced: false)], epoch=10}}
+2026-04-20T09:36:31.475+03:00  INFO 37584 --- [mescat] [ntainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : encrypt-keys-service: partitions assigned: [delete-encrypt-keys-0, delete-encrypt-keys-1]
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:4.0.3:run (default-cli) on project mescat: Process terminated with exit code: -1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

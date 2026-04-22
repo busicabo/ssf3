@@ -1,0 +1,26 @@
+﻿{
+    "senderId":  "c1e73473-8308-45db-a651-9bedd7632a22",
+    "targetUserId":  "0e08feec-b6f2-4045-b6a1-aabf42b515e7",
+    "chatId":  144,
+    "encryptName":  "c9ca6ea4-4994-489b-bc7c-5d9f7ecdc011",
+    "messageId":  160,
+    "messageText":  "Привет! Это тестовое сообщение от Codex. Если ты его видишь и оно расшифровалось, значит sender key дошел корректно. Время: 2026-04-21 12:53:26",
+    "statuses":  {
+                     "getMe":  200,
+                     "getUser":  200,
+                     "createChat":  200,
+                     "publicKeys":  200,
+                     "sendKeys":  200,
+                     "sendMessage":  200,
+                     "messages":  200
+                 },
+    "responseSamples":  {
+                            "getMe":  "\"c1e73473-8308-45db-a651-9bedd7632a22\"",
+                            "getUser":  "0e08feec-b6f2-4045-b6a1-aabf42b515e7",
+                            "createChat":  "{\"avatarUrl\":\"https://avatars.mds.yandex.net/i?id=7f18c7f70789c324859f7036c1ab0e49ea1a6e94-5505402-images-thumbs\u0026n=13\",\"chatId\":144,\"chatType\":\"PERSONAL\",\"title\":\"user\"}",
+                            "publicKeys":  "[{\"key\":\"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2A68neQunYw5/2dSOhreA5SDg8kHqnc6xAmZ63l0U7vLjnx4NHsW3tISLbgMSLJa5XMpy4HDhSWlWI5ML7j9MWT0Nop5CZvcXwZTTTK4sJrw4EpLityJ5pR6gf+6yRoYUukHzhnbpvPQv2F/FlUocCuZmVMn7DCXDfKy8PXwcHgwqtcqWSS8D1oTEZb1tZvRHSkhWlrKGJ5rk2tVV6WoBeriXT3xjiJoH0oNsEIvLH7XNJx7PvowkrbWgE8DgHe5bWVuirVgMToGsnKookWPKDTrkpux8C3JkdYZGRIAlL7g3XI81P1c13iXPxBvrGY/AnXrZMcJawJLPVoXnBYapQIDAQAB\",\"userId\":\"0e08feec-b6f2-4045-b6a1-aabf42b515e7\",\"createdAt\":\"2026-04-21T09:15:23.269228Z\",\"id\":\"5b98c926-f565-4cd2-901c-fe6c5720f5dd\"},{\"key\":\"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyY+DlJe2wktEkZ9jn/cdTcusBPRqHnLhjYOcMzFkBabY2GGzKuWBFM1/gLRH0dHROSYyuejvLmA+2Ef+GSIfQLhG9ogV4ai7vlMqkMf85yjn+i...",
+                            "sendKeys":  "{\"chatId\":144,\"encryptName\":\"c9ca6ea4-4994-489b-bc7c-5d9f7ecdc011\",\"recipients\":2}",
+                            "sendMessage":  "{\"messageId\":160,\"chatId\":144,\"message\":\"eyJhbGciOiJBRVMtR0NNIiwiaXYiOiJ5SzBQZ0lUYS9TcGNlcXl6IiwiY2lwaGVyIjoieUw2Q09NT2xRUEt3VW9iNG44cDJrTi85RktsaXBpK29Ub0dkOElrdXQrNzMybk9RZmI3bnREYTdLRUdoY3c4Q1cxNjZUK3BOcVJ2cVJ4WnVxWWJ3U0NnNWo3aHh1cytZZHhFZHlqbTUvMS95VXJxcFNyYkcrNFlWQUFTWU5ZQTJkbURnL3FmZDlVcVpKMVdkcXdER1pSRmQzRmVuUzVqTVc4MGp0dHRmdktONWxOdXQvbkVrYjl6Y0Z4ZzBnWUFQYXd1TzVUZmFKYm9uQ0VRTElTczlDaFp4YnRNN2w5MU9LTVF0VnV4RWQ3elQ3YVdweFpDcVNIcGRPa1cweG1LT3BhU1gzMHJjK0g2YzV0RlBpdmdOTW1xdXhzQ3JWa29qOWo4TzIrUmxDYnRGKys2Qmt3dlExL3MwNWlYRlpqampTWnlFYVVZPSJ9\",\"encryptionName\":\"c9ca6ea4-4994-489b-bc7c-5d9f7ecdc011\",\"senderId\":\"c1e73473-8308-45db-a651-9bedd7632a22\",\"createdAt\":\"2026-04-21T12:53:27.066324+03:...",
+                            "messages":  "[{\"messageId\":157,\"chatId\":144,\"message\":\"aGVsbG8gdXNlciBmcm9tIGNsZWFuIHVzZXIgY2xlYW5fMjAyNjA0MjExMjM4MDA=\",\"encryptionName\":\"ff0a452f-bd5b-4411-af3f-83352b0b45ae\",\"senderId\":\"c1e73473-8308-45db-a651-9bedd7632a22\",\"createdAt\":\"2026-04-21T09:38:02.791222Z\"},{\"messageId\":158,\"chatId\":144,\"message\":\"eyJhbGciOiJBRVMtR0NNIiwiaXYiOiJJZkhFb0F5bnVMaC93NTcrIiwiY2lwaGVyIjoiZ3pqNjE0eUxlRGFpUktuL2FUUnpZdnNBIn0=\",\"encryptionName\":\"45444240-acff-48cc-a990-73d72e39881f\",\"senderId\":\"0e08feec-b6f2-4045-b6a1-aabf42b515e7\",\"createdAt\":\"2026-04-21T09:40:53.622021Z\"},{\"messageId\":159,\"chatId\":144,\"message\":\"eyJhbGciOiJBRVMtR0NNIiwiaXYiOiJMbFk1cXg4dElFNGNpVVhqIiwiY2lwaGVyIjoidVJwREY0VEFlRWM3MW9vNTQ3eC9aVkZKT1VmTz..."
+                        }
+}

@@ -37,14 +37,15 @@ CREATE TABLE IF NOT EXISTS  message (
 );
 
 CREATE TABLE IF NOT EXISTS send_message_keys (
-    id UUID PRIMARY KEY default gen_random_uuid(),
-    encrypt_name TEXT NOT NULL,
-    user_id UUID NOT NULL,
-    key BYTEA NOT NULL,
-    public_key UUID NOT NULL,
-    user_target_id UUID,
-    send_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
+      id UUID PRIMARY KEY default gen_random_uuid(),
+      encrypt_name TEXT NOT NULL,
+      chat_id BIGINT,
+      user_id UUID NOT NULL,
+      key BYTEA NOT NULL,
+      public_key UUID NOT NULL,
+      user_target_id UUID,
+      send_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );
 
 CREATE TABLE IF NOT EXISTS  users_black_list(
     id BIGSERIAL PRIMARY KEY,

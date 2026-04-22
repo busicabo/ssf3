@@ -21,7 +21,7 @@ public class UserSettingsController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserSettingsEntity> findById(@PathVariable UUID userId) {
-        UserSettingsEntity settings = userSettingsService.findById(userId);
+        UserSettingsEntity settings = userSettingsService.findOrCreateById(userId);
         if (settings == null) {
             return ResponseEntity.notFound().build();
         }
@@ -36,7 +36,7 @@ public class UserSettingsController {
 
     @PatchMapping("/{userId}/auto-delete-message")
     public ResponseEntity<Void> setAutoDeleteMessage(@PathVariable UUID userId,
-                                                     @RequestParam OffsetDateTime time) {
+                                                     @RequestParam(required = false) OffsetDateTime time) {
         boolean updated = userSettingsService.setAutoDeleteMessage(time, userId);
         return updated
                 ? ResponseEntity.ok().build()

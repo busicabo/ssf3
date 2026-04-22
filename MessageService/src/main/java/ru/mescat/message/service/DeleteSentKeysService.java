@@ -15,9 +15,10 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class DeleteSentKeysService {
-    private SendMessageKeyService sendMessageKeyService;
-    private KafkaTemplate<String, KeyDelete> kafkaTemplate;
-    private String topic;
+
+    private final SendMessageKeyService sendMessageKeyService;
+    private final KafkaTemplate<String, KeyDelete> kafkaTemplate;
+    private final String topic;
 
     public DeleteSentKeysService(SendMessageKeyService sendMessageKeyService,
                                  @Qualifier("kafkaTemplateEncryptKeyDelete") KafkaTemplate<String, KeyDelete> kafkaTemplate,
@@ -33,19 +34,21 @@ public class DeleteSentKeysService {
     )
     public void listen(List<KeyDelete> messages, Acknowledgment acknowledgment) {
         if (messages.isEmpty()) {
-            log.debug("Получен пустой пакет сообщений для удаления ключей.");
+            log.debug("Получен пустой пакет удаления ключей сообщений.");
+            acknowledgment.acknowledge();
             return;
         }
 
-        log.debug("Обработка пакета удаления ключей: count={}", messages.size());
-        sendMessageKeyService.deleteAllById(messages);
+        int deleted = sendMessageKeyService.deleteAllByIdForUsers(messages);
+        log.debug("Удалены ключи сообщений из очереди: requested={}, deleted={}", messages.size(), deleted);
         acknowledgment.acknowledge();
     }
 
     public void addKeyInQueue(KeyDelete keyDelete, UUID userId) {
         try {
+            keyDelete.setUserTargetId(userId);
             kafkaTemplate.send(topic, keyDelete).get();
-            log.debug("Ключ поставлен в очередь на удаление: userId={}", userId);
+            log.debug("Ключ поставлен в очередь на удаление: userId={}, keyId={}", userId, keyDelete.getKeyId());
         } catch (Exception e) {
             log.error("Не удалось поставить ключ в очередь удаления: userId={}, error={}", userId, e.getMessage());
             throw new RuntimeException("Не удалось отправить ключ на удаление.", e);

@@ -1,6 +1,8 @@
 package ru.mescat.message.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.mescat.message.entity.SendMessageKeyEntity;
 
@@ -22,4 +24,8 @@ public interface SendMessageKeyRepository extends JpaRepository<SendMessageKeyEn
     boolean existsByUserIdAndUserTargetId(UUID userId, UUID userTargetId);
 
     void deleteByUserIdAndUserTargetId(UUID userId, UUID userTargetId);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("delete from SendMessageKeyEntity k where k.id = :id and k.userTargetId = :userTargetId")
+    int deleteOwnedById(UUID id, UUID userTargetId);
 }

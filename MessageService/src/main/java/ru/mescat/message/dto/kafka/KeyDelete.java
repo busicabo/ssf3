@@ -11,4 +11,5 @@ import java.util.UUID;
 @Getter
 public class KeyDelete {
     private UUID keyId;
+    private UUID userTargetId;
 }

@@ -1,4 +1,4 @@
-import { LIMITS } from './constants.js';
+﻿import { LIMITS } from './constants.js';
 import { normalizeBase64 } from './base64.js';
 
 export class KeyManager {
@@ -22,7 +22,7 @@ export class KeyManager {
 
     if (!this.currentKey && !serverKey) {
       await this.#createAndUploadNewCurrentKey();
-      this.ui.setKeyState('Создана новая пара user-ключей.', true);
+      this.ui.setKeyState('РЎРѕР·РґР°РЅР° РЅРѕРІР°СЏ РїР°СЂР° user-РєР»СЋС‡РµР№.', true);
       return;
     }
 
@@ -36,16 +36,24 @@ export class KeyManager {
           privateKeyB64: this.currentKey.privateKeyB64
         });
       }
-      this.ui.setKeyState('Публичный ключ восстановлен на сервере.', true);
+      this.ui.setKeyState('РџСѓР±Р»РёС‡РЅС‹Р№ РєР»СЋС‡ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅ РЅР° СЃРµСЂРІРµСЂРµ.', true);
       return;
     }
 
     if (!this.currentKey && serverKey) {
+      const localRestored = await this.#tryUseLocalUserKey(serverKey);
+      if (localRestored) {
+        this.ui.setKeyState('Найден локальный user-ключ для текущего аккаунта.', true);
+        return;
+      }
+
       const restored = await this.#tryRestoreFromPending(serverKey.id);
       if (!restored) {
         await this.#createAndUploadNewCurrentKey();
+        this.ui.setKeyState('Создана новая пара user-ключей для текущего аккаунта.', true);
+        return;
       }
-      this.ui.setKeyState('Ключи пользователя готовы.', true);
+      this.ui.setKeyState('РљР»СЋС‡Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РіРѕС‚РѕРІС‹.', true);
       return;
     }
 
@@ -55,45 +63,31 @@ export class KeyManager {
         publicKeyB64: serverKey.keyB64,
         privateKeyB64: this.currentKey.privateKeyB64
       });
-      this.ui.setKeyState('Ключи пользователя синхронизированы.', true);
+      this.ui.setKeyState('РљР»СЋС‡Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃРёРЅС…СЂРѕРЅРёР·РёСЂРѕРІР°РЅС‹.', true);
+      return;
+    }
+
+    const localRestored = await this.#tryUseLocalUserKey(serverKey);
+    if (localRestored) {
+      this.ui.setKeyState('Найден локальный user-ключ для текущего аккаунта.', true);
       return;
     }
 
     const restored = await this.#tryRestoreFromPending(serverKey.id);
     if (!restored) {
-      await this.api.saveOwnPublicKey(this.currentKey.publicKeyB64);
-      const fresh = await this.#safeGetOwnPublicKey();
-      if (fresh) {
-        await this.#setCurrent({
-          publicKeyId: fresh.id,
-          publicKeyB64: fresh.keyB64,
-          privateKeyB64: this.currentKey.privateKeyB64
-        });
-      }
+      await this.#createAndUploadNewCurrentKey();
+      this.ui.setKeyState('Создана новая пара user-ключей для текущего аккаунта.', true);
+      return;
     }
-    this.ui.setKeyState('Ключи пользователя обновлены.', true);
+    this.ui.setKeyState('РљР»СЋС‡Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РѕР±РЅРѕРІР»РµРЅС‹.', true);
   }
 
   async ensureSenderKey(chatId, memberIds) {
-    let usage = null;
-    try {
-      usage = await this.api.getLatestKeyUsage(chatId);
-      if (usage?.encryptionName) {
-        await this.db.setUsage(this.userId, chatId, usage.encryptionName, usage.count || 0);
-      }
-    } catch (error) {
-      if (error.status !== 404 && error.status !== 204) {
-        throw error;
-      }
-    }
-
-    const currentUsage = usage?.encryptionName
-      ? { encryptName: usage.encryptionName, count: Number(usage.count || 0) }
-      : await this.db.getUsage(this.userId, chatId);
+    const currentUsage = await this.db.getUsage(this.userId, chatId);
 
     if (currentUsage?.encryptName && Number(currentUsage.count || 0) < LIMITS.maxMessagesPerSenderKey) {
       const localSenderKey = await this.db.getSenderKey(this.userId, currentUsage.encryptName);
-      if (localSenderKey?.keyB64) {
+      if (localSenderKey?.keyB64 && Number(localSenderKey.chatId) === Number(chatId)) {
         return { encryptName: currentUsage.encryptName, keyB64: localSenderKey.keyB64 };
       }
     }
@@ -103,56 +97,125 @@ export class KeyManager {
     const afterSyncUsage = await this.db.getUsage(this.userId, chatId);
     if (afterSyncUsage?.encryptName && Number(afterSyncUsage.count || 0) < LIMITS.maxMessagesPerSenderKey) {
       const localSenderKey = await this.db.getSenderKey(this.userId, afterSyncUsage.encryptName);
-      if (localSenderKey?.keyB64) {
+      if (localSenderKey?.keyB64 && Number(localSenderKey.chatId) === Number(chatId)) {
         return { encryptName: afterSyncUsage.encryptName, keyB64: localSenderKey.keyB64 };
       }
     }
 
     return this.rotateSenderKey(chatId, memberIds);
   }
+  async shareAllSenderKeysForChatWithUsers(chatId, targetUserIds = []) {
+    const targets = Array.from(new Set((targetUserIds || [])
+      .map((value) => String(value || '').trim())
+      .filter((value) => value && value !== String(this.userId))));
+
+    if (!chatId || targets.length === 0) {
+      return { sent: 0, failed: 0, skipped: 0 };
+    }
+
+    const senderKeys = (await this.db.listSenderKeys(this.userId))
+      .filter((key) => Number(key.chatId) === Number(chatId) && key.encryptName && key.keyB64);
+
+    if (senderKeys.length === 0) {
+      return { sent: 0, failed: 0, skipped: targets.length };
+    }
+
+    let sent = 0;
+    let failed = 0;
+    for (const senderKey of senderKeys) {
+      const result = await this.shareSenderKeyByEncryptNameWithUsers(chatId, senderKey.encryptName, targets);
+      sent += result.sent;
+      failed += result.failed;
+    }
+
+    if (sent > 0) {
+      this.ui.appendStatus('Sender keys sent to the new member: ' + sent + '.', 'ok');
+    }
+
+    return { sent, failed, skipped: 0 };
+  }
+  async shareSenderKeyByEncryptNameWithUsers(chatId, encryptName, targetUserIds = []) {
+    const cleanEncryptName = String(encryptName || '').trim();
+    const targets = Array.from(new Set((targetUserIds || [])
+      .map((value) => String(value || '').trim())
+      .filter((value) => value && value !== String(this.userId))));
+
+    if (!chatId || !cleanEncryptName || targets.length === 0) {
+      return { sent: 0, failed: 0, skipped: 0 };
+    }
+
+    const senderKey = await this.db.getSenderKey(this.userId, cleanEncryptName);
+    if (!senderKey?.keyB64 || Number(senderKey.chatId) !== Number(chatId)) {
+      return { sent: 0, failed: 0, skipped: targets.length };
+    }
+
+    let publicKeys = [];
+    try {
+      publicKeys = await this.api.getPublicKeysByUsers(targets);
+    } catch {
+      await this.#rememberFailedSenderKeyDeliveries(chatId, cleanEncryptName, targets);
+      return { sent: 0, failed: targets.length, skipped: 0 };
+    }
+
+    const selectedKeys = targets.map((targetUserId) => (
+      ((publicKeys || []).find((key) => String(key.userId) === String(targetUserId)) || {
+        userId: targetUserId,
+        id: null,
+        key: null
+      })
+    ));
+
+    const { requestRows, failedDeliveries } = await this.#buildMessageKeyRows({
+      chatId,
+      senderKeyB64: senderKey.keyB64,
+      publicKeys: selectedKeys
+    });
+
+    if (requestRows.length === 0) {
+      await this.#rememberFailedSenderKeyDeliveries(
+        chatId,
+        cleanEncryptName,
+        failedDeliveries.map((item) => item.userTarget).filter(Boolean)
+      );
+      return { sent: 0, failed: failedDeliveries.length, skipped: targets.length };
+    }
+
+    try {
+      await this.api.sendMessageKeys({
+        chatId,
+        encryptName: cleanEncryptName,
+        requestEncryptMessageKeyForUsers: requestRows
+      });
+      return {
+        sent: requestRows.length,
+        failed: failedDeliveries.length,
+        skipped: Math.max(0, targets.length - selectedKeys.length)
+      };
+    } catch {
+      await this.#rememberFailedSenderKeyDeliveries(chatId, cleanEncryptName, targets);
+      return {
+        sent: 0,
+        failed: failedDeliveries.length + requestRows.length,
+        skipped: Math.max(0, targets.length - selectedKeys.length)
+      };
+    }
+  }
 
   async rotateSenderKey(chatId, memberIds) {
     const publicKeys = await this.api.getPublicKeysByUsers(memberIds);
     if (!Array.isArray(publicKeys) || publicKeys.length === 0) {
-      throw new Error('Не удалось получить публичные ключи участников.');
+      throw new Error('РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РїСѓР±Р»РёС‡РЅС‹Рµ РєР»СЋС‡Рё СѓС‡Р°СЃС‚РЅРёРєРѕРІ.');
     }
 
     const senderKeyB64 = this.crypto.generateSenderKey();
-    const requestRows = [];
-    let skippedInvalidKeys = 0;
-
-    for (const key of publicKeys) {
-      const publicKeyB64 = normalizeBase64(key.key);
-      if (!publicKeyB64) {
-        skippedInvalidKeys += 1;
-        continue;
-      }
-
-      let encryptedSenderKey;
-      try {
-        encryptedSenderKey = await this.crypto.encryptForPublicKey(senderKeyB64, publicKeyB64);
-      } catch (error) {
-        skippedInvalidKeys += 1;
-        console.warn('Пропущен некорректный публичный ключ участника.', {
-          userId: key.userId,
-          keyId: key.id,
-          error: error?.message || error
-        });
-        continue;
-      }
-      requestRows.push({
-        userTarget: key.userId,
-        key: encryptedSenderKey,
-        publicKeyUser: key.id
-      });
-    }
+    const { requestRows, failedDeliveries } = await this.#buildMessageKeyRows({
+      chatId,
+      senderKeyB64,
+      publicKeys
+    });
 
     if (requestRows.length === 0) {
-      throw new Error('Нет валидных публичных ключей для отправки sender key.');
-    }
-
-    if (skippedInvalidKeys > 0) {
-      this.ui.appendStatus(`Пропущено некорректных публичных ключей: ${skippedInvalidKeys}.`, 'info');
+      throw new Error('РќРµС‚ РІР°Р»РёРґРЅС‹С… РїСѓР±Р»РёС‡РЅС‹С… РєР»СЋС‡РµР№ РґР»СЏ РѕС‚РїСЂР°РІРєРё sender key.');
     }
 
     const result = await this.api.sendMessageKeys({
@@ -162,7 +225,7 @@ export class KeyManager {
 
     const encryptName = String(result?.encryptName || '');
     if (!encryptName) {
-      throw new Error('Сервер не вернул encryptName.');
+      throw new Error('РЎРµСЂРІРµСЂ РЅРµ РІРµСЂРЅСѓР» encryptName.');
     }
 
     await this.db.upsertSenderKey(this.userId, {
@@ -173,9 +236,50 @@ export class KeyManager {
     });
     await this.db.setUsage(this.userId, chatId, encryptName, 0);
 
+    await this.#rememberFailedSenderKeyDeliveries(
+      chatId,
+      encryptName,
+      failedDeliveries.map((item) => item.userTarget).filter(Boolean)
+    );
+
     return { encryptName, keyB64: senderKeyB64 };
   }
 
+  async retryFailedSenderKeyDeliveries() {
+    const pending = this.#readFailedSenderKeyDeliveries();
+    if (pending.length === 0) {
+      return { retried: 0, sent: 0, failed: 0 };
+    }
+
+    let retried = 0;
+    let sent = 0;
+    let failed = 0;
+    const stillPending = [];
+
+    for (const item of pending) {
+      const chatId = item?.chatId;
+      const encryptName = item?.encryptName;
+      const targets = Array.from(new Set((item?.targets || [])
+        .map((value) => String(value || '').trim())
+        .filter(Boolean)));
+
+      if (!chatId || !encryptName || targets.length === 0) {
+        continue;
+      }
+
+      retried += targets.length;
+      const result = await this.shareSenderKeyByEncryptNameWithUsers(chatId, encryptName, targets);
+      sent += result.sent || 0;
+      failed += result.failed || 0;
+
+      if ((result.failed || 0) > 0) {
+        stillPending.push(item);
+      }
+    }
+
+    this.#writeFailedSenderKeyDeliveries(stillPending);
+    return { retried, sent, failed };
+  }
   async incrementUsage(chatId, encryptName) {
     return this.db.incrementUsage(this.userId, chatId, encryptName);
   }
@@ -184,9 +288,99 @@ export class KeyManager {
     return this.db.getSenderKey(this.userId, encryptName);
   }
 
+  async hasSenderKey(encryptName) {
+    if (!encryptName) {
+      return false;
+    }
+    const senderKey = await this.db.getSenderKey(this.userId, encryptName);
+    return Boolean(senderKey?.keyB64);
+  }
+
+  async getDiagnostics() {
+    const currentKey = await this.db.getCurrentUserKey(this.userId);
+    const userKeys = await this.db.listUserKeys(this.userId);
+    const senderKeys = await this.db.listSenderKeys(this.userId);
+    const serverKey = await this.#safeGetOwnPublicKey();
+    const pendingPrivateKey = await this.#safeReadPendingPrivateKey();
+
+    return {
+      userId: this.userId,
+      currentPublicKeyId: currentKey?.publicKeyId || null,
+      serverPublicKeyId: serverKey?.id || null,
+      localUserKeyCount: userKeys.length,
+      localSenderKeyCount: senderKeys.length,
+      synchronized: this.#isSamePublicKey(currentKey, serverKey),
+      hasPendingPrivateKey: Boolean(pendingPrivateKey?.id),
+      pendingPrivateKeyPublicId: pendingPrivateKey?.publicKey || null
+    };
+  }
+
+  async rotateUserKeyPair() {
+    await this.bootstrap();
+
+    const currentKey = await this.db.getCurrentUserKey(this.userId);
+    if (!currentKey?.publicKeyB64 || !currentKey?.publicKeyId) {
+      throw new Error('РќРµС‚ С‚РµРєСѓС‰РµРіРѕ РєР»СЋС‡Р° РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РґР»СЏ СЂРѕС‚Р°С†РёРё.');
+    }
+
+    const generated = await this.crypto.generateUserKeyPair();
+    await this.api.saveOwnPublicKey(generated.publicKeyB64);
+    const fresh = await this.#safeGetOwnPublicKey();
+
+    if (!fresh?.id || !fresh?.keyB64) {
+      throw new Error('РЎРµСЂРІРµСЂ РЅРµ РІРµСЂРЅСѓР» РЅРѕРІС‹Р№ РїСѓР±Р»РёС‡РЅС‹Р№ РєР»СЋС‡ РїРѕСЃР»Рµ СЂРѕС‚Р°С†РёРё.');
+    }
+
+    const encryptedPrivateKey = await this.crypto.encryptForPublicKey(
+      generated.privateKeyB64,
+      currentKey.publicKeyB64
+    );
+
+    await this.api.saveNewPrivateKey({
+      userId: this.userId,
+      key: encryptedPrivateKey,
+      publicKey: fresh.id,
+      encryptingPublicKey: currentKey.publicKeyId
+    });
+
+    await this.#setCurrent({
+      publicKeyId: fresh.id,
+      publicKeyB64: fresh.keyB64,
+      privateKeyB64: generated.privateKeyB64
+    });
+
+    this.ui.setKeyState('РџРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёР№ РєР»СЋС‡ РѕР±РЅРѕРІР»РµРЅ.', true);
+    return fresh;
+  }
+
+  async createSessionUserKeyPair() {
+    const generated = await this.crypto.generateUserKeyPair();
+    await this.api.saveOwnPublicKey(generated.publicKeyB64);
+    const fresh = await this.#safeGetOwnPublicKey();
+
+    if (!fresh?.id || !fresh?.keyB64) {
+      throw new Error('РЎРµСЂРІРµСЂ РЅРµ РІРµСЂРЅСѓР» РЅРѕРІС‹Р№ РїСѓР±Р»РёС‡РЅС‹Р№ РєР»СЋС‡ РґР»СЏ С‚РµРєСѓС‰РµР№ СЃРµСЃСЃРёРё.');
+    }
+
+    await this.#setCurrent({
+      publicKeyId: fresh.id,
+      publicKeyB64: fresh.keyB64,
+      privateKeyB64: generated.privateKeyB64
+    });
+
+    this.ui.setKeyState('РЎРѕР·РґР°РЅ РЅРѕРІС‹Р№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёР№ РєР»СЋС‡ РґР»СЏ С‚РµРєСѓС‰РµР№ СЃРµСЃСЃРёРё.', true);
+    return fresh;
+  }
+
   async ingestPendingMessageKeys() {
     const pending = await this.#safeGetPendingMessageKeys();
-    if (pending.length === 0) return;
+    if (pending.length === 0) {
+      return { importedCount: 0, encryptNames: [] };
+    }
+
+    const importedEncryptNames = [];
+    let deletedCount = 0;
+    let deleteFailedCount = 0;
 
     for (const item of pending) {
       const encryptName = item.encryptName;
@@ -195,7 +389,9 @@ export class KeyManager {
       const keyExists = await this.db.getSenderKey(this.userId, encryptName);
       if (keyExists) {
         if (item.id) {
-          await this.#safeDeletePending(item.id);
+          const deleted = await this.#safeDeletePending(item.id);
+          deletedCount += deleted ? 1 : 0;
+          deleteFailedCount += deleted ? 0 : 1;
         }
         continue;
       }
@@ -216,16 +412,30 @@ export class KeyManager {
       }
 
       await this.db.upsertSenderKey(this.userId, {
-        chatId: null,
+        chatId: item.chatId ?? null,
         encryptName,
         keyB64: senderKeyB64,
         publicKeyId
       });
+      importedEncryptNames.push(encryptName);
 
       if (item.id) {
-        await this.#safeDeletePending(item.id);
+        const deleted = await this.#safeDeletePending(item.id);
+        deletedCount += deleted ? 1 : 0;
+        deleteFailedCount += deleted ? 0 : 1;
       }
     }
+
+    if (deleteFailedCount > 0) {
+      this.ui.appendStatus('РќРµ СѓРґР°Р»РѕСЃСЊ СѓРґР°Р»РёС‚СЊ С‡Р°СЃС‚СЊ РїРѕР»СѓС‡РµРЅРЅС‹С… РєР»СЋС‡РµР№ СЃ СЃРµСЂРІРµСЂР°. РџРѕРІС‚РѕСЂРёРј РїСЂРё СЃР»РµРґСѓСЋС‰РµР№ СЃРёРЅС…СЂРѕРЅРёР·Р°С†РёРё.', 'info');
+    }
+
+    return {
+      importedCount: importedEncryptNames.length,
+      encryptNames: importedEncryptNames,
+      deletedCount,
+      deleteFailedCount
+    };
   }
 
   async decryptMessage(messageB64, encryptName) {
@@ -236,14 +446,98 @@ export class KeyManager {
 
     const senderKey = await this.db.getSenderKey(this.userId, encryptName);
     if (!senderKey?.keyB64) {
-      return '[Ключ сообщения пока не получен]';
+      return null;
     }
 
     try {
       return await this.crypto.decryptMessage(messageB64, senderKey.keyB64);
     } catch {
-      return '[Не удалось расшифровать сообщение]';
+      return null;
     }
+  }
+
+  async #buildMessageKeyRows({ chatId, senderKeyB64, publicKeys, pendingItems = [] }) {
+    const requestRows = [];
+    const failedDeliveries = [];
+
+    for (const key of publicKeys) {
+      const publicKeyB64 = normalizeBase64(key.key);
+      const pendingItem = pendingItems.find((item) => String(item.userTarget) === String(key.userId)) || null;
+      const userTarget = key.userId || pendingItem?.userTarget;
+      const publicKeyUser = key.id || pendingItem?.publicKeyUser;
+
+      if (!publicKeyB64) {
+        failedDeliveries.push({ userTarget, publicKeyUser, reason: 'public key is empty' });
+        continue;
+      }
+
+      let encryptedSenderKey;
+      try {
+        encryptedSenderKey = await this.crypto.encryptForPublicKey(senderKeyB64, publicKeyB64);
+      } catch (error) {
+        failedDeliveries.push({ userTarget, publicKeyUser, reason: error?.message || 'public key import failed' });
+        console.warn('РџСЂРѕРїСѓС‰РµРЅ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РїСѓР±Р»РёС‡РЅС‹Р№ РєР»СЋС‡ СѓС‡Р°СЃС‚РЅРёРєР°.', {
+          userId: userTarget,
+          keyId: publicKeyUser,
+          error: error?.message || error
+        });
+        continue;
+      }
+
+      requestRows.push({
+        userTarget,
+        key: encryptedSenderKey,
+        publicKeyUser
+      });
+    }
+
+    return { requestRows, failedDeliveries };
+  }
+
+  async #rememberFailedSenderKeyDeliveries(chatId, encryptName, targetUserIds = []) {
+    const targets = Array.from(new Set((targetUserIds || [])
+      .map((value) => String(value || '').trim())
+      .filter((value) => value && value !== String(this.userId))));
+
+    if (!chatId || !encryptName || targets.length === 0) {
+      return;
+    }
+
+    const existing = this.#readFailedSenderKeyDeliveries();
+    const key = `${chatId}:${encryptName}`;
+    const byKey = new Map(existing.map((item) => [`${item.chatId}:${item.encryptName}`, item]));
+    const current = byKey.get(key) || { chatId: Number(chatId), encryptName: String(encryptName), targets: [] };
+    current.targets = Array.from(new Set([...(current.targets || []), ...targets]));
+    byKey.set(key, current);
+    this.#writeFailedSenderKeyDeliveries(Array.from(byKey.values()));
+  }
+
+  #readFailedSenderKeyDeliveries() {
+    try {
+      const raw = localStorage.getItem(this.#failedSenderKeysStorageKey());
+      const payload = raw ? JSON.parse(raw) : [];
+      return Array.isArray(payload) ? payload : [];
+    } catch {
+      return [];
+    }
+  }
+
+  #writeFailedSenderKeyDeliveries(items) {
+    const clean = (items || [])
+      .map((item) => ({
+        chatId: Number(item.chatId),
+        encryptName: String(item.encryptName || ''),
+        targets: Array.from(new Set((item.targets || [])
+          .map((value) => String(value || '').trim())
+          .filter(Boolean)))
+      }))
+      .filter((item) => item.chatId && item.encryptName && item.targets.length > 0);
+
+    localStorage.setItem(this.#failedSenderKeysStorageKey(), JSON.stringify(clean));
+  }
+
+  #failedSenderKeysStorageKey() {
+    return `mescat_failed_sender_keys:${this.userId}`;
   }
 
   async #createAndUploadNewCurrentKey() {
@@ -267,6 +561,33 @@ export class KeyManager {
       privateKeyB64: key.privateKeyB64
     });
     this.currentKey = await this.db.getCurrentUserKey(this.userId);
+  }
+
+  async #tryUseLocalUserKey(serverKey) {
+    if (!serverKey?.id && !serverKey?.keyB64) {
+      return false;
+    }
+
+    const serverPublicKeyId = serverKey.id ? String(serverKey.id) : null;
+    const serverPublicKeyB64 = normalizeBase64(serverKey.keyB64);
+    const localKeys = await this.db.listUserKeys(this.userId);
+
+    const matchedKey = localKeys.find((key) => {
+      const sameId = serverPublicKeyId && key.publicKeyId && String(key.publicKeyId) === serverPublicKeyId;
+      const samePublicKey = serverPublicKeyB64 && normalizeBase64(key.publicKeyB64) === serverPublicKeyB64;
+      return key.privateKeyB64 && (sameId || samePublicKey);
+    });
+
+    if (!matchedKey) {
+      return false;
+    }
+
+    await this.#setCurrent({
+      publicKeyId: serverPublicKeyId || matchedKey.publicKeyId,
+      publicKeyB64: serverPublicKeyB64 || matchedKey.publicKeyB64,
+      privateKeyB64: matchedKey.privateKeyB64
+    });
+    return true;
   }
 
   async #safeGetOwnPublicKey() {
@@ -303,63 +624,141 @@ export class KeyManager {
   async #safeDeletePending(id) {
     try {
       await this.api.deletePendingMessageKey(id);
+      return true;
     } catch {
-      // Ignore delete races
+      return false;
+    }
+  }
+
+  async #safeReadPendingPrivateKey() {
+    try {
+      const payload = await this.api.getNewPrivateKey();
+      return payload && typeof payload === 'object' ? payload : null;
+    } catch (error) {
+      if (error.status === 404 || error.status === 204) {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  async #safeReadPendingPrivateKeyChain() {
+    try {
+      const payload = typeof this.api.getNewPrivateKeyChain === 'function'
+        ? await this.api.getNewPrivateKeyChain()
+        : await this.api.getNewPrivateKey();
+      if (Array.isArray(payload)) {
+        return payload;
+      }
+      return payload && typeof payload === 'object' ? [payload] : [];
+    } catch (error) {
+      if (error.status === 404 || error.status === 204) {
+        return [];
+      }
+      throw error;
     }
   }
 
   async #tryRestoreFromPending(expectedPublicKeyId) {
-    let pending;
-    try {
-      pending = await this.api.getNewPrivateKey();
-    } catch (error) {
-      if (error.status === 404 || error.status === 204) {
-        return false;
-      }
-      throw error;
-    }
-
-    if (!pending || typeof pending !== 'object') {
-      return false;
-    }
-
-    const pendingPublic = pending.publicKey ? String(pending.publicKey) : null;
-    if (expectedPublicKeyId && pendingPublic && pendingPublic !== String(expectedPublicKeyId)) {
-      return false;
-    }
-
-    const encryptedPrivateB64 = normalizeBase64(pending.key);
-    const encryptingPublicKey = pending.encryptingPublicKey ? String(pending.encryptingPublicKey) : null;
-    if (!encryptedPrivateB64 || !encryptingPublicKey) {
-      return false;
-    }
-
-    const decryptor = await this.db.findPrivateKeyByPublicId(this.userId, encryptingPublicKey);
-    if (!decryptor?.privateKeyB64) {
-      return false;
-    }
-
-    let decryptedPrivateB64;
-    try {
-      decryptedPrivateB64 = await this.crypto.decryptWithPrivateKey(encryptedPrivateB64, decryptor.privateKeyB64);
-    } catch {
-      return false;
-    }
-
-    const keys = await this.api.getPublicKeysByIds([pendingPublic]);
-    const resolvedPublic = Array.isArray(keys) && keys.length > 0
-      ? normalizeBase64(keys[0].key)
+    const localKeys = await this.db.listUserKeys(this.userId);
+    const targetPublicKeyId = expectedPublicKeyId ? String(expectedPublicKeyId) : null;
+    const targetLocalKey = targetPublicKeyId
+      ? localKeys.find((key) => String(key.publicKeyId) === targetPublicKeyId && key.privateKeyB64 && key.publicKeyB64)
       : null;
-    if (!resolvedPublic) {
+    if (targetLocalKey) {
+      await this.#setCurrent({
+        publicKeyId: targetLocalKey.publicKeyId,
+        publicKeyB64: targetLocalKey.publicKeyB64,
+        privateKeyB64: targetLocalKey.privateKeyB64
+      });
+      return true;
+    }
+
+    const pendingItems = await this.#safeReadPendingPrivateKeyChain();
+    if (pendingItems.length === 0) {
       return false;
     }
 
-    await this.#setCurrent({
-      publicKeyId: pendingPublic,
-      publicKeyB64: resolvedPublic,
-      privateKeyB64: decryptedPrivateB64
-    });
-    return true;
+    const ownItems = pendingItems
+      .filter((item) => item && typeof item === 'object')
+      .filter((item) => !item.userId || String(item.userId) === String(this.userId))
+      .sort((a, b) => String(a.createdAt || '').localeCompare(String(b.createdAt || '')));
+
+    if (ownItems.length === 0) {
+      return false;
+    }
+
+    const knownPrivateKeys = new Map(
+      localKeys
+        .filter((key) => key.publicKeyId && key.privateKeyB64)
+        .map((key) => [String(key.publicKeyId), key.privateKeyB64])
+    );
+
+    if (knownPrivateKeys.size === 0) {
+      return false;
+    }
+
+    const publicIds = Array.from(new Set(
+      ownItems
+        .map((item) => item.publicKey ? String(item.publicKey) : null)
+        .filter(Boolean)
+    ));
+    const publicKeys = publicIds.length > 0 ? await this.api.getPublicKeysByIds(publicIds) : [];
+    const publicKeyById = new Map(
+      (Array.isArray(publicKeys) ? publicKeys : [])
+        .filter((key) => key?.id && key?.key)
+        .map((key) => [String(key.id), normalizeBase64(key.key)])
+    );
+
+    const restoredPublicKeys = new Set();
+    let restoredCurrent = false;
+    let progress = true;
+
+    while (progress) {
+      progress = false;
+
+      for (const pending of ownItems) {
+        const pendingPublic = pending.publicKey ? String(pending.publicKey) : null;
+        const encryptingPublicKey = pending.encryptingPublicKey ? String(pending.encryptingPublicKey) : null;
+
+        if (!pendingPublic || !encryptingPublicKey || restoredPublicKeys.has(pendingPublic)) {
+          continue;
+        }
+
+        const decryptorPrivateKey = knownPrivateKeys.get(encryptingPublicKey);
+        if (!decryptorPrivateKey) {
+          continue;
+        }
+
+        const encryptedPrivateB64 = normalizeBase64(pending.key);
+        const resolvedPublic = publicKeyById.get(pendingPublic);
+        if (!encryptedPrivateB64 || !resolvedPublic) {
+          continue;
+        }
+
+        let decryptedPrivateB64;
+        try {
+          decryptedPrivateB64 = await this.crypto.decryptWithPrivateKey(encryptedPrivateB64, decryptorPrivateKey);
+        } catch {
+          continue;
+        }
+
+        knownPrivateKeys.set(pendingPublic, decryptedPrivateB64);
+        restoredPublicKeys.add(pendingPublic);
+        await this.#setCurrent({
+          publicKeyId: pendingPublic,
+          publicKeyB64: resolvedPublic,
+          privateKeyB64: decryptedPrivateB64
+        });
+
+        progress = true;
+        if (!targetPublicKeyId || pendingPublic === targetPublicKeyId) {
+          restoredCurrent = true;
+        }
+      }
+    }
+
+    return restoredCurrent || (targetPublicKeyId && knownPrivateKeys.has(targetPublicKeyId));
   }
 
   #isSamePublicKey(localKey, serverKey) {
@@ -374,7 +773,8 @@ export class KeyManager {
     try {
       return decodeURIComponent(escape(atob(messageB64)));
     } catch {
-      return '[Сообщение зашифровано]';
+      return '[РЎРѕРѕР±С‰РµРЅРёРµ Р·Р°С€РёС„СЂРѕРІР°РЅРѕ]';
     }
   }
 }
+

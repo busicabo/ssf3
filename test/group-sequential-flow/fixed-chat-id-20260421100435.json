@@ -1,0 +1,183 @@
+{
+  "mode": "ideal-client-stores-chat-id",
+  "runId": "20260421100435",
+  "chatId": 149,
+  "users": [
+    {
+      "username": "seq_20260421100435_1",
+      "id": "8cd2c591-b283-41fa-a600-1786d4a7e32c",
+      "publicKeyId": "7ec76219-2fe6-4a1a-9fed-b670981c9d97"
+    },
+    {
+      "username": "seq_20260421100435_2",
+      "id": "f4b5df92-fd48-4458-84af-2d491550a5df",
+      "publicKeyId": "d157ae15-ff4b-4592-8a58-54dd8bee2bff"
+    },
+    {
+      "username": "seq_20260421100435_3",
+      "id": "b878e106-b203-4c48-a4fb-eb7e91bc0809",
+      "publicKeyId": "ee165e85-6f06-466c-ad5e-67331312c75d"
+    },
+    {
+      "username": "seq_20260421100435_4",
+      "id": "63a33630-98b0-406a-9a22-1775f8e0fd5a",
+      "publicKeyId": "ebd8656a-d74e-4ae9-ad21-d472118b3611"
+    },
+    {
+      "username": "seq_20260421100435_5",
+      "id": "28fa244e-3205-42e5-b858-5d34b1a62dd2",
+      "publicKeyId": "161dcb6b-c4db-45ca-846d-ed5a068c2fcf"
+    },
+    {
+      "username": "seq_20260421100435_6",
+      "id": "5a95a13e-c248-4553-b38d-151fc0ef9c9a",
+      "publicKeyId": "cf26c0f2-45f4-4729-87cf-9a93b9843b56"
+    }
+  ],
+  "events": [
+    {
+      "step": "owner first message",
+      "messageId": 170
+    },
+    {
+      "step": "seq_20260421100435_2 message",
+      "messageId": 171
+    },
+    {
+      "step": "seq_20260421100435_3 message",
+      "messageId": 172
+    },
+    {
+      "step": "seq_20260421100435_4 message",
+      "messageId": 173
+    },
+    {
+      "step": "seq_20260421100435_5 message",
+      "messageId": 174
+    },
+    {
+      "step": "seq_20260421100435_6 message",
+      "messageId": 175
+    }
+  ],
+  "historyChecks": [
+    {
+      "user": "seq_20260421100435_2",
+      "phase": "after add before own message",
+      "sharedEncryptNames": [
+        "6d6de08b-d9a1-4e94-95be-0548d9e124fc"
+      ],
+      "imported": [
+        "6d6de08b-d9a1-4e94-95be-0548d9e124fc"
+      ],
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100435_1",
+      "phase": "after seq_20260421100435_2 message",
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100435_3",
+      "phase": "after add before own message",
+      "sharedEncryptNames": [
+        "6d6de08b-d9a1-4e94-95be-0548d9e124fc"
+      ],
+      "imported": [
+        "6d6de08b-d9a1-4e94-95be-0548d9e124fc"
+      ],
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100435_1",
+      "phase": "after seq_20260421100435_3 message",
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100435_4",
+      "phase": "after add before own message",
+      "sharedEncryptNames": [
+        "6d6de08b-d9a1-4e94-95be-0548d9e124fc"
+      ],
+      "imported": [
+        "6d6de08b-d9a1-4e94-95be-0548d9e124fc"
+      ],
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100435_1",
+      "phase": "after seq_20260421100435_4 message",
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100435_5",
+      "phase": "after add before own message",
+      "sharedEncryptNames": [
+        "6d6de08b-d9a1-4e94-95be-0548d9e124fc"
+      ],
+      "imported": [
+        "6d6de08b-d9a1-4e94-95be-0548d9e124fc"
+      ],
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100435_1",
+      "phase": "after seq_20260421100435_5 message",
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100435_6",
+      "phase": "after add before own message",
+      "sharedEncryptNames": [
+        "6d6de08b-d9a1-4e94-95be-0548d9e124fc"
+      ],
+      "imported": [
+        "6d6de08b-d9a1-4e94-95be-0548d9e124fc"
+      ],
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100435_1",
+      "phase": "after seq_20260421100435_6 message",
+      "failed": []
+    }
+  ],
+  "finalChecks": [
+    {
+      "user": "seq_20260421100435_1",
+      "total": 6,
+      "decryptedCount": 6,
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100435_2",
+      "total": 6,
+      "decryptedCount": 6,
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100435_3",
+      "total": 6,
+      "decryptedCount": 6,
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100435_4",
+      "total": 6,
+      "decryptedCount": 6,
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100435_5",
+      "total": 6,
+      "decryptedCount": 6,
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100435_6",
+      "total": 6,
+      "decryptedCount": 6,
+      "failed": []
+    }
+  ]
+}

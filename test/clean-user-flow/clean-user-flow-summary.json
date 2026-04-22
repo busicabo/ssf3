@@ -1,0 +1,37 @@
+﻿{
+    "username":  "clean_20260421123800",
+    "password":  "Passw0rd!12345",
+    "newUserId":  "c1e73473-8308-45db-a651-9bedd7632a22",
+    "targetUserId":  "0e08feec-b6f2-4045-b6a1-aabf42b515e7",
+    "chatId":  "144",
+    "statuses":  {
+                     "register":  200,
+                     "getId":  200,
+                     "settings":  200,
+                     "ownKeyBefore":  404,
+                     "saveOwnPublicKey":  200,
+                     "ownKeyAfter":  200,
+                     "pendingPrivateKey":  204,
+                     "userIdLookup":  200,
+                     "searchUser":  200,
+                     "createPersonalChat":  200,
+                     "members":  200,
+                     "sendMessage":  200,
+                     "messagesAfterSend":  200
+                 },
+    "responseSamples":  {
+                            "register":  "Р РµРіРёСЃС‚СЂР°С†РёСЏ СѓСЃРїРµС€РЅР°",
+                            "getId":  "\"c1e73473-8308-45db-a651-9bedd7632a22\"",
+                            "settings":  "{\"id\":\"c1e73473-8308-45db-a651-9bedd7632a22\",\"username\":\"clean_20260421123800\",\"avatarUrl\":\"https://90995c79f2f34c065a0d26c1400cc671.bckt.ru/default-avatar/ChatGPT%20Image%2015%20РјР°СЂ.%202026%20Рі.%2C%2019_46_55.png\",\"createdAt\":\"2026-04-21T09:38:00.690334Z\",\"online\":true,\"allowWriting\":true,\"allowAddChat\":true,\"autoDeleteMessage\":null}",
+                            "ownKeyBefore":  null,
+                            "saveOwnPublicKey":  "Р С™Р В»РЎР‹РЎвЂЎ РЎС“РЎРѓР С—Р ВµРЎв‚¬Р Р…Р С• РЎРѓР С•Р В·Р Т‘Р В°Р Р….",
+                            "ownKeyAfter":  "{\"key\":\"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyY+DlJe2wktEkZ9jn/cdTcusBPRqHnLhjYOcMzFkBabY2GGzKuWBFM1/gLRH0dHROSYyuejvLmA+2Ef+GSIfQLhG9ogV4ai7vlMqkMf85yjn+iScIGBvFu3gB05VilOle28Yy+m9v6eeQ7R/EJwJ40njPD3hMJIRGJuWa7JgJgc5skWDNn/j+HFOBWGrSLkKcwpaDB/if74BTnK8YJGJ9iotej0btFTpk5ehAyG93d0NPsonitCkxjRzBVFSJljUVisdLfn5Mlq15xqqbWuIShYcQ3rLeZaWIezXIh7WY2pEhLlerLDE5nlJsr+9cj5N8xMuDOU06GyXMLnNlP59/QIDAQAB\",\"userId\":\"c1e73473-8308-45db-a651-9bedd7632a22\",\"createdAt\":\"2026-04-21T09:38:01.501635Z\",\"id\":\"788e1a7b-c4b9-4b00-bea4-1727dab694d5\"}",
+                            "pendingPrivateKey":  null,
+                            "userIdLookup":  "0e08feec-b6f2-4045-b6a1-aabf42b515e7",
+                            "searchUser":  "[{\"avatarUrl\":\"https://avatars.mds.yandex.net/i?id=7f18c7f70789c324859f7036c1ab0e49ea1a6e94-5505402-images-thumbs\u0026n=13\",\"chatType\":\"PERSONAL\",\"title\":\"user\"},{\"avatarUrl\":\"https://90995c79f2f34c065a0d26c1400cc671.bckt.ru/default-avatar/ChatGPT%20Image%2015%20РјР°СЂ.%202026%20Рі.%2C%2019_46_55.png\",\"chatType\":\"PERSONAL\",\"title\":\"user2\"},{\"avatarUrl\":\"https://90995c79f2f34c065a0d26c1400cc671.bckt.ru/default-avatar/ChatGPT%20Image%2015%20РјР°СЂ.%202026%20Рі.%2C%2019_46_55.png\",\"chatType\":\"PERSONAL\",\"title\":\"abcuser123\"},{\"avatarUrl\":\"https://90995c79f2f34c065a0d26c1400cc671.bckt.ru/default-avatar/ChatGPT%20Image%2015%20РјР°СЂ.%202026%20Рі.%2C%2019_46_55.png\",\"chatType\":\"PERSONAL\",\"title\":\"user3\"},{\"avatarUrl\":\"https://90995c79f2f34c065a0d26c1400cc671.bckt.ru/default-avatar/ChatGPT%20Image%2015%20РјР°СЂ.%202026%20Рі.%2C%2019_46_55.png\",\"chatType\":\"PERSONAL\",\"title\":\"user4\"},{\"avatarUrl\":\"htt...",
+                            "createPersonalChat":  "{\"avatarUrl\":\"https://avatars.mds.yandex.net/i?id=7f18c7f70789c324859f7036c1ab0e49ea1a6e94-5505402-images-thumbs\u0026n=13\",\"chatId\":144,\"chatType\":\"PERSONAL\",\"title\":\"user\"}",
+                            "members":  "[\"c1e73473-8308-45db-a651-9bedd7632a22\",\"0e08feec-b6f2-4045-b6a1-aabf42b515e7\"]",
+                            "sendMessage":  "{\"messageId\":157,\"chatId\":144,\"message\":\"aGVsbG8gdXNlciBmcm9tIGNsZWFuIHVzZXIgY2xlYW5fMjAyNjA0MjExMjM4MDA=\",\"encryptionName\":\"ff0a452f-bd5b-4411-af3f-83352b0b45ae\",\"senderId\":\"c1e73473-8308-45db-a651-9bedd7632a22\",\"createdAt\":\"2026-04-21T12:38:02.836242+03:00\"}",
+                            "messagesAfterSend":  "[{\"messageId\":157,\"chatId\":144,\"message\":\"aGVsbG8gdXNlciBmcm9tIGNsZWFuIHVzZXIgY2xlYW5fMjAyNjA0MjExMjM4MDA=\",\"encryptionName\":\"ff0a452f-bd5b-4411-af3f-83352b0b45ae\",\"senderId\":\"c1e73473-8308-45db-a651-9bedd7632a22\",\"createdAt\":\"2026-04-21T09:38:02.791222Z\"}]"
+                        }
+}

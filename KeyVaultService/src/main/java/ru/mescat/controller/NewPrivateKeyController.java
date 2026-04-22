@@ -31,6 +31,19 @@ public class NewPrivateKeyController {
         }
     }
 
+    @GetMapping("/{id}/all")
+    public ResponseEntity<?> findChainByUserId(@PathVariable UUID id){
+        try{
+            var entities = newPrivateKeyService.findAllByUserId(id);
+            if (entities == null || entities.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(entities);
+        } catch (Exception e){
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
+    }
+
     @PostMapping("/")
     public ResponseEntity<?> save(@RequestBody NewPrivateKeyDto newPrivateKeyDto){
         if (newPrivateKeyDto == null

@@ -7,6 +7,20 @@ CREATE TABLE IF NOT EXISTS public_keys (
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
+DELETE FROM public_keys old_key
+WHERE EXISTS (
+    SELECT 1
+    FROM public_keys newer_key
+    WHERE newer_key.user_id = old_key.user_id
+      AND (
+          newer_key.created_at > old_key.created_at
+          OR (newer_key.created_at = old_key.created_at AND newer_key.id > old_key.id)
+      )
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS public_keys_user_id_unique
+    ON public_keys (user_id);
+
 
 CREATE TABLE IF NOT EXISTS user_backup (
     backup_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -23,13 +37,3 @@ CREATE TABLE IF NOT EXISTS send_new_key(
     public_key UUID NOT NULL,
     encrypting_public_key UUID
 );
-
-ALTER TABLE send_new_key
-    ADD COLUMN IF NOT EXISTS encrypting_public_key UUID;
-
-UPDATE send_new_key
-SET encrypting_public_key = public_key
-WHERE encrypting_public_key IS NULL;
-
-ALTER TABLE send_new_key
-    ALTER COLUMN encrypting_public_key SET NOT NULL;

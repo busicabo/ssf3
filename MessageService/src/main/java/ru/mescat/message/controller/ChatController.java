@@ -7,6 +7,7 @@ import ru.mescat.message.exception.AccessDeniedException;
 import ru.mescat.message.exception.ChatNotFoundException;
 import ru.mescat.message.exception.NotFoundException;
 import ru.mescat.message.service.ChatQueryService;
+import ru.mescat.message.service.ChatSidebarService;
 import ru.mescat.message.service.ChatService;
 import ru.mescat.message.service.ChatUserService;
 import ru.mescat.message.service.MessageService;
@@ -24,6 +25,7 @@ public class ChatController {
     private final ChatUserService chatUserService;
     private final UserService userService;
     private final ChatQueryService chatQueryService;
+    private final ChatSidebarService chatSidebarService;
     private final MessageService messageService;
     private final UsersBlackListService usersBlackListService;
 
@@ -31,10 +33,12 @@ public class ChatController {
                           ChatUserService chatUserService,
                           UserService userService,
                           ChatQueryService chatQueryService,
+                          ChatSidebarService chatSidebarService,
                           MessageService messageService,
                           UsersBlackListService usersBlackListService) {
         this.usersBlackListService = usersBlackListService;
         this.messageService = messageService;
+        this.chatSidebarService = chatSidebarService;
         this.chatQueryService = chatQueryService;
         this.userService = userService;
         this.chatService = chatService;
@@ -52,6 +56,11 @@ public class ChatController {
         }
 
         return ResponseEntity.ok(chatDtos);
+    }
+
+    @GetMapping("/sidebar/chats")
+    public ResponseEntity<?> getSidebarChats(@RequestHeader("X-User-Id") UUID userId) {
+        return ResponseEntity.ok(chatSidebarService.getSidebarChats(userId));
     }
 
     @GetMapping("/chats/{chatId}/members")
@@ -73,6 +82,8 @@ public class ChatController {
 
         try {
             return ResponseEntity.ok(messageService.createPersonalChat(userId, dto.getUserId()));
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
         } catch (NotFoundException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         } catch (Exception e) {
@@ -126,6 +137,8 @@ public class ChatController {
         try{
             chatUserService.addNewUserInChat(dto);
             return ResponseEntity.ok().build();
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
         } catch (NotFoundException | ChatNotFoundException e){
             return ResponseEntity.status(404).body(e.getMessage());
         } catch (Exception e){
@@ -149,6 +162,21 @@ public class ChatController {
             return ResponseEntity.status(403).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping("/chats/{chatId}")
+    public ResponseEntity<?> deleteChat(@RequestHeader("X-User-Id") UUID userId,
+                                        @PathVariable Long chatId) {
+        try {
+            chatService.deleteChatById(chatId, userId);
+            return ResponseEntity.ok().build();
+        } catch (ChatNotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Не удалось удалить чат.");
         }
     }
 }

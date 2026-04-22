@@ -17,6 +17,15 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
     List<UserEntity> findByUsernameContainingIgnoreCase(String part);
 
+    @Query("""
+            select count(u) > 0
+            from UserEntity u
+            where lower(u.username) = lower(:username)
+              and u.id <> :userId
+            """)
+    boolean existsByUsernameIgnoreCaseAndIdNot(@Param("username") String username,
+                                               @Param("userId") UUID userId);
+
     @Modifying
     @Query("""
            update UserEntity u
@@ -43,6 +52,15 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
            """)
     int updateUsernameById(@Param("userId") UUID userId,
                            @Param("username") String username);
+
+    @Modifying
+    @Query("""
+           update UserEntity u
+           set u.avatarUrl = :avatarUrl
+           where u.id = :userId
+           """)
+    int updateAvatarUrlById(@Param("userId") UUID userId,
+                            @Param("avatarUrl") String avatarUrl);
 
     @Modifying
     @Query("""

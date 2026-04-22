@@ -1,0 +1,1 @@
+{"chatId":144,"encryptName":"ff0f7536-1b20-447b-a738-24f5ea4905d3","recipients":2}

@@ -8,85 +8,258 @@
   <link rel="stylesheet" href="/chat.css">
 </head>
 <body>
-<div class="page">
-  <header class="top">
-    <div class="title-block">
-      <h1>Mescat</h1>
-      <p>Клиент чата</p>
-    </div>
-    <div class="meta">
-      <div>user: <span id="userId">-</span></div>
-      <div>ws: <span id="wsState" class="bad">offline</span></div>
-      <div>keys: <span id="keyState" class="bad">не синхронизированы</span></div>
-    </div>
-    <div class="actions">
-      <button id="bootstrapKeysBtn" type="button">Ключи</button>
-      <button id="reloadBtn" type="button">Обновить</button>
-      <button id="logoutBtn" type="button" class="danger">Выйти</button>
-    </div>
-  </header>
+<div id="catPattern" class="cat-pattern" aria-hidden="true"></div>
 
-  <main class="layout">
-    <aside class="left">
-      <section class="panel">
-        <h2>Поиск пользователя</h2>
-        <div class="row">
-          <input id="searchInput" placeholder="username">
-          <button id="searchBtn" type="button">Поиск</button>
+<main class="app-shell">
+  <section class="messenger">
+    <aside class="sidebar-pane">
+      <header class="sidebar-toolbar">
+        <button id="settingsBtn" type="button" class="icon-button icon-button--ghost" aria-label="Настройки или назад">
+          <span id="settingsIcon">⚙</span>
+          <span id="settingsLabel" class="visually-hidden">настройки</span>
+        </button>
+
+        <label class="search-box" for="searchInput">
+          <input id="searchInput" type="text" placeholder="найти" autocomplete="off">
+        </label>
+
+        <button id="searchBtn" type="button" class="icon-button icon-button--ghost" aria-label="Найти">
+          <span>⌕</span>
+        </button>
+      </header>
+
+      <section class="sidebar-panel">
+        <div class="sidebar-panel__header">
+          <span class="sidebar-panel__line"></span>
+          <h2 id="sidebarTitle" class="visually-hidden">Ваши чаты</h2>
+          <p id="sidebarHint" class="visually-hidden">Личные диалоги и группы с последней активностью.</p>
         </div>
-        <div id="searchResult"></div>
+
+        <div id="searchResult" class="search-results" hidden></div>
+        <div id="chatList" class="dialog-list"></div>
       </section>
 
-      <section class="panel">
-        <h2>Новая группа</h2>
-        <div class="row">
-          <input id="groupTitleInput" placeholder="Название группы">
-          <button id="createGroupBtn" type="button">Создать</button>
-        </div>
-      </section>
-
-      <section class="panel">
-        <h2>Чаты</h2>
-        <div class="row">
-          <button id="refreshChatsBtn" type="button">Обновить чаты</button>
-          <button id="wsReconnectBtn" type="button">WS reconnect</button>
-        </div>
-        <div id="chatList" class="chat-list"></div>
-      </section>
+      <button id="createChatBtn" type="button" class="floating-create-btn" aria-label="Создать чат">+</button>
     </aside>
 
-    <section class="center">
-      <section class="panel">
-        <h2 id="chatTitle">Выберите чат</h2>
-        <div id="messageList" class="messages"></div>
-        <div class="composer">
-          <textarea id="messageInput" rows="4" placeholder="Введите сообщение"></textarea>
-          <button id="sendBtn" type="button">Отправить</button>
+    <section class="chat-pane">
+      <header id="chatHeader" class="chat-header" hidden>
+        <div class="chat-header__main">
+          <img id="activeChatAvatar" class="chat-header__avatar" alt="Аватар чата" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='28' fill='%23d7ebff'/%3E%3Cpath d='M20 36 34 18l10 20M76 36 62 18 52 38' fill='%2377aee9'/%3E%3Crect x='24' y='34' width='48' height='44' rx='22' fill='%23f7fbff' stroke='%236aa0d9' stroke-width='4'/%3E%3Ccircle cx='38' cy='52' r='4' fill='%2335577a'/%3E%3Ccircle cx='58' cy='52' r='4' fill='%2335577a'/%3E%3Cpath d='M42 63c4-3 8-3 12 0' stroke='%2335577a' stroke-width='4' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+          <div class="chat-header__text">
+            <h1 id="chatTitle" title="Чат еще не выбран">Выберите чат</h1>
+            <p id="chatSubtitle">Сообщения появятся здесь после выбора диалога.</p>
+            <div class="chat-header__presence">
+              <span id="chatPresenceDot" class="presence-dot"></span>
+              <span id="chatPresence"></span>
+            </div>
+          </div>
         </div>
+
+        <div class="chat-header__actions">
+          <button id="chatMenuBtn" type="button" class="icon-button icon-button--menu" aria-label="Действия чата" disabled>⋯</button>
+          <div id="chatMenu" class="menu chat-menu" hidden></div>
+        </div>
+      </header>
+
+      <section id="chatContent" class="chat-content">
+        <aside id="chatOptionsPanel" class="chat-options" hidden>
+          <div class="chat-options__header">
+            <div>
+              <h3 id="membersTitle">Участники чата</h3>
+              <p id="membersHint">Здесь можно управлять составом чата.</p>
+            </div>
+            <button id="chatOptionsCloseBtn" type="button" class="icon-button icon-button--ghost" aria-label="Закрыть панель">×</button>
+          </div>
+
+          <div id="membersList" class="member-list"></div>
+
+          <div class="chat-options__form">
+            <label for="memberInput">Username участника</label>
+            <input id="memberInput" type="text" placeholder="username">
+          </div>
+
+          <div class="chat-options__actions">
+            <button id="addMemberBtn" type="button" class="button button--primary">Добавить</button>
+            <button id="removeMemberBtn" type="button" class="button button--secondary">Удалить</button>
+            <button id="blockMemberBtn" type="button" class="button button--danger">Заблокировать</button>
+          </div>
+
+          <button id="servicePanelToggle" type="button" class="button button--ghost button--small">Открыть все действия и журнал</button>
+        </aside>
+
+        <section class="message-area">
+          <div id="emptyChatState" class="empty-chat-state">
+            <div class="empty-chat-state__card">
+              <h2>выберите чат</h2>
+              <p>Когда диалог будет выбран, здесь появятся сообщения и строка ввода.</p>
+            </div>
+          </div>
+
+          <div id="messageList" class="message-list"></div>
+          <button id="scrollBottomBtn" type="button" class="scroll-bottom-btn" aria-label="Перейти к последним сообщениям" hidden>↓</button>
+        </section>
       </section>
+
+      <footer id="composer" class="composer" hidden>
+        <p id="composerHint" class="composer__hint" hidden></p>
+        <div class="composer__row">
+          <textarea id="messageInput" rows="3" placeholder="Сначала выберите чат" disabled></textarea>
+          <button id="sendBtn" type="button" class="button button--primary" disabled>Отправить</button>
+        </div>
+      </footer>
+    </section>
+  </section>
+</main>
+
+<div id="createChatModal" class="create-chat-modal" hidden>
+  <div class="create-chat-card">
+    <div class="create-chat-card__header">
+      <div>
+        <p class="settings-panel__eyebrow">Новый чат</p>
+        <h3>Создать группу</h3>
+      </div>
+      <button id="createChatCloseBtn" type="button" class="icon-button icon-button--ghost" aria-label="Закрыть создание чата">×</button>
+    </div>
+    <div class="settings-field">
+      <label for="createChatTitleInput">Название группы</label>
+      <input id="createChatTitleInput" type="text" placeholder="Введите название группы">
+    </div>
+    <div class="create-chat-card__actions">
+      <button id="createChatContinueBtn" type="button" class="button button--primary">Продолжить</button>
+    </div>
+  </div>
+</div>
+
+<div id="settingsModal" class="settings-modal" hidden>
+  <div class="settings-panel">
+    <header class="settings-panel__header">
+      <div>
+        <p class="settings-panel__eyebrow">Настройки</p>
+        <h2 id="settingsTitle">Профиль</h2>
+        <p id="settingsCreatedAt" class="settings-panel__subtitle">Аккаунт создан: неизвестно</p>
+      </div>
+      <button id="settingsCloseBtn" type="button" class="icon-button icon-button--ghost" aria-label="Закрыть настройки">×</button>
+    </header>
+
+    <nav class="settings-tabs">
+      <button type="button" data-settings-tab="profile" class="settings-tab active">Профиль</button>
+      <button type="button" data-settings-tab="preferences" class="settings-tab">Ограничения</button>
+      <button type="button" data-settings-tab="security" class="settings-tab">Безопасность</button>
+      <button type="button" data-settings-tab="journal" class="settings-tab">Журнал</button>
+      <button type="button" data-settings-tab="actions" class="settings-tab">Действия</button>
+    </nav>
+
+    <div id="settingsMessage" class="settings-message info"></div>
+
+    <section class="settings-section" data-settings-section="profile">
+      <div class="settings-grid">
+        <div class="settings-field settings-field--avatar">
+          <img id="settingsAvatarPreview" class="settings-avatar" alt="Аватар" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='28' fill='%23d7ebff'/%3E%3Cpath d='M20 36 34 18l10 20M76 36 62 18 52 38' fill='%2377aee9'/%3E%3Crect x='24' y='34' width='48' height='44' rx='22' fill='%23f7fbff' stroke='%236aa0d9' stroke-width='4'/%3E%3Ccircle cx='38' cy='52' r='4' fill='%2335577a'/%3E%3Ccircle cx='58' cy='52' r='4' fill='%2335577a'/%3E%3Cpath d='M42 63c4-3 8-3 12 0' stroke='%2335577a' stroke-width='4' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+          <p>Аватарка пока задается ссылкой на изображение. Позже можно будет заменить это загрузкой файла.</p>
+        </div>
+        <div class="settings-field">
+          <label for="settingsUsername">Ник</label>
+          <input id="settingsUsername" type="text" placeholder="Ваш ник">
+        </div>
+        <div class="settings-field">
+          <label for="settingsAvatarUrl">Ссылка на аватарку</label>
+          <input id="settingsAvatarUrl" type="url" placeholder="https://...">
+        </div>
+      </div>
+      <div class="settings-actions">
+        <button id="saveProfileBtn" type="button" class="button button--primary">Сохранить профиль</button>
+      </div>
     </section>
 
-    <aside class="right">
-      <section class="panel">
-        <h2>Участники чата</h2>
-        <div id="membersList" class="members"></div>
-        <div class="row">
-          <input id="memberInput" placeholder="username">
-        </div>
-        <div class="row">
-          <button id="addMemberBtn" type="button">Добавить</button>
-          <button id="removeMemberBtn" type="button">Удалить</button>
-          <button id="blockMemberBtn" type="button" class="danger">Блок</button>
-        </div>
-      </section>
+    <section class="settings-section" data-settings-section="preferences" hidden>
+      <label class="toggle-card">
+        <input id="allowWritingCheckbox" type="checkbox">
+        <span>
+          <strong>Разрешить писать мне лично</strong>
+          <small>Если выключить, новые личные сообщения вам отправить не смогут.</small>
+        </span>
+      </label>
 
-      <section class="panel">
-        <h2>Системный статус</h2>
-        <div id="statusList" class="status"></div>
-      </section>
-    </aside>
-  </main>
+      <label class="toggle-card">
+        <input id="allowAddChatCheckbox" type="checkbox">
+        <span>
+          <strong>Разрешить добавлять меня в чаты</strong>
+          <small>Если выключить, вас нельзя будет добавить в новые диалоги и группы.</small>
+        </span>
+      </label>
+
+      <div class="settings-field">
+        <label for="autoDeleteMessageInput">Автоудаление сообщений до даты</label>
+        <input id="autoDeleteMessageInput" type="datetime-local">
+      </div>
+
+      <div class="settings-actions">
+        <button id="clearAutoDeleteBtn" type="button" class="button button--ghost">Очистить дату</button>
+        <button id="savePreferencesBtn" type="button" class="button button--primary">Сохранить ограничения</button>
+      </div>
+    </section>
+
+    <section class="settings-section" data-settings-section="security" hidden>
+      <div class="settings-grid settings-grid--security">
+        <div class="settings-field">
+          <label for="currentPassword">Текущий пароль</label>
+          <input id="currentPassword" type="password">
+        </div>
+        <div class="settings-field">
+          <label for="newPassword">Новый пароль</label>
+          <input id="newPassword" type="password">
+        </div>
+        <div class="settings-field">
+          <label for="confirmPassword">Подтверждение</label>
+          <input id="confirmPassword" type="password">
+        </div>
+      </div>
+
+      <div class="settings-actions">
+        <button id="changePasswordBtn" type="button" class="button button--primary">Сменить пароль</button>
+        <button id="rotateKeysBtn" type="button" class="button button--secondary">Сменить ключи пользователя</button>
+        <button id="rotateSessionKeysBtn" type="button" class="button button--secondary">Создать новые ключи пользователя для текущей сессии</button>
+        <button id="logoutAllBtn" type="button" class="button button--danger">Завершить все сессии</button>
+      </div>
+
+      <div class="diagnostics-card">
+        <h3>Состояние ключей</h3>
+        <pre id="keyDiagnostics"></pre>
+      </div>
+    </section>
+
+    <section class="settings-section" data-settings-section="journal" hidden>
+      <div class="meta-strip">
+        <div class="meta-pill">
+          <span class="meta-pill__label">user id</span>
+          <span id="userId" class="meta-pill__value">-</span>
+        </div>
+        <div class="meta-pill">
+          <span class="meta-pill__label">websocket</span>
+          <span id="wsState" class="meta-pill__value is-bad">offline</span>
+        </div>
+        <div class="meta-pill">
+          <span class="meta-pill__label">ключи</span>
+          <span id="keyState" class="meta-pill__value is-bad">не синхронизированы</span>
+        </div>
+      </div>
+      <div id="statusList" class="status-list"></div>
+    </section>
+
+    <section class="settings-section" data-settings-section="actions" hidden>
+      <div class="settings-actions">
+        <button id="bootstrapKeysBtn" type="button" class="button button--secondary">Синхронизировать ключи</button>
+        <button id="wsReconnectBtn" type="button" class="button button--ghost">Переподключить websocket</button>
+        <button id="reloadBtn" type="button" class="button button--ghost">Обновить страницу</button>
+        <button id="logoutBtn" type="button" class="button button--danger">Выйти</button>
+      </div>
+    </section>
+  </div>
 </div>
+
+<div id="messageMenu" class="menu message-menu" hidden></div>
+
 <script type="module" src="/js/chat/app.js"></script>
 </body>
 </html>

@@ -1,12 +1,48 @@
-import { API } from './constants.js';
+﻿import { API } from './constants.js';
 
 export class ApiClient {
   async getCurrentUserId() {
     return this.get(API.me);
   }
 
+  async getSettings() {
+    return this.get(API.settings);
+  }
+
+  async updateProfileUsername(username) {
+    return this.patchJson(API.settingsUsername, { username });
+  }
+
+  async updateProfileAvatarUrl(avatarUrl) {
+    return this.patchJson(API.settingsAvatarUrl, { avatarUrl });
+  }
+
+  async updateAllowWriting(value) {
+    return this.patchJson(API.settingsAllowWriting, { value: Boolean(value) });
+  }
+
+  async updateAllowAddChat(value) {
+    return this.patchJson(API.settingsAllowAddChat, { value: Boolean(value) });
+  }
+
+  async updateAutoDeleteMessage(value) {
+    return this.patchJson(API.settingsAutoDeleteMessage, { value });
+  }
+
+  async changePassword(dto) {
+    return this.postJson(API.settingsChangePassword, dto);
+  }
+
+  async logoutAllSessions() {
+    return this.postJson(API.settingsLogoutAll, {});
+  }
+
   async getChats() {
     return this.get(API.chats);
+  }
+
+  async getSidebarChats() {
+    return this.get(API.sidebarChats);
   }
 
   async getMessages(chatId, limit) {
@@ -33,6 +69,10 @@ export class ApiClient {
     return this.postJson(API.createGroupChat, { title, avatarUrl });
   }
 
+  async deleteChat(chatId) {
+    return this.delete(API.deleteChat(chatId));
+  }
+
   async addUserInChat(chatId, userTarget) {
     return this.postJson(API.addUserToChat, { chatId, userTarget });
   }
@@ -47,6 +87,10 @@ export class ApiClient {
 
   async sendMessage(dto) {
     return this.postJson(API.sendMessage, dto);
+  }
+
+  async deleteMessage(dto) {
+    return this.postJson(API.deleteMessage, dto);
   }
 
   async getOwnPublicKey() {
@@ -67,6 +111,10 @@ export class ApiClient {
 
   async getNewPrivateKey() {
     return this.get(API.getNewPrivateKey);
+  }
+
+  async getNewPrivateKeyChain() {
+    return this.get(API.getNewPrivateKeyChain);
   }
 
   async saveNewPrivateKey(dto) {
@@ -111,6 +159,18 @@ export class ApiClient {
       headers: { 'Content-Type': 'text/plain' },
       body: String(text ?? '')
     });
+  }
+
+  async patchJson(path, body) {
+    return this.#request(path, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+  }
+
+  async delete(path) {
+    return this.#request(path, { method: 'DELETE' });
   }
 
   async #request(path, init) {

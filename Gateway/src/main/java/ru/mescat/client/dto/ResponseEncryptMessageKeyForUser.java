@@ -12,6 +12,7 @@ import java.util.UUID;
 @ToString
 public class ResponseEncryptMessageKeyForUser {
     private UUID userTarget;
+    private Long chatId;
     private byte[] key;
     private String encryptName;
     private UUID publicKeyUser;

@@ -60,11 +60,11 @@ public class UserChatDtoMap {
         List<ChatUserEntity> chatUsers = chatUserService.findAllByUserId(userId);
         if (chatUsers == null) {
             return null;
-        } else if (chatUsers.isEmpty()) {
-            return List.of();
         }
 
-        List<ChatUserDto> userAndChats = chatUserService.findAllChatUsersByChatIds(
+        List<ChatUserDto> userAndChats = chatUsers.isEmpty()
+                ? List.of()
+                : chatUserService.findAllChatUsersByChatIds(
                 chatUsers.stream().map(u -> u.getChat().getChatId()).toList(), userId
         );
 

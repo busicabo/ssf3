@@ -79,12 +79,31 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/username")
-    public ResponseEntity<Void> updateUsername(@PathVariable UUID id,
-                                               @RequestParam String username) {
-        boolean updated = userService.updateUsername(id, username);
-        return updated
-                ? ResponseEntity.ok().build()
-                : ResponseEntity.notFound().build();
+    public ResponseEntity<?> updateUsername(@PathVariable UUID id,
+                                            @RequestParam String username) {
+        try {
+            boolean updated = userService.updateUsername(id, username);
+            return updated
+                    ? ResponseEntity.ok().build()
+                    : ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{id}/avatar-url")
+    public ResponseEntity<?> updateAvatarUrl(@PathVariable UUID id,
+                                             @RequestBody String avatarUrl) {
+        try {
+            boolean updated = userService.updateAvatarUrl(id, avatarUrl);
+            return updated
+                    ? ResponseEntity.ok().build()
+                    : ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/getAllById")

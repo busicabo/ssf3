@@ -22,7 +22,9 @@ public class EncryptMessageKeyController {
     @PostMapping("/delete")
     public ResponseEntity<?> deleteMessageKey(@RequestBody KeyDelete keyDelete,
                                               Authentication authentication) {
-        return proxy.post("/api/encrypt_message_key/delete", userId(authentication), keyDelete);
+        UUID userId = userId(authentication);
+        keyDelete.setUserTargetId(userId);
+        return proxy.post("/api/encrypt_message_key/delete", userId, keyDelete);
     }
 
     @PostMapping("/send")

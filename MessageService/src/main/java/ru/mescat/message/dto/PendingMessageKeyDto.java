@@ -16,6 +16,7 @@ import java.util.UUID;
 @ToString
 public class PendingMessageKeyDto {
     private UUID id;
+    private Long chatId;
     private UUID userId;
     private UUID userTargetId;
     private byte[] key;
@@ -23,4 +24,3 @@ public class PendingMessageKeyDto {
     private String encryptName;
     private OffsetDateTime sendAt;
 }
-

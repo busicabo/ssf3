@@ -96,6 +96,7 @@ public class EncryptKeyController {
             PublicKey key = keyVaultService.getKeyByUserId(userId.toString());
 
             if (key == null) {
+                System.out.println("Не нашло!");
                 return ResponseEntity.notFound().build();
             }
 
@@ -126,6 +127,23 @@ public class EncryptKeyController {
     }
 
     //РЎРѕС…СЂР°РЅРµРЅРёРµ РЅРѕРІРѕРіРѕ РїСЂРёРІР°С‚РЅРѕРіРѕ РєР»СЋС‡Р°
+    @GetMapping("/new_private_key/all")
+    public ResponseEntity<?> getNewPrivateKeyChain(@RequestHeader("X-User-Id") UUID userId) {
+        try {
+            List<NewPrivateKeyEntity> result = newPrivateKeyService.findChainByUserId(userId);
+            if (result == null || result.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+
+            return ResponseEntity.ok(result);
+        } catch (RemoteServiceException e) {
+            if (e.getStatus() == 404) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.status(e.getStatus()).body(e.getResponseBody());
+        }
+    }
+
     @PostMapping("/new_private_key")
     public ResponseEntity<?> saveNewPrivateKeyEntities(@RequestHeader("X-User-Id") UUID userId,
                                                        @RequestBody NewPrivateKeyDto newPrivateKeyDto) {

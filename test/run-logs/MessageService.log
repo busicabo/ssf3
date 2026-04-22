@@ -1,0 +1,1121 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.3)
+
+2026-04-21T22:36:55.167+03:00  INFO 12168 --- [mescat] [           main] ru.mescat.MessageApplication             : Starting MessageApplication using Java 21.0.7 with PID 12168 (C:\Users\ivano\OneDrive\Рабочий стол\project\MessageService\target\classes started by ivano in C:\Users\ivano\OneDrive\Рабочий стол\project\MessageService)
+2026-04-21T22:36:55.173+03:00  INFO 12168 --- [mescat] [           main] ru.mescat.MessageApplication             : No active profile set, falling back to 1 default profile: "default"
+2026-04-21T22:36:56.584+03:00  INFO 12168 --- [mescat] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-21T22:36:56.587+03:00  INFO 12168 --- [mescat] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-21T22:36:57.038+03:00  INFO 12168 --- [mescat] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 436 ms. Found 5 JPA repository interfaces.
+2026-04-21T22:36:57.109+03:00  INFO 12168 --- [mescat] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-21T22:36:57.111+03:00  INFO 12168 --- [mescat] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-04-21T22:36:57.144+03:00  INFO 12168 --- [mescat] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.mescat.message.repository.ChatRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-04-21T22:36:57.146+03:00  INFO 12168 --- [mescat] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.mescat.message.repository.ChatUserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-04-21T22:36:57.146+03:00  INFO 12168 --- [mescat] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.mescat.message.repository.MessageRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-04-21T22:36:57.147+03:00  INFO 12168 --- [mescat] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.mescat.message.repository.SendMessageKeyRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-04-21T22:36:57.147+03:00  INFO 12168 --- [mescat] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface ru.mescat.message.repository.UsersBlackListRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-04-21T22:36:57.147+03:00  INFO 12168 --- [mescat] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 20 ms. Found 0 Redis repository interfaces.
+2026-04-21T22:36:58.016+03:00  INFO 12168 --- [mescat] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8082 (http)
+2026-04-21T22:36:58.039+03:00  INFO 12168 --- [mescat] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-21T22:36:58.039+03:00  INFO 12168 --- [mescat] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.18]
+2026-04-21T22:36:58.156+03:00  INFO 12168 --- [mescat] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 2900 ms
+2026-04-21T22:36:58.304+03:00  INFO 12168 --- [mescat] [           main] com.zaxxer.hikari.HikariDataSource       : app-pool - Starting...
+2026-04-21T22:36:58.559+03:00  INFO 12168 --- [mescat] [           main] com.zaxxer.hikari.pool.HikariPool        : app-pool - Added connection org.postgresql.jdbc.PgConnection@1a88c4f5
+2026-04-21T22:36:58.562+03:00  INFO 12168 --- [mescat] [           main] com.zaxxer.hikari.HikariDataSource       : app-pool - Start completed.
+2026-04-21T22:36:58.741+03:00  INFO 12168 --- [mescat] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-04-21T22:36:58.828+03:00  INFO 12168 --- [mescat] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.4.Final
+2026-04-21T22:36:59.620+03:00  INFO 12168 --- [mescat] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-21T22:36:59.730+03:00  WARN 12168 --- [mescat] [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-21T22:36:59.763+03:00  INFO 12168 --- [mescat] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5435/postgres]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.13
+	Default catalog/schema: postgres/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-04-21T22:37:01.646+03:00  INFO 12168 --- [mescat] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-21T22:37:01.656+03:00  INFO 12168 --- [mescat] [           main] org.hibernate.orm.jdbc.batch             : HHH100501: Automatic JDBC statement batching enabled (maximum batch size 50)
+2026-04-21T22:37:01.772+03:00  INFO 12168 --- [mescat] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-21T22:37:02.165+03:00  INFO 12168 --- [mescat] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-21T22:37:05.376+03:00  INFO 12168 --- [mescat] [           main] o.a.kafka.common.config.AbstractConfig   : AdminClientConfig values: 
+	bootstrap.controllers = []
+	bootstrap.servers = [localhost:9092]
+	client.dns.lookup = use_all_dns_ips
+	client.id = mescat-admin-0
+	connections.max.idle.ms = 300000
+	default.api.timeout.ms = 60000
+	enable.metrics.push = false
+	metadata.max.age.ms = 300000
+	metadata.recovery.rebootstrap.trigger.ms = 300000
+	metadata.recovery.strategy = rebootstrap
+	metric.reporters = [org.apache.kafka.common.metrics.JmxReporter]
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.assertion.algorithm = RS256
+	sasl.oauthbearer.assertion.claim.aud = null
+	sasl.oauthbearer.assertion.claim.exp.seconds = 300
+	sasl.oauthbearer.assertion.claim.iss = null
+	sasl.oauthbearer.assertion.claim.jti.include = false
+	sasl.oauthbearer.assertion.claim.nbf.seconds = 60
+	sasl.oauthbearer.assertion.claim.sub = null
+	sasl.oauthbearer.assertion.file = null
+	sasl.oauthbearer.assertion.private.key.file = null
+	sasl.oauthbearer.assertion.private.key.passphrase = null
+	sasl.oauthbearer.assertion.template.file = null
+	sasl.oauthbearer.client.credentials.client.id = null
+	sasl.oauthbearer.client.credentials.client.secret = null
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.jwt.retriever.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtRetriever
+	sasl.oauthbearer.jwt.validator.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtValidator
+	sasl.oauthbearer.scope = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+
+2026-04-21T22:37:05.558+03:00  INFO 12168 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 4.1.1
+2026-04-21T22:37:05.558+03:00  INFO 12168 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: be816b82d25370ce
+2026-04-21T22:37:05.559+03:00  INFO 12168 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1776800225556
+2026-04-21T22:37:06.189+03:00  INFO 12168 --- [mescat] [           main] o.apache.kafka.common.metrics.Metrics    : Metrics scheduler closed
+2026-04-21T22:37:06.190+03:00  INFO 12168 --- [mescat] [           main] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2026-04-21T22:37:06.190+03:00  INFO 12168 --- [mescat] [           main] o.apache.kafka.common.metrics.Metrics    : Metrics reporters closed
+2026-04-21T22:37:06.191+03:00  INFO 12168 --- [mescat] [ mescat-admin-0] o.a.kafka.common.utils.AppInfoParser     : App info kafka.admin.client for mescat-admin-0 unregistered
+2026-04-21T22:37:06.196+03:00  INFO 12168 --- [mescat] [ mescat-admin-0] o.apache.kafka.common.metrics.Metrics    : Metrics scheduler closed
+2026-04-21T22:37:06.197+03:00  INFO 12168 --- [mescat] [ mescat-admin-0] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2026-04-21T22:37:06.197+03:00  INFO 12168 --- [mescat] [ mescat-admin-0] o.apache.kafka.common.metrics.Metrics    : Metrics reporters closed
+2026-04-21T22:37:06.219+03:00  INFO 12168 --- [mescat] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8082 (http) with context path '/'
+2026-04-21T22:37:06.261+03:00  INFO 12168 --- [mescat] [           main] o.a.kafka.common.config.AbstractConfig   : ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-encrypt-keys-service-1
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = encrypt-keys-service
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 10000
+	metadata.max.age.ms = 300000
+	metadata.recovery.rebootstrap.trigger.ms = 300000
+	metadata.recovery.strategy = rebootstrap
+	metric.reporters = [org.apache.kafka.common.metrics.JmxReporter]
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.assertion.algorithm = RS256
+	sasl.oauthbearer.assertion.claim.aud = null
+	sasl.oauthbearer.assertion.claim.exp.seconds = 300
+	sasl.oauthbearer.assertion.claim.iss = null
+	sasl.oauthbearer.assertion.claim.jti.include = false
+	sasl.oauthbearer.assertion.claim.nbf.seconds = 60
+	sasl.oauthbearer.assertion.claim.sub = null
+	sasl.oauthbearer.assertion.file = null
+	sasl.oauthbearer.assertion.private.key.file = null
+	sasl.oauthbearer.assertion.private.key.passphrase = null
+	sasl.oauthbearer.assertion.template.file = null
+	sasl.oauthbearer.client.credentials.client.id = null
+	sasl.oauthbearer.client.credentials.client.secret = null
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.jwt.retriever.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtRetriever
+	sasl.oauthbearer.jwt.validator.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtValidator
+	sasl.oauthbearer.scope = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	share.acknowledgement.mode = implicit
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.JsonDeserializer
+
+2026-04-21T22:37:06.314+03:00  INFO 12168 --- [mescat] [           main] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-04-21T22:37:06.485+03:00  INFO 12168 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 4.1.1
+2026-04-21T22:37:06.486+03:00  INFO 12168 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: be816b82d25370ce
+2026-04-21T22:37:06.486+03:00  INFO 12168 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1776800226485
+2026-04-21T22:37:06.488+03:00  INFO 12168 --- [mescat] [           main] o.a.k.c.c.i.ClassicKafkaConsumer         : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Subscribed to topic(s): delete-encrypt-keys
+2026-04-21T22:37:06.500+03:00  INFO 12168 --- [mescat] [           main] o.a.kafka.common.config.AbstractConfig   : ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-user-online-message-service-2
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = user-online-message-service
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metadata.recovery.rebootstrap.trigger.ms = 300000
+	metadata.recovery.strategy = rebootstrap
+	metric.reporters = [org.apache.kafka.common.metrics.JmxReporter]
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.assertion.algorithm = RS256
+	sasl.oauthbearer.assertion.claim.aud = null
+	sasl.oauthbearer.assertion.claim.exp.seconds = 300
+	sasl.oauthbearer.assertion.claim.iss = null
+	sasl.oauthbearer.assertion.claim.jti.include = false
+	sasl.oauthbearer.assertion.claim.nbf.seconds = 60
+	sasl.oauthbearer.assertion.claim.sub = null
+	sasl.oauthbearer.assertion.file = null
+	sasl.oauthbearer.assertion.private.key.file = null
+	sasl.oauthbearer.assertion.private.key.passphrase = null
+	sasl.oauthbearer.assertion.template.file = null
+	sasl.oauthbearer.client.credentials.client.id = null
+	sasl.oauthbearer.client.credentials.client.secret = null
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.jwt.retriever.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtRetriever
+	sasl.oauthbearer.jwt.validator.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtValidator
+	sasl.oauthbearer.scope = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	share.acknowledgement.mode = implicit
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.JsonDeserializer
+
+2026-04-21T22:37:06.500+03:00  INFO 12168 --- [mescat] [           main] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-04-21T22:37:06.513+03:00  INFO 12168 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 4.1.1
+2026-04-21T22:37:06.514+03:00  INFO 12168 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: be816b82d25370ce
+2026-04-21T22:37:06.514+03:00  INFO 12168 --- [mescat] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1776800226513
+2026-04-21T22:37:06.514+03:00  INFO 12168 --- [mescat] [           main] o.a.k.c.c.i.ClassicKafkaConsumer         : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Subscribed to topic(s): user-online
+2026-04-21T22:37:06.528+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Cluster ID: MkU3OEVBNTcwNTJENDM2Qk
+2026-04-21T22:37:06.528+03:00  INFO 12168 --- [mescat] [           main] ru.mescat.MessageApplication             : Started MessageApplication in 12.682 seconds (process running for 13.248)
+2026-04-21T22:37:06.528+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Cluster ID: MkU3OEVBNTcwNTJENDM2Qk
+2026-04-21T22:37:06.545+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Discovered group coordinator localhost:9092 (id: 2147483646 rack: null isFenced: false)
+2026-04-21T22:37:06.545+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Discovered group coordinator localhost:9092 (id: 2147483646 rack: null isFenced: false)
+2026-04-21T22:37:06.549+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] (Re-)joining group
+2026-04-21T22:37:06.549+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] (Re-)joining group
+2026-04-21T22:37:06.579+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Request joining group due to: need to re-join with the given member-id: consumer-encrypt-keys-service-1-a5611eb0-8552-44de-9203-83eefcab3917
+2026-04-21T22:37:06.579+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Request joining group due to: need to re-join with the given member-id: consumer-user-online-message-service-2-7f36e9a4-9ea3-4414-b1b1-dcf3c4b2a3a1
+2026-04-21T22:37:06.580+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] (Re-)joining group
+2026-04-21T22:37:06.580+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] (Re-)joining group
+2026-04-21T22:37:22.105+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Successfully joined group with generation Generation{generationId=44, memberId='consumer-user-online-message-service-2-7f36e9a4-9ea3-4414-b1b1-dcf3c4b2a3a1', protocol='range'}
+2026-04-21T22:37:22.137+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Finished assignment for group at generation 44: {consumer-user-online-message-service-2-7f36e9a4-9ea3-4414-b1b1-dcf3c4b2a3a1=Assignment(partitions=[user-online-0, user-online-1, user-online-2])}
+2026-04-21T22:37:22.181+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Successfully synced group in generation Generation{generationId=44, memberId='consumer-user-online-message-service-2-7f36e9a4-9ea3-4414-b1b1-dcf3c4b2a3a1', protocol='range'}
+2026-04-21T22:37:22.183+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Notifying assignor about the new Assignment(partitions=[user-online-0, user-online-1, user-online-2])
+2026-04-21T22:37:22.189+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] k.c.c.i.ConsumerRebalanceListenerInvoker : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Adding newly assigned partitions: [user-online-0, user-online-1, user-online-2]
+2026-04-21T22:37:22.240+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition user-online-2 to the committed offset FetchPosition{offset=141, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null isFenced: false)], epoch=16}}
+2026-04-21T22:37:22.260+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition user-online-1 to the committed offset FetchPosition{offset=180, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null isFenced: false)], epoch=16}}
+2026-04-21T22:37:22.260+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition user-online-0 to the committed offset FetchPosition{offset=314, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null isFenced: false)], epoch=16}}
+2026-04-21T22:37:22.383+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : user-online-message-service: partitions assigned: [user-online-0, user-online-1, user-online-2]
+2026-04-21T22:37:22.942+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Successfully joined group with generation Generation{generationId=44, memberId='consumer-encrypt-keys-service-1-a5611eb0-8552-44de-9203-83eefcab3917', protocol='range'}
+2026-04-21T22:37:22.943+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Finished assignment for group at generation 44: {consumer-encrypt-keys-service-1-a5611eb0-8552-44de-9203-83eefcab3917=Assignment(partitions=[delete-encrypt-keys-0, delete-encrypt-keys-1, delete-encrypt-keys-2])}
+2026-04-21T22:37:22.952+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Successfully synced group in generation Generation{generationId=44, memberId='consumer-encrypt-keys-service-1-a5611eb0-8552-44de-9203-83eefcab3917', protocol='range'}
+2026-04-21T22:37:22.953+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Notifying assignor about the new Assignment(partitions=[delete-encrypt-keys-0, delete-encrypt-keys-1, delete-encrypt-keys-2])
+2026-04-21T22:37:22.953+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] k.c.c.i.ConsumerRebalanceListenerInvoker : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Adding newly assigned partitions: [delete-encrypt-keys-0, delete-encrypt-keys-1, delete-encrypt-keys-2]
+2026-04-21T22:37:22.956+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition delete-encrypt-keys-2 to the committed offset FetchPosition{offset=490, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null isFenced: false)], epoch=16}}
+2026-04-21T22:37:22.957+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition delete-encrypt-keys-0 to the committed offset FetchPosition{offset=68, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null isFenced: false)], epoch=16}}
+2026-04-21T22:37:22.957+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerUtils        : Setting offset for partition delete-encrypt-keys-1 to the committed offset FetchPosition{offset=16, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null isFenced: false)], epoch=16}}
+2026-04-21T22:37:22.957+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : encrypt-keys-service: partitions assigned: [delete-encrypt-keys-0, delete-encrypt-keys-1, delete-encrypt-keys-2]
+2026-04-21T22:37:35.100+03:00  INFO 12168 --- [mescat] [nio-8082-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-21T22:37:35.100+03:00  INFO 12168 --- [mescat] [nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-04-21T22:37:35.103+03:00  INFO 12168 --- [mescat] [nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2026-04-21T22:37:50.571+03:00  INFO 12168 --- [mescat] [nio-8082-exec-3] r.mescat.message.service.CreateKeyVault  : Запрос на сохранение публичного ключа: userId=bb594973-7d0b-4676-9748-fa365c6f53c6
+2026-04-21T22:37:50.988+03:00  INFO 12168 --- [mescat] [nio-8082-exec-3] r.mescat.message.service.CreateKeyVault  : Публичный ключ сохранен: keyId=3075c727-a30d-49c5-9e98-d62666c02600, userId=bb594973-7d0b-4676-9748-fa365c6f53c6
+2026-04-21T22:41:59.500+03:00  INFO 12168 --- [mescat] [nio-8082-exec-5] r.mescat.message.service.CreateKeyVault  : Запрос на сохранение публичного ключа: userId=26a92412-ce2f-4695-8d7b-563dfab806c4
+2026-04-21T22:41:59.522+03:00  INFO 12168 --- [mescat] [nio-8082-exec-5] r.mescat.message.service.CreateKeyVault  : Публичный ключ сохранен: keyId=152f3ef8-92ea-4306-983f-72e12cafc57a, userId=26a92412-ce2f-4695-8d7b-563dfab806c4
+2026-04-21T22:42:00.739+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.kafka.common.config.AbstractConfig   : ProducerConfig values: 
+	acks = -1
+	batch.size = 16384
+	bootstrap.servers = [localhost:9092]
+	buffer.memory = 33554432
+	client.dns.lookup = use_all_dns_ips
+	client.id = mescat-producer-1
+	compression.gzip.level = -1
+	compression.lz4.level = 9
+	compression.type = none
+	compression.zstd.level = 3
+	connections.max.idle.ms = 540000
+	delivery.timeout.ms = 120000
+	enable.idempotence = true
+	enable.metrics.push = true
+	interceptor.classes = []
+	key.serializer = class org.apache.kafka.common.serialization.StringSerializer
+	linger.ms = 5
+	max.block.ms = 60000
+	max.in.flight.requests.per.connection = 5
+	max.request.size = 1048576
+	metadata.max.age.ms = 300000
+	metadata.max.idle.ms = 300000
+	metadata.recovery.rebootstrap.trigger.ms = 300000
+	metadata.recovery.strategy = rebootstrap
+	metric.reporters = [org.apache.kafka.common.metrics.JmxReporter]
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partitioner.adaptive.partitioning.enable = true
+	partitioner.availability.timeout.ms = 0
+	partitioner.class = null
+	partitioner.ignore.keys = false
+	receive.buffer.bytes = 32768
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 3
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.assertion.algorithm = RS256
+	sasl.oauthbearer.assertion.claim.aud = null
+	sasl.oauthbearer.assertion.claim.exp.seconds = 300
+	sasl.oauthbearer.assertion.claim.iss = null
+	sasl.oauthbearer.assertion.claim.jti.include = false
+	sasl.oauthbearer.assertion.claim.nbf.seconds = 60
+	sasl.oauthbearer.assertion.claim.sub = null
+	sasl.oauthbearer.assertion.file = null
+	sasl.oauthbearer.assertion.private.key.file = null
+	sasl.oauthbearer.assertion.private.key.passphrase = null
+	sasl.oauthbearer.assertion.template.file = null
+	sasl.oauthbearer.client.credentials.client.id = null
+	sasl.oauthbearer.client.credentials.client.secret = null
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.jwt.retriever.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtRetriever
+	sasl.oauthbearer.jwt.validator.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtValidator
+	sasl.oauthbearer.scope = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	transaction.timeout.ms = 60000
+	transaction.two.phase.commit.enable = false
+	transactional.id = null
+	value.serializer = class org.springframework.kafka.support.serializer.JsonSerializer
+
+2026-04-21T22:42:00.741+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-04-21T22:42:00.764+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=mescat-producer-1] Instantiated an idempotent producer.
+2026-04-21T22:42:00.783+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 4.1.1
+2026-04-21T22:42:00.783+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: be816b82d25370ce
+2026-04-21T22:42:00.783+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1776800520783
+2026-04-21T22:42:00.793+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Cluster ID: MkU3OEVBNTcwNTJENDM2Qk
+2026-04-21T22:42:00.794+03:00  INFO 12168 --- [mescat] [scat-producer-1] o.a.k.c.p.internals.TransactionManager   : [Producer clientId=mescat-producer-1] ProducerId set to 8005 with epoch 0
+2026-04-21T22:42:00.847+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] r.m.m.service.UserOnlineSyncService      : Отправлен user-sync пакет: userId=26a92412-ce2f-4695-8d7b-563dfab806c4, chats=5, messages=27, pendingKeys=1
+2026-04-21T22:42:24.573+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] r.m.m.service.UserOnlineSyncService      : Отправлен user-sync пакет: userId=0e08feec-b6f2-4045-b6a1-aabf42b515e7, chats=10, messages=35, pendingKeys=3
+2026-04-21T22:42:39.090+03:00  INFO 12168 --- [mescat] [nio-8082-exec-6] ru.mescat.message.service.ChatService    : Запрос на удаление чата: chatId=139, userId=0e08feec-b6f2-4045-b6a1-aabf42b515e7
+2026-04-21T22:42:39.132+03:00  INFO 12168 --- [mescat] [nio-8082-exec-6] ru.mescat.message.service.ChatService    : Чат удален: chatId=139, deletedBy=0e08feec-b6f2-4045-b6a1-aabf42b515e7
+2026-04-21T22:42:39.187+03:00  INFO 12168 --- [mescat] [nio-8082-exec-6] o.a.kafka.common.config.AbstractConfig   : ProducerConfig values: 
+	acks = -1
+	batch.size = 16384
+	bootstrap.servers = [localhost:9092]
+	buffer.memory = 33554432
+	client.dns.lookup = use_all_dns_ips
+	client.id = mescat-producer-1
+	compression.gzip.level = -1
+	compression.lz4.level = 9
+	compression.type = none
+	compression.zstd.level = 3
+	connections.max.idle.ms = 540000
+	delivery.timeout.ms = 120000
+	enable.idempotence = true
+	enable.metrics.push = true
+	interceptor.classes = []
+	key.serializer = class org.apache.kafka.common.serialization.StringSerializer
+	linger.ms = 5
+	max.block.ms = 60000
+	max.in.flight.requests.per.connection = 5
+	max.request.size = 1048576
+	metadata.max.age.ms = 300000
+	metadata.max.idle.ms = 300000
+	metadata.recovery.rebootstrap.trigger.ms = 300000
+	metadata.recovery.strategy = rebootstrap
+	metric.reporters = [org.apache.kafka.common.metrics.JmxReporter]
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partitioner.adaptive.partitioning.enable = true
+	partitioner.availability.timeout.ms = 0
+	partitioner.class = null
+	partitioner.ignore.keys = false
+	receive.buffer.bytes = 32768
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 3
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.assertion.algorithm = RS256
+	sasl.oauthbearer.assertion.claim.aud = null
+	sasl.oauthbearer.assertion.claim.exp.seconds = 300
+	sasl.oauthbearer.assertion.claim.iss = null
+	sasl.oauthbearer.assertion.claim.jti.include = false
+	sasl.oauthbearer.assertion.claim.nbf.seconds = 60
+	sasl.oauthbearer.assertion.claim.sub = null
+	sasl.oauthbearer.assertion.file = null
+	sasl.oauthbearer.assertion.private.key.file = null
+	sasl.oauthbearer.assertion.private.key.passphrase = null
+	sasl.oauthbearer.assertion.template.file = null
+	sasl.oauthbearer.client.credentials.client.id = null
+	sasl.oauthbearer.client.credentials.client.secret = null
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.jwt.retriever.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtRetriever
+	sasl.oauthbearer.jwt.validator.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtValidator
+	sasl.oauthbearer.scope = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	transaction.timeout.ms = 60000
+	transaction.two.phase.commit.enable = false
+	transactional.id = null
+	value.serializer = class org.springframework.kafka.support.serializer.JsonSerializer
+
+2026-04-21T22:42:39.188+03:00  INFO 12168 --- [mescat] [nio-8082-exec-6] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-04-21T22:42:39.189+03:00  INFO 12168 --- [mescat] [nio-8082-exec-6] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=mescat-producer-1] Instantiated an idempotent producer.
+2026-04-21T22:42:39.193+03:00  INFO 12168 --- [mescat] [nio-8082-exec-6] o.a.kafka.common.utils.AppInfoParser     : The mbean of App info: [kafka.producer], id: [mescat-producer-1] already exists, so skipping a new mbean creation.
+2026-04-21T22:42:39.201+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Cluster ID: MkU3OEVBNTcwNTJENDM2Qk
+2026-04-21T22:42:39.202+03:00  INFO 12168 --- [mescat] [scat-producer-1] o.a.k.c.p.internals.TransactionManager   : [Producer clientId=mescat-producer-1] ProducerId set to 8006 with epoch 0
+2026-04-21T22:43:08.190+03:00  INFO 12168 --- [mescat] [io-8082-exec-10] r.mescat.message.service.CreateKeyVault  : Запрос на сохранение публичного ключа: userId=bb594973-7d0b-4676-9748-fa365c6f53c6
+2026-04-21T22:43:08.211+03:00  INFO 12168 --- [mescat] [io-8082-exec-10] r.mescat.message.service.CreateKeyVault  : Публичный ключ сохранен: keyId=3e90593a-1973-484f-a07f-844d602ba379, userId=bb594973-7d0b-4676-9748-fa365c6f53c6
+2026-04-21T22:43:08.717+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] r.m.m.service.UserOnlineSyncService      : Отправлен user-sync пакет: userId=bb594973-7d0b-4676-9748-fa365c6f53c6, chats=5, messages=30, pendingKeys=7
+2026-04-21T22:43:25.135+03:00  INFO 12168 --- [mescat] [io-8082-exec-10] r.mescat.message.service.CreateKeyVault  : Запрос на сохранение публичного ключа: userId=908d8d44-c6f1-4d73-ae02-cad8da7c84b9
+2026-04-21T22:43:25.155+03:00  INFO 12168 --- [mescat] [io-8082-exec-10] r.mescat.message.service.CreateKeyVault  : Публичный ключ сохранен: keyId=edd992a9-a97e-4e55-b380-3476b3150a43, userId=908d8d44-c6f1-4d73-ae02-cad8da7c84b9
+2026-04-21T22:43:25.476+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] r.m.m.service.UserOnlineSyncService      : Отправлен user-sync пакет: userId=908d8d44-c6f1-4d73-ae02-cad8da7c84b9, chats=3, messages=22, pendingKeys=3
+2026-04-21T22:43:38.327+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] r.m.m.service.UserOnlineSyncService      : Отправлен user-sync пакет: userId=0e08feec-b6f2-4045-b6a1-aabf42b515e7, chats=9, messages=30, pendingKeys=3
+2026-04-21T22:51:09.798+03:00  INFO 12168 --- [mescat] [nio-8082-exec-8] r.m.m.service.SendMessageKeyService      : Запрос на отправку ключей сообщений: userId=0e08feec-b6f2-4045-b6a1-aabf42b515e7, chatId=151
+2026-04-21T22:51:09.818+03:00  INFO 12168 --- [mescat] [nio-8082-exec-8] r.m.m.service.SendMessageKeyService      : Ключи сообщений отправлены: fromUser=0e08feec-b6f2-4045-b6a1-aabf42b515e7, chatId=151, recipients=1, encryptName=069bd798-5d6e-44f9-9ec5-3281404e8ee6
+2026-04-21T22:51:09.841+03:00  INFO 12168 --- [mescat] [nio-8082-exec-8] o.a.kafka.common.config.AbstractConfig   : ProducerConfig values: 
+	acks = -1
+	batch.size = 16384
+	bootstrap.servers = [localhost:9092]
+	buffer.memory = 33554432
+	client.dns.lookup = use_all_dns_ips
+	client.id = mescat-producer-1
+	compression.gzip.level = -1
+	compression.lz4.level = 9
+	compression.type = none
+	compression.zstd.level = 3
+	connections.max.idle.ms = 540000
+	delivery.timeout.ms = 120000
+	enable.idempotence = true
+	enable.metrics.push = true
+	interceptor.classes = []
+	key.serializer = class org.apache.kafka.common.serialization.StringSerializer
+	linger.ms = 5
+	max.block.ms = 60000
+	max.in.flight.requests.per.connection = 5
+	max.request.size = 1048576
+	metadata.max.age.ms = 300000
+	metadata.max.idle.ms = 300000
+	metadata.recovery.rebootstrap.trigger.ms = 300000
+	metadata.recovery.strategy = rebootstrap
+	metric.reporters = [org.apache.kafka.common.metrics.JmxReporter]
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partitioner.adaptive.partitioning.enable = true
+	partitioner.availability.timeout.ms = 0
+	partitioner.class = null
+	partitioner.ignore.keys = false
+	receive.buffer.bytes = 32768
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 3
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.assertion.algorithm = RS256
+	sasl.oauthbearer.assertion.claim.aud = null
+	sasl.oauthbearer.assertion.claim.exp.seconds = 300
+	sasl.oauthbearer.assertion.claim.iss = null
+	sasl.oauthbearer.assertion.claim.jti.include = false
+	sasl.oauthbearer.assertion.claim.nbf.seconds = 60
+	sasl.oauthbearer.assertion.claim.sub = null
+	sasl.oauthbearer.assertion.file = null
+	sasl.oauthbearer.assertion.private.key.file = null
+	sasl.oauthbearer.assertion.private.key.passphrase = null
+	sasl.oauthbearer.assertion.template.file = null
+	sasl.oauthbearer.client.credentials.client.id = null
+	sasl.oauthbearer.client.credentials.client.secret = null
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.jwt.retriever.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtRetriever
+	sasl.oauthbearer.jwt.validator.class = class org.apache.kafka.common.security.oauthbearer.DefaultJwtValidator
+	sasl.oauthbearer.scope = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	transaction.timeout.ms = 60000
+	transaction.two.phase.commit.enable = false
+	transactional.id = null
+	value.serializer = class org.springframework.kafka.support.serializer.JsonSerializer
+
+2026-04-21T22:51:09.841+03:00  INFO 12168 --- [mescat] [nio-8082-exec-8] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-04-21T22:51:09.842+03:00  INFO 12168 --- [mescat] [nio-8082-exec-8] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=mescat-producer-1] Instantiated an idempotent producer.
+2026-04-21T22:51:09.848+03:00  INFO 12168 --- [mescat] [nio-8082-exec-8] o.a.kafka.common.utils.AppInfoParser     : The mbean of App info: [kafka.producer], id: [mescat-producer-1] already exists, so skipping a new mbean creation.
+2026-04-21T22:51:09.858+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Cluster ID: MkU3OEVBNTcwNTJENDM2Qk
+2026-04-21T22:51:09.859+03:00  INFO 12168 --- [mescat] [scat-producer-1] o.a.k.c.p.internals.TransactionManager   : [Producer clientId=mescat-producer-1] ProducerId set to 8007 with epoch 0
+2026-04-21T22:51:49.104+03:00  INFO 12168 --- [mescat] [nio-8082-exec-6] r.mescat.message.service.CreateKeyVault  : Запрос на сохранение публичного ключа: userId=26a92412-ce2f-4695-8d7b-563dfab806c4
+2026-04-21T22:51:49.124+03:00  INFO 12168 --- [mescat] [nio-8082-exec-6] r.mescat.message.service.CreateKeyVault  : Публичный ключ сохранен: keyId=49ab4758-f4e1-4e51-a205-a11081c02abd, userId=26a92412-ce2f-4695-8d7b-563dfab806c4
+2026-04-21T22:51:49.457+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] r.m.m.service.UserOnlineSyncService      : Отправлен user-sync пакет: userId=26a92412-ce2f-4695-8d7b-563dfab806c4, chats=5, messages=27, pendingKeys=0
+2026-04-21T22:56:08.350+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] r.m.m.service.UserOnlineSyncService      : Отправлен user-sync пакет: userId=0e08feec-b6f2-4045-b6a1-aabf42b515e7, chats=9, messages=30, pendingKeys=0
+2026-04-21T22:56:24.525+03:00  INFO 12168 --- [mescat] [nio-8082-exec-6] ru.mescat.message.service.ChatService    : Запрос на создание группового чата: creatorId=0e08feec-b6f2-4045-b6a1-aabf42b515e7, title=test2
+2026-04-21T22:56:24.536+03:00  INFO 12168 --- [mescat] [nio-8082-exec-6] ru.mescat.message.service.ChatService    : Групповой чат создан: chatId=152, creatorId=0e08feec-b6f2-4045-b6a1-aabf42b515e7
+2026-04-21T23:01:23.933+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] r.m.m.service.UserOnlineSyncService      : Отправлен user-sync пакет: userId=0e08feec-b6f2-4045-b6a1-aabf42b515e7, chats=10, messages=30, pendingKeys=0
+2026-04-21T23:01:30.123+03:00  INFO 12168 --- [mescat] [nio-8082-exec-4] ru.mescat.message.service.ChatService    : Запрос на создание группового чата: creatorId=0e08feec-b6f2-4045-b6a1-aabf42b515e7, title=test2
+2026-04-21T23:01:30.130+03:00  INFO 12168 --- [mescat] [nio-8082-exec-4] ru.mescat.message.service.ChatService    : Групповой чат создан: chatId=153, creatorId=0e08feec-b6f2-4045-b6a1-aabf42b515e7
+2026-04-21T23:01:45.483+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] r.m.m.service.UserOnlineSyncService      : Отправлен user-sync пакет: userId=26a92412-ce2f-4695-8d7b-563dfab806c4, chats=6, messages=27, pendingKeys=0
+2026-04-21T23:01:46.646+03:00  INFO 12168 --- [mescat] [nio-8082-exec-9] r.m.m.service.SendMessageKeyService      : Запрос на отправку ключей сообщений: userId=0e08feec-b6f2-4045-b6a1-aabf42b515e7, chatId=151
+2026-04-21T23:01:46.652+03:00  INFO 12168 --- [mescat] [nio-8082-exec-9] r.m.m.service.SendMessageKeyService      : Ключи сообщений отправлены: fromUser=0e08feec-b6f2-4045-b6a1-aabf42b515e7, chatId=151, recipients=1, encryptName=069bd798-5d6e-44f9-9ec5-3281404e8ee6
+2026-04-21T23:01:50.943+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] r.m.m.service.UserOnlineSyncService      : Отправлен user-sync пакет: userId=26a92412-ce2f-4695-8d7b-563dfab806c4, chats=6, messages=27, pendingKeys=0
+2026-04-21T23:02:06.049+03:00  INFO 12168 --- [mescat] [nio-8082-exec-3] ru.mescat.message.service.ChatService    : Запрос на создание группового чата: creatorId=0e08feec-b6f2-4045-b6a1-aabf42b515e7, title=test3
+2026-04-21T23:02:06.055+03:00  INFO 12168 --- [mescat] [nio-8082-exec-3] ru.mescat.message.service.ChatService    : Групповой чат создан: chatId=154, creatorId=0e08feec-b6f2-4045-b6a1-aabf42b515e7
+2026-04-21T23:02:18.384+03:00  INFO 12168 --- [mescat] [nio-8082-exec-8] r.m.m.service.SendMessageKeyService      : Запрос на отправку ключей сообщений: userId=0e08feec-b6f2-4045-b6a1-aabf42b515e7, chatId=154
+2026-04-21T23:02:18.390+03:00  INFO 12168 --- [mescat] [nio-8082-exec-8] r.m.m.service.SendMessageKeyService      : Ключи сообщений отправлены: fromUser=0e08feec-b6f2-4045-b6a1-aabf42b515e7, chatId=154, recipients=2, encryptName=1f477ca8-0cf6-43cb-8f1b-b3d9a10a5517
+2026-04-21T23:02:18.421+03:00  INFO 12168 --- [mescat] [nio-8082-exec-9] r.mescat.message.service.MessageService  : Р—Р°РїСЂРѕСЃ РЅР° РѕС‚РїСЂР°РІРєСѓ СЃРѕРѕР±С‰РµРЅРёСЏ: userId=0e08feec-b6f2-4045-b6a1-aabf42b515e7, chatId=154
+2026-04-21T23:02:18.437+03:00  INFO 12168 --- [mescat] [nio-8082-exec-9] r.mescat.message.service.MessageService  : РЎРѕРѕР±С‰РµРЅРёРµ РѕС‚РїСЂР°РІР»РµРЅРѕ: messageId=186, chatId=154, senderId=0e08feec-b6f2-4045-b6a1-aabf42b515e7
+2026-04-21T23:02:29.381+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] r.m.m.service.UserOnlineSyncService      : Отправлен user-sync пакет: userId=26a92412-ce2f-4695-8d7b-563dfab806c4, chats=7, messages=28, pendingKeys=0
+2026-04-21T23:09:29.944+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node 1 disconnected.
+2026-04-21T23:09:29.944+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node 1 disconnected.
+2026-04-21T23:09:29.945+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:29.946+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:29.958+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node 1 disconnected.
+2026-04-21T23:09:29.959+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:29.960+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:29.960+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:29.961+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 12 due to node -1 being disconnected (elapsed time since creation: 8ms, elapsed time since send: 8ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:29.961+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 20 due to node -1 being disconnected (elapsed time since creation: 9ms, elapsed time since send: 9ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:29.962+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:29.962+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:29.972+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:29.973+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 23 due to node -1 being disconnected (elapsed time since creation: 7ms, elapsed time since send: 7ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:29.973+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:29.989+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node 1 disconnected.
+2026-04-21T23:09:29.990+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node 2147483646 disconnected.
+2026-04-21T23:09:29.993+03:00  INFO 12168 --- [mescat] [pt-keys-service] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Group coordinator localhost:9092 (id: 2147483646 rack: null isFenced: false) is unavailable or invalid due to cause: coordinator unavailable. isDisconnected: true. Rediscovery will be attempted.
+2026-04-21T23:09:30.058+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:30.084+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:30.085+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 24 due to node -1 being disconnected (elapsed time since creation: 6ms, elapsed time since send: 6ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:30.085+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:30.100+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:30.100+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 21 due to node -1 being disconnected (elapsed time since creation: 6ms, elapsed time since send: 6ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:30.101+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:30.133+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:30.134+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 13 due to node -1 being disconnected (elapsed time since creation: 9ms, elapsed time since send: 9ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:30.135+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:30.229+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node 1 disconnected.
+2026-04-21T23:09:30.230+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Cancelled in-flight API_VERSIONS request with correlation id 1537 due to node 1 being disconnected (elapsed time since creation: 116ms, elapsed time since send: 116ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:30.350+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:30.350+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:30.351+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 25 due to node -1 being disconnected (elapsed time since creation: 8ms, elapsed time since send: 8ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:30.351+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 22 due to node -1 being disconnected (elapsed time since creation: 8ms, elapsed time since send: 8ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:30.351+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:30.351+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:30.363+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:30.364+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 14 due to node -1 being disconnected (elapsed time since creation: 7ms, elapsed time since send: 7ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:30.364+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:30.559+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node 1 disconnected.
+2026-04-21T23:09:30.559+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Cancelled in-flight API_VERSIONS request with correlation id 1540 due to node 1 being disconnected (elapsed time since creation: 110ms, elapsed time since send: 110ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:30.773+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:30.788+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:30.846+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:30.847+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 26 due to node -1 being disconnected (elapsed time since creation: 8ms, elapsed time since send: 8ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:30.847+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:30.848+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:30.849+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 15 due to node -1 being disconnected (elapsed time since creation: 9ms, elapsed time since send: 9ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:30.849+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:30.862+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:30.862+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 23 due to node -1 being disconnected (elapsed time since creation: 9ms, elapsed time since send: 9ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:30.864+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:31.097+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node 1 disconnected.
+2026-04-21T23:09:31.099+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Cancelled in-flight API_VERSIONS request with correlation id 1542 due to node 1 being disconnected (elapsed time since creation: 106ms, elapsed time since send: 106ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:31.426+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node 1 disconnected.
+2026-04-21T23:09:31.426+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Cancelled in-flight FETCH request with correlation id 4504 due to node 1 being disconnected (elapsed time since creation: 1781ms, elapsed time since send: 1781ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:31.427+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node 2147483646 disconnected.
+2026-04-21T23:09:31.427+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Cancelled in-flight HEARTBEAT request with correlation id 4505 due to node 2147483646 being disconnected (elapsed time since creation: 1290ms, elapsed time since send: 1290ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:31.430+03:00  INFO 12168 --- [mescat] [message-service] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Group coordinator localhost:9092 (id: 2147483646 rack: null isFenced: false) is unavailable or invalid due to cause: null. isDisconnected: true. Rediscovery will be attempted.
+2026-04-21T23:09:31.428+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] o.a.kafka.clients.FetchSessionHandler    : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Error sending fetch request (sessionId=53828005, epoch=3828) to node 1:
+
+org.apache.kafka.common.errors.DisconnectException
+
+2026-04-21T23:09:31.605+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node 1 disconnected.
+2026-04-21T23:09:31.606+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Cancelled in-flight API_VERSIONS request with correlation id 4506 due to node 1 being disconnected (elapsed time since creation: 7ms, elapsed time since send: 7ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:31.751+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node 1 disconnected.
+2026-04-21T23:09:31.752+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Cancelled in-flight API_VERSIONS request with correlation id 1544 due to node 1 being disconnected (elapsed time since creation: 106ms, elapsed time since send: 106ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:31.779+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:31.779+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 27 due to node -1 being disconnected (elapsed time since creation: 10ms, elapsed time since send: 10ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:31.780+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:31.811+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:31.812+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 16 due to node -1 being disconnected (elapsed time since creation: 9ms, elapsed time since send: 9ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:31.812+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:31.823+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:31.824+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 24 due to node -1 being disconnected (elapsed time since creation: 8ms, elapsed time since send: 8ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:31.825+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:31.842+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node 1 disconnected.
+2026-04-21T23:09:31.845+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Cancelled in-flight API_VERSIONS request with correlation id 4507 due to node 1 being disconnected (elapsed time since creation: 8ms, elapsed time since send: 8ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:31.965+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:32.075+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node -1 disconnected.
+2026-04-21T23:09:32.076+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Cancelled in-flight API_VERSIONS request with correlation id 1545 due to node -1 being disconnected (elapsed time since creation: 104ms, elapsed time since send: 104ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:32.076+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:32.283+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node 1 disconnected.
+2026-04-21T23:09:32.284+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Cancelled in-flight API_VERSIONS request with correlation id 4508 due to node 1 being disconnected (elapsed time since creation: 7ms, elapsed time since send: 7ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:32.398+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node -1 disconnected.
+2026-04-21T23:09:32.399+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Cancelled in-flight API_VERSIONS request with correlation id 1548 due to node -1 being disconnected (elapsed time since creation: 105ms, elapsed time since send: 105ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:32.399+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:32.675+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:32.794+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:32.795+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 28 due to node -1 being disconnected (elapsed time since creation: 9ms, elapsed time since send: 9ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:32.795+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:32.824+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:32.825+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 17 due to node -1 being disconnected (elapsed time since creation: 8ms, elapsed time since send: 8ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:32.825+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:32.841+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:32.841+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 25 due to node -1 being disconnected (elapsed time since creation: 9ms, elapsed time since send: 9ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:32.842+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:32.939+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node -1 disconnected.
+2026-04-21T23:09:32.940+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Cancelled in-flight API_VERSIONS request with correlation id 1550 due to node -1 being disconnected (elapsed time since creation: 105ms, elapsed time since send: 105ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:32.941+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:33.044+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:33.153+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:33.260+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:33.368+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:33.471+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node 1 disconnected.
+2026-04-21T23:09:33.473+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Cancelled in-flight API_VERSIONS request with correlation id 4509 due to node 1 being disconnected (elapsed time since creation: 285ms, elapsed time since send: 285ms, throttle time: 0ms, request timeout: 30000ms)
+2026-04-21T23:09:33.482+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node -1 disconnected.
+2026-04-21T23:09:33.482+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:33.483+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:33.750+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:33.800+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:33.800+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:33.801+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:33.812+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:33.854+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:33.855+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:33.855+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:33.889+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:33.894+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:33.895+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:34.355+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node -1 disconnected.
+2026-04-21T23:09:34.356+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:34.357+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:34.373+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node 1 disconnected.
+2026-04-21T23:09:34.373+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Connection to node 1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:34.808+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:34.808+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:34.808+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:34.869+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:34.869+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:34.870+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:34.899+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:34.900+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:34.900+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:35.223+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:35.349+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node 1 disconnected.
+2026-04-21T23:09:35.350+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Connection to node 1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:35.442+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node -1 disconnected.
+2026-04-21T23:09:35.443+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:35.443+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:35.815+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:35.816+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:35.816+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:35.872+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:35.872+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:35.872+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:35.921+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:35.924+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:35.924+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:36.353+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node 1 disconnected.
+2026-04-21T23:09:36.353+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Connection to node 1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:36.428+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:36.493+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node -1 disconnected.
+2026-04-21T23:09:36.494+03:00  WARN 12168 --- [mescat] [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:36.495+03:00  WARN 12168 --- [mescat] [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:36.834+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:36.835+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:36.835+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:36.880+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:36.882+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:36.883+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:36.926+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:36.926+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:36.927+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:37.371+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node 1 disconnected.
+2026-04-21T23:09:37.372+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Connection to node 1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:37.509+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node -1 disconnected.
+2026-04-21T23:09:37.509+03:00  WARN 12168 --- [mescat] [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:37.509+03:00  WARN 12168 --- [mescat] [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:37.806+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:37.806+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:37.806+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:37.807+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:37.855+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:37.856+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:37.857+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:37.899+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:37.899+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:37.900+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:37.942+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:38.003+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:38.065+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:38.126+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:38.187+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:38.251+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:38.312+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:38.347+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node 1 disconnected.
+2026-04-21T23:09:38.347+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Connection to node 1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:38.347+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:38.351+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node -1 disconnected.
+2026-04-21T23:09:38.351+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:38.351+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:38.374+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:38.437+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:38.500+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:38.519+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node -1 disconnected.
+2026-04-21T23:09:38.519+03:00  WARN 12168 --- [mescat] [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:38.519+03:00  WARN 12168 --- [mescat] [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:38.561+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:38.622+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:38.684+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:38.745+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:38.811+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:38.812+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:38.812+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:38.872+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:38.873+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:38.873+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:38.904+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:38.904+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:38.904+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:38.956+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node -1 disconnected.
+2026-04-21T23:09:38.957+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:38.958+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:39.045+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node 1 disconnected.
+2026-04-21T23:09:39.046+03:00  WARN 12168 --- [mescat] [ntainer#0-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Connection to node 1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:39.046+03:00  INFO 12168 --- [mescat] [ntainer#0-0-C-1] o.a.kafka.clients.FetchSessionHandler    : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Error sending fetch request (sessionId=378088312, epoch=886) to node 1:
+
+org.apache.kafka.common.errors.DisconnectException
+
+2026-04-21T23:09:39.357+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node -1 disconnected.
+2026-04-21T23:09:39.357+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:39.359+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:39.482+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node -1 disconnected.
+2026-04-21T23:09:39.482+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:39.482+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:39.825+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:39.826+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:39.826+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:39.888+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:39.888+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:39.889+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:39.930+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:39.931+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:39.931+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:40.367+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node -1 disconnected.
+2026-04-21T23:09:40.367+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:40.368+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:40.472+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:40.583+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node -1 disconnected.
+2026-04-21T23:09:40.584+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:40.584+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:40.833+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:40.834+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:40.834+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:40.895+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:40.895+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:40.896+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:40.941+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:40.942+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:40.942+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:41.381+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node -1 disconnected.
+2026-04-21T23:09:41.382+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:41.382+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:41.674+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node -1 disconnected.
+2026-04-21T23:09:41.675+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:41.675+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:41.847+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:41.848+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:41.848+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:41.907+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:41.907+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:41.907+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:41.954+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:41.954+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:41.954+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:42.388+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node -1 disconnected.
+2026-04-21T23:09:42.388+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:42.389+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:42.762+03:00  INFO 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Node -1 disconnected.
+2026-04-21T23:09:42.762+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:42.762+03:00  WARN 12168 --- [mescat] [pt-keys-service] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-encrypt-keys-service-1, groupId=encrypt-keys-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:42.854+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:42.854+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:42.854+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:42.916+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:42.916+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:42.916+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:42.934+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Node -1 disconnected.
+2026-04-21T23:09:42.934+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:42.934+03:00  WARN 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=mescat-producer-1] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:42.960+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:43.023+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:43.083+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:43.146+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:43.207+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:43.269+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:43.330+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:43.394+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:43.396+03:00  INFO 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Node -1 disconnected.
+2026-04-21T23:09:43.396+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Connection to node -1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-04-21T23:09:43.396+03:00  WARN 12168 --- [mescat] [ntainer#1-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-user-online-message-service-2, groupId=user-online-message-service] Bootstrap broker localhost:9092 (id: -1 rack: null isFenced: false) disconnected
+2026-04-21T23:09:43.458+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:43.518+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+2026-04-21T23:09:43.569+03:00  INFO 12168 --- [mescat] [scat-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=mescat-producer-1] Rebootstrapping with [localhost/127.0.0.1:9092]
+^C

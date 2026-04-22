@@ -95,6 +95,8 @@ public class MessageController {
         try {
             MessageForUser createdMessage = messageService.sendMessage(userId, messageDto);
             return ResponseEntity.ok(createdMessage);
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
         } catch (ChatNotFoundException | NotFoundException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         } catch (UserBlockedException e) {
@@ -117,6 +119,8 @@ public class MessageController {
 
         try {
             return ResponseEntity.ok(messageService.sendMessageAndCreateChat(userId, newMessageToNewChat));
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {

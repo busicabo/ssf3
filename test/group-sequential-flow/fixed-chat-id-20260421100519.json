@@ -1,0 +1,203 @@
+{
+  "mode": "ideal-client-stores-chat-id",
+  "runId": "20260421100519",
+  "chatId": 150,
+  "users": [
+    {
+      "username": "seq_20260421100519_1",
+      "id": "d3c4d87c-6abc-44c7-af85-62395e3d3400",
+      "publicKeyId": "c2ed641a-9dcc-417f-9818-be0bc4b7187d"
+    },
+    {
+      "username": "seq_20260421100519_2",
+      "id": "5eff0c94-3546-44b5-8fe8-8ef4cda2f0fd",
+      "publicKeyId": "5628f795-1399-4b99-8076-637d292a59f6"
+    },
+    {
+      "username": "seq_20260421100519_3",
+      "id": "50506d52-db44-4b19-b8b2-64db25cd15a1",
+      "publicKeyId": "83c0b380-765c-43c4-836c-edbe1e92edaf"
+    },
+    {
+      "username": "seq_20260421100519_4",
+      "id": "f87a0972-dcf7-4d95-8a3a-0869f96319fb",
+      "publicKeyId": "07424ad2-9cec-4a69-9ff8-8d3146cf176a"
+    },
+    {
+      "username": "seq_20260421100519_5",
+      "id": "58ae752d-b329-49c7-861f-73e0d22e3e5f",
+      "publicKeyId": "fbb01b82-aa00-4a42-85c1-a65c399166df"
+    },
+    {
+      "username": "seq_20260421100519_6",
+      "id": "d1efa210-6692-4b7e-8e7d-d6449e1a6bc0",
+      "publicKeyId": "352626bb-fc02-450f-ab59-f43d723d0985"
+    }
+  ],
+  "events": [
+    {
+      "step": "owner first message",
+      "messageId": 176
+    },
+    {
+      "step": "seq_20260421100519_2 message",
+      "messageId": 177
+    },
+    {
+      "step": "seq_20260421100519_3 message",
+      "messageId": 178
+    },
+    {
+      "step": "seq_20260421100519_4 message",
+      "messageId": 179
+    },
+    {
+      "step": "seq_20260421100519_5 message",
+      "messageId": 180
+    },
+    {
+      "step": "seq_20260421100519_6 message",
+      "messageId": 181
+    }
+  ],
+  "historyChecks": [
+    {
+      "user": "seq_20260421100519_2",
+      "phase": "after add before own message",
+      "sharedEncryptNames": [
+        "e5cb449c-718e-4a3c-94eb-21e2ca21adae"
+      ],
+      "imported": [
+        "e5cb449c-718e-4a3c-94eb-21e2ca21adae"
+      ],
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100519_1",
+      "phase": "after seq_20260421100519_2 message",
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100519_3",
+      "phase": "after add before own message",
+      "sharedEncryptNames": [
+        "e5cb449c-718e-4a3c-94eb-21e2ca21adae",
+        "5871aefd-cb4d-4c55-a162-d266baf93194"
+      ],
+      "imported": [
+        "e5cb449c-718e-4a3c-94eb-21e2ca21adae",
+        "5871aefd-cb4d-4c55-a162-d266baf93194"
+      ],
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100519_1",
+      "phase": "after seq_20260421100519_3 message",
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100519_4",
+      "phase": "after add before own message",
+      "sharedEncryptNames": [
+        "e5cb449c-718e-4a3c-94eb-21e2ca21adae",
+        "5871aefd-cb4d-4c55-a162-d266baf93194",
+        "5ad7f899-1ccf-4892-9c4b-1185559573da"
+      ],
+      "imported": [
+        "e5cb449c-718e-4a3c-94eb-21e2ca21adae",
+        "5871aefd-cb4d-4c55-a162-d266baf93194",
+        "5ad7f899-1ccf-4892-9c4b-1185559573da"
+      ],
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100519_1",
+      "phase": "after seq_20260421100519_4 message",
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100519_5",
+      "phase": "after add before own message",
+      "sharedEncryptNames": [
+        "e5cb449c-718e-4a3c-94eb-21e2ca21adae",
+        "5871aefd-cb4d-4c55-a162-d266baf93194",
+        "5ad7f899-1ccf-4892-9c4b-1185559573da",
+        "f9d15b20-ac6a-4882-869d-d2db993f6320"
+      ],
+      "imported": [
+        "e5cb449c-718e-4a3c-94eb-21e2ca21adae",
+        "5871aefd-cb4d-4c55-a162-d266baf93194",
+        "5ad7f899-1ccf-4892-9c4b-1185559573da",
+        "f9d15b20-ac6a-4882-869d-d2db993f6320"
+      ],
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100519_1",
+      "phase": "after seq_20260421100519_5 message",
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100519_6",
+      "phase": "after add before own message",
+      "sharedEncryptNames": [
+        "e5cb449c-718e-4a3c-94eb-21e2ca21adae",
+        "5871aefd-cb4d-4c55-a162-d266baf93194",
+        "5ad7f899-1ccf-4892-9c4b-1185559573da",
+        "f9d15b20-ac6a-4882-869d-d2db993f6320",
+        "abf10304-75be-4baa-99e1-0a7dc59a95b1"
+      ],
+      "imported": [
+        "e5cb449c-718e-4a3c-94eb-21e2ca21adae",
+        "5871aefd-cb4d-4c55-a162-d266baf93194",
+        "5ad7f899-1ccf-4892-9c4b-1185559573da",
+        "f9d15b20-ac6a-4882-869d-d2db993f6320",
+        "abf10304-75be-4baa-99e1-0a7dc59a95b1"
+      ],
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100519_1",
+      "phase": "after seq_20260421100519_6 message",
+      "failed": []
+    }
+  ],
+  "finalChecks": [
+    {
+      "user": "seq_20260421100519_1",
+      "total": 6,
+      "decryptedCount": 6,
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100519_2",
+      "total": 6,
+      "decryptedCount": 6,
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100519_3",
+      "total": 6,
+      "decryptedCount": 6,
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100519_4",
+      "total": 6,
+      "decryptedCount": 6,
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100519_5",
+      "total": 6,
+      "decryptedCount": 6,
+      "failed": []
+    },
+    {
+      "user": "seq_20260421100519_6",
+      "total": 6,
+      "decryptedCount": 6,
+      "failed": []
+    }
+  ]
+}

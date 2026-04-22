@@ -3,6 +3,7 @@ package ru.mescat.message.service;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.mescat.message.dto.AddUserInChatDto;
 import ru.mescat.message.dto.auxiliary.ChatUserDto;
 import ru.mescat.message.entity.ChatEntity;
@@ -14,6 +15,7 @@ import ru.mescat.message.exception.ChatNotFoundException;
 import ru.mescat.message.exception.NotFoundException;
 import ru.mescat.message.repository.ChatUserRepository;
 import ru.mescat.user.dto.User;
+import ru.mescat.user.dto.UserSettings;
 import ru.mescat.user.service.UserService;
 
 import java.util.List;
@@ -83,6 +85,7 @@ public class ChatUserService {
         return repository.findByUserIdAndChatId(chatId,userId);
     }
 
+    @Transactional
     public ChatUserEntity addNewUserInChat(AddUserInChatDto dto){
 
         ChatEntity chat = chatService.findById(dto.getChatId());
@@ -91,17 +94,22 @@ public class ChatUserService {
             throw new ChatNotFoundException("Чат не найден.");
         }
 
+        if (chat.getChatType() == ChatType.PERSONAL) {
+            throw new AccessDeniedException("В личный диалог нельзя добавлять новых участников.");
+        }
+
         User user = userService.findById(dto.getUserTarget());
 
         if(user==null){
             throw new NotFoundException("Пользователь не найден.");
         }
 
-        ChatUserEntity chatUserEntity = save(new ChatUserEntity(chat,user.getId()));
+        UserSettings userSettings = userService.getSettingsById(user.getId());
+        if (userSettings != null && !userSettings.isAllowAddChat()) {
+            throw new AccessDeniedException("Пользователь запретил добавлять себя в чаты.");
+        }
 
-        applicationEventPublisher.publishEvent(new NewUserInChat(chatUserEntity));
-
-        return chatUserEntity;
+        return save(new ChatUserEntity(chat, user.getId()));
     }
 
     public void deleteUserFromChat(AddUserInChatDto dto, UUID userId) {

@@ -16,7 +16,7 @@ async function waitForKeyReady(page) {
       const keyState = document.getElementById('keyState');
       if (!keyState) return false;
       const text = (keyState.textContent || '').trim();
-      return keyState.classList.contains('good') && text.length > 0;
+      return (keyState.classList.contains('good') || keyState.classList.contains('is-good')) && text.length > 0;
     });
 
     if (ready) {
@@ -60,7 +60,7 @@ async function register(page, username, password) {
   await page.fill('#username', username);
   await page.fill('#password', password);
   await page.click('button[type="submit"]');
-  await page.waitForURL(/\/chat\.html$/, { timeout: 20000 });
+  await page.waitForURL(/\/chat\.html$/, { timeout: 20000, waitUntil: 'domcontentloaded' });
 }
 
 async function login(page, username, password) {
@@ -68,10 +68,13 @@ async function login(page, username, password) {
   await page.fill('#username', username);
   await page.fill('#password', password);
   await page.click('button[type="submit"]');
-  await page.waitForURL(/\/chat\.html$/, { timeout: 20000 });
+  await page.waitForURL(/\/chat\.html$/, { timeout: 20000, waitUntil: 'domcontentloaded' });
 }
 
 async function logout(page) {
+  await page.click('#settingsBtn');
+  await page.waitForSelector('#settingsModal:not([hidden])');
+  await page.click('[data-settings-tab="actions"]');
   await page.click('#logoutBtn');
   await page.waitForURL(/\/auth\/login$/, { timeout: 20000 });
 }

@@ -35,7 +35,7 @@ public class MessageServiceProxy {
             logRemoteError("GET", path, e.getStatusCode().value());
             return toErrorResponse(e);
         } catch (RestClientException e) {
-            log.error("MessageService РЅРµРґРѕСЃС‚СѓРїРµРЅ: method=GET, path={}, error={}", path, e.getMessage());
+            log.error("MessageService недоступен: method=GET, path={}, error={}", path, e.getMessage());
             return ResponseEntity.status(503).body("MessageService unavailable: " + e.getMessage());
         }
     }
@@ -51,7 +51,7 @@ public class MessageServiceProxy {
             logRemoteError("GET", path, e.getStatusCode().value());
             return toErrorResponse(e);
         } catch (RestClientException e) {
-            log.error("MessageService РЅРµРґРѕСЃС‚СѓРїРµРЅ: method=GET, path={}, error={}", path, e.getMessage());
+            log.error("MessageService недоступен: method=GET, path={}, error={}", path, e.getMessage());
             return ResponseEntity.status(503).body("MessageService unavailable: " + e.getMessage());
         }
     }
@@ -69,7 +69,24 @@ public class MessageServiceProxy {
             logRemoteError("POST", path, e.getStatusCode().value());
             return toErrorResponse(e);
         } catch (RestClientException e) {
-            log.error("MessageService РЅРµРґРѕСЃС‚СѓРїРµРЅ: method=POST, path={}, error={}", path, e.getMessage());
+            log.error("MessageService недоступен: method=POST, path={}, error={}", path, e.getMessage());
+            return ResponseEntity.status(503).body("MessageService unavailable: " + e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> delete(String path, UUID userId) {
+        try {
+            ResponseEntity<byte[]> upstream = restClient.delete()
+                    .uri(path)
+                    .header("X-User-Id", userId.toString())
+                    .retrieve()
+                    .toEntity(byte[].class);
+            return toClientResponse(upstream);
+        } catch (RestClientResponseException e) {
+            logRemoteError("DELETE", path, e.getStatusCode().value());
+            return toErrorResponse(e);
+        } catch (RestClientException e) {
+            log.error("MessageService недоступен: method=DELETE, path={}, error={}", path, e.getMessage());
             return ResponseEntity.status(503).body("MessageService unavailable: " + e.getMessage());
         }
     }

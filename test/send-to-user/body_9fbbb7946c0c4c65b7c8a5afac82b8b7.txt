@@ -1,0 +1,1 @@
+{"avatarUrl":"https://avatars.mds.yandex.net/i?id=7f18c7f70789c324859f7036c1ab0e49ea1a6e94-5505402-images-thumbs&n=13","chatId":144,"chatType":"PERSONAL","title":"user"}

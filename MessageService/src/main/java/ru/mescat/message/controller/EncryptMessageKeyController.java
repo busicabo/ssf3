@@ -1,47 +1,43 @@
 package ru.mescat.message.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.mescat.message.dto.SendEncryptKeyDto;
 import ru.mescat.message.dto.kafka.KeyDelete;
 import ru.mescat.message.exception.ChatNotFoundException;
 import ru.mescat.message.exception.SaveToDatabaseException;
 import ru.mescat.message.exception.UserBlockedException;
-import ru.mescat.message.service.DeleteSentKeysService;
 import ru.mescat.message.service.SendMessageKeyService;
 
-import java.util.List;
 import java.util.UUID;
-
-//РљРѕРЅС‚СЂРѕР»Р»РµСЂ РѕС‚РІРµС‡Р°СЋС‰РёР№ Р·Р° РєР»СЋС‡Рё С€РёС„СЂРѕРІР°РЅРёСЏ СЃРѕРѕР±С‰РµРЅРёР№.
 
 @RestController
 @RequestMapping("/api/encrypt_message_key")
 public class EncryptMessageKeyController {
 
-    private final DeleteSentKeysService deleteSentKeysService;
     private final SendMessageKeyService sendMessageKeyService;
 
-    public EncryptMessageKeyController(DeleteSentKeysService deleteSentKeysService,
-                                       SendMessageKeyService sendMessageKeyService) {
+    public EncryptMessageKeyController(SendMessageKeyService sendMessageKeyService) {
         this.sendMessageKeyService = sendMessageKeyService;
-        this.deleteSentKeysService = deleteSentKeysService;
     }
 
-    //РЈРґР°Р»РёС‚СЊ РєР»СЋС‡ РµСЃР»Рё РїСЂРѕС‡РёС‚Р°Р»
     @PostMapping("/delete")
     public ResponseEntity<?> deleteMessageKey(
             @RequestHeader("X-User-Id") UUID userId,
             @RequestBody KeyDelete keyDelete) {
-        try {
-            deleteSentKeysService.addKeyInQueue(keyDelete,userId);
-            return ResponseEntity.ok("РљР»СЋС‡Рё РґРѕР±Р°РІР»РµРЅС‹ РІ РѕС‡РµСЂРµРґСЊ РЅР° СѓРґР°Р»РµРЅРёРµ.");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("РќРµ СѓРґР°Р»РѕСЃСЊ РґРѕР±Р°РІРёС‚СЊ РєР»СЋС‡Рё РІ РѕС‡РµСЂРµРґСЊ.");
+        if (keyDelete == null || keyDelete.getKeyId() == null) {
+            return ResponseEntity.badRequest().body("keyId обязателен.");
         }
+
+        sendMessageKeyService.deleteByIdForUser(keyDelete.getKeyId(), userId);
+        return ResponseEntity.ok().build();
     }
 
-    //РћС‚РїСЂР°РІРёС‚СЊ РєР»СЋС‡Рё РІСЃРµРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРј
     @PostMapping("/send")
     public ResponseEntity<?> sendKeys(@RequestHeader("X-User-Id") UUID userId,
                                       @RequestBody SendEncryptKeyDto sendEncryptKeyDto) {

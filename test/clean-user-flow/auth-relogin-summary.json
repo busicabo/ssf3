@@ -1,0 +1,23 @@
+﻿{
+    "username":  "clean_20260421123800",
+    "statuses":  {
+                     "loginPage":  200,
+                     "regPage":  200,
+                     "logout":  200,
+                     "getIdAfterLogout":  401,
+                     "badLogin":  401,
+                     "goodLogin":  200,
+                     "getIdAfterLogin":  200,
+                     "chatAfterLogin":  200
+                 },
+    "responseSamples":  {
+                            "loginPage":  "\u003c!DOCTYPE html\u003e\n\u003chtml lang=\"ru\"\u003e\n\u003chead\u003e\n    \u003cmeta charset=\"UTF-8\"\u003e\n    \u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1\"\u003e\n    \u003ctitle\u003eР’С…РѕРґ РІ Mescat\u003c/title\u003e\n    \u003clink rel=\"icon\" href=\"data:,\"\u003e\n    \u003clink rel=\"stylesheet\" href=\"/auth.css\"\u003e\n\u003c/head\u003e\n\u003cbody\u003e\n\u003cdiv class=\"auth-cat auth-cat--left\" aria-hidden=\"true\"\u003e\u003c/div\u003e\n\u003cdiv class=\"auth-cat auth-cat--right\" aria-hidden=\"true\"\u003e\u003c/div\u003e\n\n\u003cdiv class=\"auth-shell\"\u003e\n    \u003caside class=\"auth-aside\"\u003e\n        \u003cp class=\"auth-eyebrow\"\u003eРњРµСЃСЃРµ...",
+                            "regPage":  "\u003c!DOCTYPE html\u003e\n\u003chtml lang=\"ru\"\u003e\n\u003chead\u003e\n    \u003cmeta charset=\"UTF-8\"\u003e\n    \u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1\"\u003e\n    \u003ctitle\u003eР РµРіРёСЃС‚СЂР°С†РёСЏ РІ Mescat\u003c/title\u003e\n    \u003clink rel=\"icon\" href=\"data:,\"\u003e\n    \u003clink rel=\"stylesheet\" href=\"/auth.css\"\u003e\n\u003c/head\u003e\n\u003cbody\u003e\n\u003cdiv class=\"auth-cat auth-cat--left\" aria-hidden=\"true\"\u003e\u003c/div\u003e\n\u003cdiv class=\"auth-cat auth-cat--right\" aria-hidden=\"true\"\u003e\u003c/div\u003e\n\n\u003cdiv class=\"auth-shell\"\u003e\n    \u003caside class=\"auth-aside\"\u003e\n        \u003cp class=\"auth-eyebr...",
+                            "logout":  "Р’С‹С…РѕРґ РІС‹РїРѕР»РЅРµРЅ",
+                            "getIdAfterLogout":  "РўСЂРµР±СѓРµС‚СЃСЏ Р°РІС‚РѕСЂРёР·Р°С†РёСЏ",
+                            "badLogin":  "РќРµРІРµСЂРЅС‹Р№ Р»РѕРіРёРЅ РёР»Рё РїР°СЂРѕР»СЊ",
+                            "goodLogin":  "РЈСЃРїРµС€РЅС‹Р№ РІС…РѕРґ",
+                            "getIdAfterLogin":  "\"c1e73473-8308-45db-a651-9bedd7632a22\"",
+                            "chatAfterLogin":  "[{\"chatId\":144,\"chatType\":\"PERSONAL\",\"title\":\"user\",\"avatarUrl\":\"https://avatars.mds.yandex.net/i?id=7f18c7f70789c324859f7036c1ab0e49ea1a6e94-5505402-images-thumbs\u0026n=13\",\"lastMessage\":\"aGVsbG8gdXNlciBmcm9tIGNsZWFuIHVzZXIgY2xlYW5fMjAyNjA0MjExMjM4MDA=\",\"encryptName\":\"ff0a452f-bd5b-4411-af3f-83352b0b45ae\",\"counterpartUserId\":\"0e08feec-b6f2-4045-b6a1-aabf42b515e7\",\"counterpartOnline\":false,\"currentUserRole\":\"MEMBER\",\"canManageMembers\":false,\"canDeleteChat\":false,\"memberCount\":2,\"onlineCount\":1,\"memb..."
+                        }
+}

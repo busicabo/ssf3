@@ -8,9 +8,11 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 import ru.mescat.security.User;
+import ru.mescat.security.UserSettings;
 import ru.mescat.security.dto.RegDto;
 import ru.mescat.security.exception.RemoteServiceException;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Service
@@ -19,12 +21,12 @@ public class UserService {
 
     private final RestClient restClient;
 
-    public UserService(@Qualifier("user") RestClient restClient){
-        this.restClient=restClient;
+    public UserService(@Qualifier("user") RestClient restClient) {
+        this.restClient = restClient;
     }
 
-    public User registration(RegDto regDto){
-        try{
+    public User registration(RegDto regDto) {
+        try {
             User user = restClient.post()
                     .uri("/auth/reg")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -48,10 +50,10 @@ public class UserService {
         }
     }
 
-    public User info(String username){
-        try{
+    public User info(String username) {
+        try {
             User user = restClient.get()
-                    .uri("/auth/info/{username}",username)
+                    .uri("/auth/info/{username}", username)
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve()
                     .body(User.class);
@@ -71,8 +73,8 @@ public class UserService {
         }
     }
 
-    public User infoById(UUID id){
-        try{
+    public User infoById(UUID id) {
+        try {
             User user = restClient.get()
                     .uri("/auth/info/id/{id}", id)
                     .accept(MediaType.APPLICATION_JSON)
@@ -90,6 +92,145 @@ public class UserService {
             throw new RemoteServiceException(status, message);
         } catch (RestClientException e) {
             log.error("UserService недоступен при infoById: userId={}, error={}", id, e.getMessage());
+            throw new RemoteServiceException(503, "UserService unavailable: " + e.getMessage());
+        }
+    }
+
+    public UserSettings settingsById(UUID id) {
+        try {
+            return restClient.get()
+                    .uri("/user_settings/{id}", id)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .body(UserSettings.class);
+        } catch (RestClientResponseException e) {
+            int status = e.getStatusCode().value();
+            String message = e.getResponseBodyAsString();
+            log.warn("UserService: ошибка получения настроек, status={}, userId={}", status, id);
+            throw new RemoteServiceException(status, message);
+        } catch (RestClientException e) {
+            log.error("UserService недоступен при settingsById: userId={}, error={}", id, e.getMessage());
+            throw new RemoteServiceException(503, "UserService unavailable: " + e.getMessage());
+        }
+    }
+
+    public void updatePassword(UUID id, String password) {
+        try {
+            restClient.patch()
+                    .uri("/user/{id}/password", id)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(password)
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (RestClientResponseException e) {
+            int status = e.getStatusCode().value();
+            String message = e.getResponseBodyAsString();
+            log.warn("UserService: ошибка смены пароля, status={}, userId={}", status, id);
+            throw new RemoteServiceException(status, message);
+        } catch (RestClientException e) {
+            log.error("UserService недоступен при updatePassword: userId={}, error={}", id, e.getMessage());
+            throw new RemoteServiceException(503, "UserService unavailable: " + e.getMessage());
+        }
+    }
+
+    public void updateUsername(UUID id, String username) {
+        try {
+            restClient.patch()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/user/{id}/username")
+                            .queryParam("username", username)
+                            .build(id))
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (RestClientResponseException e) {
+            int status = e.getStatusCode().value();
+            String message = e.getResponseBodyAsString();
+            log.warn("UserService: ошибка изменения username, status={}, userId={}", status, id);
+            throw new RemoteServiceException(status, message);
+        } catch (RestClientException e) {
+            log.error("UserService недоступен при updateUsername: userId={}, error={}", id, e.getMessage());
+            throw new RemoteServiceException(503, "UserService unavailable: " + e.getMessage());
+        }
+    }
+
+    public void updateAvatarUrl(UUID id, String avatarUrl) {
+        try {
+            restClient.patch()
+                    .uri("/user/{id}/avatar-url", id)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(avatarUrl == null ? "" : avatarUrl)
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (RestClientResponseException e) {
+            int status = e.getStatusCode().value();
+            String message = e.getResponseBodyAsString();
+            log.warn("UserService: ошибка изменения avatarUrl, status={}, userId={}", status, id);
+            throw new RemoteServiceException(status, message);
+        } catch (RestClientException e) {
+            log.error("UserService недоступен при updateAvatarUrl: userId={}, error={}", id, e.getMessage());
+            throw new RemoteServiceException(503, "UserService unavailable: " + e.getMessage());
+        }
+    }
+
+    public void updateAllowWriting(UUID id, boolean value) {
+        try {
+            restClient.patch()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/user_settings/{id}/allow-writing")
+                            .queryParam("value", value)
+                            .build(id))
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (RestClientResponseException e) {
+            int status = e.getStatusCode().value();
+            String message = e.getResponseBodyAsString();
+            log.warn("UserService: ошибка изменения allowWriting, status={}, userId={}", status, id);
+            throw new RemoteServiceException(status, message);
+        } catch (RestClientException e) {
+            log.error("UserService недоступен при updateAllowWriting: userId={}, error={}", id, e.getMessage());
+            throw new RemoteServiceException(503, "UserService unavailable: " + e.getMessage());
+        }
+    }
+
+    public void updateAllowAddChat(UUID id, boolean value) {
+        try {
+            restClient.patch()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/user_settings/{id}/allow-add-chat")
+                            .queryParam("value", value)
+                            .build(id))
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (RestClientResponseException e) {
+            int status = e.getStatusCode().value();
+            String message = e.getResponseBodyAsString();
+            log.warn("UserService: ошибка изменения allowAddChat, status={}, userId={}", status, id);
+            throw new RemoteServiceException(status, message);
+        } catch (RestClientException e) {
+            log.error("UserService недоступен при updateAllowAddChat: userId={}, error={}", id, e.getMessage());
+            throw new RemoteServiceException(503, "UserService unavailable: " + e.getMessage());
+        }
+    }
+
+    public void updateAutoDeleteMessage(UUID id, OffsetDateTime value) {
+        try {
+            restClient.patch()
+                    .uri(uriBuilder -> {
+                        var builder = uriBuilder.path("/user_settings/{id}/auto-delete-message");
+                        if (value != null) {
+                            builder.queryParam("time", value);
+                        }
+                        return builder.build(id);
+                    })
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (RestClientResponseException e) {
+            int status = e.getStatusCode().value();
+            String message = e.getResponseBodyAsString();
+            log.warn("UserService: ошибка изменения autoDeleteMessage, status={}, userId={}", status, id);
+            throw new RemoteServiceException(status, message);
+        } catch (RestClientException e) {
+            log.error("UserService недоступен при updateAutoDeleteMessage: userId={}, error={}", id, e.getMessage());
             throw new RemoteServiceException(503, "UserService unavailable: " + e.getMessage());
         }
     }

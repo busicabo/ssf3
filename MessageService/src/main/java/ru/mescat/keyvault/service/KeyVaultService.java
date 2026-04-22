@@ -121,6 +121,26 @@ public class KeyVaultService {
         }
     }
 
+    public List<NewPrivateKeyEntity> getPrivateKeyChain(UUID userId) {
+        try {
+            return restClient.get()
+                    .uri("/api/new_private_key/{userId}/all", userId)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .body(new ParameterizedTypeReference<List<NewPrivateKeyEntity>>() {});
+        } catch (RestClientResponseException e) {
+            if (e.getStatusCode().value() == 404) {
+                log.debug("KeyVaultService getPrivateKeyChain: private key chain not found for userId={}", userId);
+            } else {
+                log.warn("KeyVaultService getPrivateKeyChain failed: userId={}, status={}", userId, e.getStatusCode().value());
+            }
+            throw new RemoteServiceException(e.getStatusCode().value(), e.getResponseBodyAsString());
+        } catch (RestClientException e) {
+            log.error("KeyVaultService unavailable during getPrivateKeyChain: userId={}, error={}", userId, e.getMessage());
+            throw new RemoteServiceException(503, "РЎРµСЂРІРёСЃ С…СЂР°РЅРёР»РёС‰Р° РєР»СЋС‡РµР№ РЅРµРґРѕСЃС‚СѓРїРµРЅ: " + e.getMessage());
+        }
+    }
+
     public NewPrivateKeyEntity saveNewPrivateKey(NewPrivateKeyDto newPrivateKeyDto) {
         try {
             return restClient.post()

@@ -65,6 +65,23 @@ export class WsManager {
     }
   }
 
+  requestMessageKey({ chatId, messageId, senderId, encryptName }) {
+    if (!this.connected || !chatId || !senderId || !encryptName) {
+      return false;
+    }
+
+    this.#sendFrame('SEND', {
+      destination: '/app/message-key.request',
+      'content-type': 'application/json'
+    }, JSON.stringify({
+      chatId,
+      messageId: messageId || null,
+      senderId,
+      encryptName
+    }));
+    return true;
+  }
+
   #readChunk(chunk, chatIds) {
     this.buffer += chunk;
     const frames = this.buffer.split('\0');
@@ -107,7 +124,7 @@ export class WsManager {
     }
 
     if (command === 'ERROR') {
-      this.ui.appendStatus(`WS ошибка: ${body || 'protocol error'}`, 'error');
+      this.ui.appendStatus(`WS \u043e\u0448\u0438\u0431\u043a\u0430: ${body || 'protocol error'}`, 'error');
     }
   }
 

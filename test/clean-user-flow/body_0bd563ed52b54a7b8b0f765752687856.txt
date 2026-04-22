@@ -1,0 +1,1 @@
+{"id":"04d3b54b-a940-4ab8-a101-d2b2d5e6ad4c","username":"clean_20260421123713","avatarUrl":"https://90995c79f2f34c065a0d26c1400cc671.bckt.ru/default-avatar/ChatGPT%20Image%2015%20мар.%202026%20г.%2C%2019_46_55.png","createdAt":"2026-04-21T09:37:14.437479Z","online":true,"allowWriting":true,"allowAddChat":true,"autoDeleteMessage":null}

@@ -1,0 +1,22 @@
+﻿{
+    "chatId":  "144",
+    "selectedKeyIds":  [
+                           "788e1a7b-c4b9-4b00-bea4-1727dab694d5",
+                           "5b98c926-f565-4cd2-901c-fe6c5720f5dd"
+                       ],
+    "skippedInvalidKeyIds":  [
+
+                             ],
+    "statuses":  {
+                     "publicKeys":  200,
+                     "sendKeys":  200,
+                     "sendEncryptedMessage":  200,
+                     "messagesAfterEncryptedSend":  200
+                 },
+    "responseSamples":  {
+                            "publicKeys":  "[{\"key\":\"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2A68neQunYw5/2dSOhreA5SDg8kHqnc6xAmZ63l0U7vLjnx4NHsW3tISLbgMSLJa5XMpy4HDhSWlWI5ML7j9MWT0Nop5CZvcXwZTTTK4sJrw4EpLityJ5pR6gf+6yRoYUukHzhnbpvPQv2F/FlUocCuZmVMn7DCXDfKy8PXwcHgwqtcqWSS8D1oTEZb1tZvRHSkhWlrKGJ5rk2tVV6WoBeriXT3xjiJoH0oNsEIvLH7XNJx7PvowkrbWgE8DgHe5bWVuirVgMToGsnKookWPKDTrkpux8C3JkdYZGRIAlL7g3XI81P1c13iXPxBvrGY/AnXrZMcJawJLPVoXnBYapQIDAQAB\",\"userId\":\"0e08feec-b6f2-4045-b6a1-aabf42b515e7\",\"createdAt\":\"2026-04-21T09:15:23.269228Z\",\"id\":\"5b98c926-f565-4cd2-901c-fe6c5720f5dd\"},{\"key\":\"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvjHC81kd74b98E0ASIkirOKrmo8bk9OzrZOdLwGFRiO5rk3SSKgvWy1X+VDrDaOuOrq+hCQxryBXURT7JEttutaA4p9ChPoQIkaV2G2YoWoNKMCTQORx8uGkNvQcy/kxyCE4FpSBpZ2VQ2uS9IrZ5bcVYN0FGeg8nUfhl8ur1mTFlz6YujANTeYMpGXessJOQFmc/1ia1UXTLJNZt9...",
+                            "sendKeys":  "{\"chatId\":144,\"encryptName\":\"ff0f7536-1b20-447b-a738-24f5ea4905d3\",\"recipients\":2}",
+                            "sendEncryptedMessage":  "{\"messageId\":159,\"chatId\":144,\"message\":\"eyJhbGciOiJBRVMtR0NNIiwiaXYiOiJMbFk1cXg4dElFNGNpVVhqIiwiY2lwaGVyIjoidVJwREY0VEFlRWM3MW9vNTQ3eC9aVkZKT1VmTzJsbit5NW1MMmtxZkNLU1owZEs1cTdiVEhNSk9SWnRwZmJlNTdqUUQvNXZmbFFlV2FYOWtvRUhWVzVOZEF6ZmNIeFhHTGc9PSJ9\",\"encryptionName\":\"ff0f7536-1b20-447b-a738-24f5ea4905d3\",\"senderId\":\"c1e73473-8308-45db-a651-9bedd7632a22\",\"createdAt\":\"2026-04-21T12:43:12.731519+03:00\"}",
+                            "messagesAfterEncryptedSend":  "[{\"messageId\":157,\"chatId\":144,\"message\":\"aGVsbG8gdXNlciBmcm9tIGNsZWFuIHVzZXIgY2xlYW5fMjAyNjA0MjExMjM4MDA=\",\"encryptionName\":\"ff0a452f-bd5b-4411-af3f-83352b0b45ae\",\"senderId\":\"c1e73473-8308-45db-a651-9bedd7632a22\",\"createdAt\":\"2026-04-21T09:38:02.791222Z\"},{\"messageId\":158,\"chatId\":144,\"message\":\"eyJhbGciOiJBRVMtR0NNIiwiaXYiOiJJZkhFb0F5bnVMaC93NTcrIiwiY2lwaGVyIjoiZ3pqNjE0eUxlRGFpUktuL2FUUnpZdnNBIn0=\",\"encryptionName\":\"45444240-acff-48cc-a990-73d72e39881f\",\"senderId\":\"0e08feec-b6f2-4045-b6a1-aabf42b515e7\",\"createdAt\":\"2026-04-21T09:40:53.622021Z\"},{\"messageId\":159,\"chatId\":144,\"message\":\"eyJhbGciOiJBRVMtR0NNIiwiaXYiOiJMbFk1cXg4dElFNGNpVVhqIiwiY2lwaGVyIjoidVJwREY0VEFlRWM3MW9vNTQ3eC9aVkZKT1VmTzJsbit5NW1MMmtxZkNLU1owZEs1cTdiVEhNSk9SWnRwZmJlNTdqUUQvNXZmbFFlV2FYOWtvRUhWVzVOZEF6ZmNIeFhHTGc9PSJ9\",..."
+                        }
+}

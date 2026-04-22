@@ -1,0 +1,1 @@
+{"messageId":157,"chatId":144,"message":"aGVsbG8gdXNlciBmcm9tIGNsZWFuIHVzZXIgY2xlYW5fMjAyNjA0MjExMjM4MDA=","encryptionName":"ff0a452f-bd5b-4411-af3f-83352b0b45ae","senderId":"c1e73473-8308-45db-a651-9bedd7632a22","createdAt":"2026-04-21T12:38:02.836242+03:00"}

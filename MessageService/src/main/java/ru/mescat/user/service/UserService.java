@@ -8,6 +8,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 import ru.mescat.user.dto.User;
+import ru.mescat.user.dto.UserSettings;
 import ru.mescat.message.exception.RemoteServiceException;
 
 import java.util.List;
@@ -199,6 +200,22 @@ public class UserService {
             int status = e.getStatusCode().value();
             String message = e.getResponseBodyAsString();
 
+            throw new RemoteServiceException(status, message);
+        } catch (RestClientException e) {
+            throw new RemoteServiceException(503, "UserService unavailable: " + e.getMessage());
+        }
+    }
+
+    public UserSettings getSettingsById(UUID id) {
+        try {
+            return restClient.get()
+                    .uri("/user_settings/{id}", id)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .body(UserSettings.class);
+        } catch (RestClientResponseException e) {
+            int status = e.getStatusCode().value();
+            String message = e.getResponseBodyAsString();
             throw new RemoteServiceException(status, message);
         } catch (RestClientException e) {
             throw new RemoteServiceException(503, "UserService unavailable: " + e.getMessage());

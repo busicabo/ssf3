@@ -37,7 +37,7 @@ public class UserEntity {
         this.password = password;
     }
 
-    @Column(name="avatar_url", nullable = false,insertable = false, updatable = false)
+    @Column(name="avatar_url", nullable = false, insertable = false)
     private String avatarUrl;
 
     @Column(name = "online", nullable = false)
