@@ -14,6 +14,7 @@ import ru.mescat.message.entity.UsersBlackListEntity;
 import ru.mescat.message.event.dto.DeleteChat;
 import ru.mescat.message.event.dto.NewUserBlockInChat;
 import ru.mescat.message.event.dto.NewUserInChat;
+import ru.mescat.message.event.dto.NewUserUnblockInChat;
 import ru.mescat.user.dto.User;
 import ru.mescat.user.service.UserService;
 
@@ -69,6 +70,16 @@ public class ChatEvent {
         log.debug("Событие добавления пользователя в чат отправлено в Kafka: topic={}", topic);
     }
 
+    @TransactionalEventListener
+    public void newUserUnblockInChat(NewUserUnblockInChat event) {
+        if (event == null || event.getChatId() == null || event.getUserTarget() == null) {
+            return;
+        }
+
+        kafkaTemplate.send(topic, new ChatEventDto(ChatEventType.NEW_USER_UNBLOCK_IN_CHAT, unblockedUserPayload(event)));
+        log.debug("User unblock chat event sent to Kafka: topic={}", topic);
+    }
+
     private Map<String, Object> deleteChatPayload(ChatEntity chat) {
         Map<String, Object> chatNode = new HashMap<>();
         chatNode.put("chatId", chat.getChatId());
@@ -107,6 +118,21 @@ public class ChatEvent {
         entityNode.put("userInitiator", blocked.getUserInitiator());
         entityNode.put("userTarget", blocked.getUserTarget());
         entityNode.put("createdAt", blocked.getCreatedAt() != null ? blocked.getCreatedAt().toString() : null);
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("usersBlackListEntity", entityNode);
+        return payload;
+    }
+
+    private Map<String, Object> unblockedUserPayload(NewUserUnblockInChat event) {
+        Map<String, Object> chatNode = new HashMap<>();
+        chatNode.put("chatId", event.getChatId());
+
+        Map<String, Object> entityNode = new HashMap<>();
+        entityNode.put("chat", chatNode);
+        entityNode.put("userInitiator", event.getUserInitiator());
+        entityNode.put("userTarget", event.getUserTarget());
+        entityNode.put("createdAt", event.getCreatedAt() != null ? event.getCreatedAt().toString() : null);
 
         Map<String, Object> payload = new HashMap<>();
         payload.put("usersBlackListEntity", entityNode);

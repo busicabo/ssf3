@@ -94,6 +94,43 @@ export class FrontendDb {
     return nextCount;
   }
 
+  async getCachedMessages(userId, chatId) {
+    const row = await this.#getById(STORE.messageCache, this.#key(userId, String(chatId)));
+    return Array.isArray(row?.messages) ? row.messages : [];
+  }
+
+  async setCachedMessages(userId, chatId, messages, limit = Infinity) {
+    let normalized = (Array.isArray(messages) ? messages : [])
+      .filter((row) => row?.messageId)
+      .sort((left, right) => {
+        const leftTime = new Date(left.createdAt || 0).getTime();
+        const rightTime = new Date(right.createdAt || 0).getTime();
+        return rightTime - leftTime || Number(right.messageId || 0) - Number(left.messageId || 0);
+      });
+
+    if (Number.isFinite(limit) && limit > 0) {
+      normalized = normalized.slice(0, limit);
+    }
+
+    normalized = normalized.sort((left, right) => {
+      const leftTime = new Date(left.createdAt || 0).getTime();
+      const rightTime = new Date(right.createdAt || 0).getTime();
+      return leftTime - rightTime || Number(left.messageId || 0) - Number(right.messageId || 0);
+    });
+
+    await this.#put(STORE.messageCache, {
+      id: this.#key(userId, String(chatId)),
+      userId,
+      chatId: Number(chatId),
+      messages: normalized,
+      updatedAt: new Date().toISOString()
+    });
+  }
+
+  async deleteCachedMessages(userId, chatId) {
+    await this.#deleteById(STORE.messageCache, this.#key(userId, String(chatId)));
+  }
+
   async #open() {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -114,6 +151,11 @@ export class FrontendDb {
         if (!db.objectStoreNames.contains(STORE.usage)) {
           const usage = db.createObjectStore(STORE.usage, { keyPath: 'id' });
           usage.createIndex('userId', 'userId', { unique: false });
+        }
+
+        if (!db.objectStoreNames.contains(STORE.messageCache)) {
+          const messageCache = db.createObjectStore(STORE.messageCache, { keyPath: 'id' });
+          messageCache.createIndex('userId', 'userId', { unique: false });
         }
       };
 
@@ -155,6 +197,13 @@ export class FrontendDb {
       req.onsuccess = () => resolve(req.result || null);
       req.onerror = () => reject(req.error || new Error('IndexedDB get failed'));
     }));
+  }
+
+  async #deleteById(storeName, id) {
+    const db = await this.init();
+    await this.#tx(db, [storeName], 'readwrite', (tx) => {
+      tx.objectStore(storeName).delete(id);
+    });
   }
 
   async #getAllByIndex(storeName, indexName, value) {

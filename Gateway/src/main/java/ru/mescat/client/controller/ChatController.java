@@ -61,6 +61,12 @@ public class ChatController {
         return proxy.post("/api/block_user", userId(authentication), userBlockDto);
     }
 
+    @PostMapping("/unblock_user")
+    public ResponseEntity<?> unblockUser(@RequestBody UserBlockDto userBlockDto,
+                                         Authentication authentication) {
+        return proxy.post("/api/unblock_user", userId(authentication), userBlockDto);
+    }
+
     @PostMapping("/add_user_in_chat")
     public ResponseEntity<?> addUserInChat(@RequestBody AddUserInChatDto dto,
                                            Authentication authentication) {

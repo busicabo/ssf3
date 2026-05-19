@@ -129,6 +129,27 @@ public class ChatController {
         }
     }
 
+    @PostMapping("/unblock_user")
+    public ResponseEntity<?> unblockUser(@RequestHeader("X-User-Id") UUID userId,
+                                         @RequestBody UserBlockDto userBlockDto) {
+        if (userBlockDto == null) {
+            return ResponseEntity.badRequest().body("Тело запроса не должно быть пустым.");
+        }
+
+        try {
+            usersBlackListService.removeBlock(userId, userBlockDto);
+            return ResponseEntity.ok("Пользователь успешно разблокирован.");
+        } catch (ChatNotFoundException | NotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Не удалось разблокировать пользователя.");
+        }
+    }
+
     @PostMapping("/add_user_in_chat")
     public ResponseEntity<?> addUserInChat(@RequestHeader("X-User-Id") UUID userId,
                                            @RequestBody AddUserInChatDto dto) {
@@ -146,7 +167,7 @@ public class ChatController {
 
     @PostMapping("/delete_user_in_chat")
     public ResponseEntity<?> deleteUserInChat(@RequestHeader("X-User-Id") UUID userId,
-                                              @RequestBody AddUserInChatDto dto) {
+                                              @RequestBody DeleteUserInChatDto dto) {
         if (dto == null) {
             return ResponseEntity.badRequest().body("Тело запроса не должно быть пустым.");
         }

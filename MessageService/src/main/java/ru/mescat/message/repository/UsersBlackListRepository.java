@@ -21,9 +21,13 @@ public interface UsersBlackListRepository extends JpaRepository<UsersBlackListEn
 
     List<UsersBlackListEntity> findAllByChat_ChatId(Long chatId);
 
+    List<UsersBlackListEntity> findAllByChat_ChatIdAndUserTarget(Long chatId, UUID userTarget);
+
     Optional<UsersBlackListEntity> findByUserInitiatorAndChat_ChatIdAndUserTarget(UUID userInitiator, Long chatId, UUID userTarget);
 
     void deleteByUserInitiatorAndChat_ChatIdAndUserTarget(UUID userInitiator, Long chatId, UUID userTarget);
+
+    void deleteByChat_ChatIdAndUserTarget(Long chatId, UUID userTarget);
 
     @Query("""
             select ubl.userTarget

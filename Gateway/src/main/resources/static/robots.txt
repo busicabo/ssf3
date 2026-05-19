@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /ws
+Disallow: /chat.html
+Disallow: /message
+
+Sitemap: https://mescat.ru/sitemap.xml

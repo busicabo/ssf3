@@ -410,6 +410,10 @@ export class KeyManager {
 
   async ingestPendingMessageKeys() {
     const pending = await this.#safeGetPendingMessageKeys();
+    return this.ingestMessageKeyItems(pending);
+  }
+
+  async ingestMessageKeyItems(pending = []) {
     if (pending.length === 0) {
       return { importedCount: 0, encryptNames: [] };
     }

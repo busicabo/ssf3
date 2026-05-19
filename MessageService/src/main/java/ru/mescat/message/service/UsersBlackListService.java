@@ -2,12 +2,14 @@ package ru.mescat.message.service;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.mescat.message.dto.UserBlockDto;
 import ru.mescat.message.entity.ChatEntity;
 import ru.mescat.message.entity.ChatUserEntity;
 import ru.mescat.message.entity.UsersBlackListEntity;
 import ru.mescat.message.entity.enums.ChatType;
 import ru.mescat.message.event.dto.NewUserBlockInChat;
+import ru.mescat.message.event.dto.NewUserUnblockInChat;
 import ru.mescat.message.exception.AccessDeniedException;
 import ru.mescat.message.exception.ChatNotFoundException;
 import ru.mescat.message.exception.NotFoundException;
@@ -16,6 +18,7 @@ import ru.mescat.message.repository.UsersBlackListRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.time.OffsetDateTime;
 
 @Service
 public class UsersBlackListService {
@@ -81,6 +84,7 @@ public class UsersBlackListService {
         repository.deleteByUserInitiatorAndChat_ChatIdAndUserTarget(userInitiator, chatId, userTarget);
     }
 
+    @Transactional
     public UsersBlackListEntity addBlock(UUID userId, UserBlockDto userBlockDto) {
         if (userBlockDto == null || userBlockDto.getChatId() == null || userBlockDto.getUserId() == null) {
             throw new IllegalArgumentException("Некорректные параметры блокировки.");
@@ -124,5 +128,41 @@ public class UsersBlackListService {
         }
 
         return save(new UsersBlackListEntity(initiator.getUserId(), chat, target.getUserId()));
+    }
+
+    @Transactional
+    public void removeBlock(UUID userId, UserBlockDto userBlockDto) {
+        if (userBlockDto == null || userBlockDto.getChatId() == null || userBlockDto.getUserId() == null) {
+            throw new IllegalArgumentException("Некорректные параметры разблокировки.");
+        }
+
+        Long chatId = userBlockDto.getChatId();
+        UUID targetUserId = userBlockDto.getUserId();
+
+        ChatEntity chat = chatService.findById(chatId);
+        if (chat == null) {
+            throw new ChatNotFoundException("Чат не найден.");
+        }
+
+        ChatUserEntity initiator = chatUserService.findByUserIdAndChatId(chatId, userId);
+        if (initiator == null) {
+            throw new NotFoundException("Вы не состоите в данном чате.");
+        }
+
+        ChatUserEntity target = chatUserService.findByUserIdAndChatId(chatId, targetUserId);
+        if (target == null) {
+            throw new NotFoundException("Этот участник не состоит в чате.");
+        }
+
+        if (chat.getChatType() == ChatType.GROUP) {
+            if (!initiator.getRole().equalsIgnoreCase("ADMIN") && !initiator.getRole().equalsIgnoreCase("CREATOR")) {
+                throw new AccessDeniedException("Нет прав разблокировать участников группы.");
+            }
+            repository.deleteByChat_ChatIdAndUserTarget(chatId, targetUserId);
+        } else {
+            repository.deleteByUserInitiatorAndChat_ChatIdAndUserTarget(userId, chatId, targetUserId);
+        }
+
+        applicationEventPublisher.publishEvent(new NewUserUnblockInChat(chatId, userId, targetUserId, OffsetDateTime.now()));
     }
 }

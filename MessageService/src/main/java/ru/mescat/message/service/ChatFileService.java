@@ -2,6 +2,7 @@ package ru.mescat.message.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -38,6 +39,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -179,6 +181,43 @@ public class ChatFileService {
         ensureUserHasAccess(chatId, userId);
         return fileRepository.findByChat_ChatIdAndStatusOrderByCreatedAtAsc(chatId, FileStatus.READY)
                 .stream()
+                .map(this::toDto)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<FileDto> getReadyFilesInChat(UUID userId, Long chatId, Integer limit, UUID beforeFileId) {
+        ensureUserHasAccess(chatId, userId);
+        if (limit == null) {
+            return getReadyFilesInChat(userId, chatId);
+        }
+        if (limit <= 0 || limit > 100) {
+            throw new IllegalArgumentException("File limit must be between 1 and 100.");
+        }
+
+        List<FileEntity> desc;
+        if (beforeFileId != null) {
+            FileEntity cursor = fileRepository.findByFileIdAndChat_ChatId(beforeFileId, chatId)
+                    .orElseThrow(() -> new NotFoundException("File cursor not found."));
+            if (cursor.getStatus() != FileStatus.READY) {
+                throw new NotFoundException("File cursor not found.");
+            }
+            desc = fileRepository.findByChat_ChatIdAndStatusAndCreatedAtBeforeOrderByCreatedAtDesc(
+                    chatId,
+                    FileStatus.READY,
+                    cursor.getCreatedAt(),
+                    PageRequest.of(0, limit)
+            );
+        } else {
+            desc = fileRepository.findByChat_ChatIdAndStatusOrderByCreatedAtDesc(
+                    chatId,
+                    FileStatus.READY,
+                    PageRequest.of(0, limit)
+            );
+        }
+
+        Collections.reverse(desc);
+        return desc.stream()
                 .map(this::toDto)
                 .toList();
     }

@@ -85,6 +85,7 @@
             <button id="addMemberBtn" type="button" class="button button--primary">Добавить</button>
             <button id="removeMemberBtn" type="button" class="button button--secondary">Удалить</button>
             <button id="blockMemberBtn" type="button" class="button button--danger">Заблокировать</button>
+            <button id="unblockMemberBtn" type="button" class="button button--secondary">Разблокировать</button>
           </div>
 
           <button id="servicePanelToggle" type="button" class="button button--ghost button--small">Открыть все действия и журнал</button>
@@ -109,7 +110,7 @@
         <div class="composer__row">
           <button id="fileAttachBtn" type="button" class="button button--ghost composer__attach" disabled title="Прикрепить файл">+</button>
           <input id="fileInput" type="file" hidden>
-          <textarea id="messageInput" rows="3" placeholder="Сначала выберите чат" disabled></textarea>
+          <textarea id="messageInput" rows="3" maxlength="500" placeholder="Сначала выберите чат" disabled></textarea>
           <button id="sendBtn" type="button" class="button button--primary" disabled>Отправить</button>
         </div>
       </footer>

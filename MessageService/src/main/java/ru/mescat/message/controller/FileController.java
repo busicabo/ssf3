@@ -61,13 +61,19 @@ public class FileController {
 
     @GetMapping("/chats/{chatId}")
     public ResponseEntity<?> getReadyFilesInChat(@RequestHeader("X-User-Id") UUID userId,
-                                                 @PathVariable Long chatId) {
+                                                 @PathVariable Long chatId,
+                                                 @RequestParam(required = false) Integer limit,
+                                                 @RequestParam(required = false) UUID beforeFileId) {
         try {
-            return ResponseEntity.ok(chatFileService.getReadyFilesInChat(userId, chatId));
+            return ResponseEntity.ok(chatFileService.getReadyFilesInChat(userId, chatId, limit, beforeFileId));
         } catch (ChatNotFoundException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         } catch (AccessDeniedException e) {
             return ResponseEntity.status(403).body(e.getMessage());
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

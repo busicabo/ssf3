@@ -6,6 +6,10 @@ export class ChatUi {
     this.statusItems = [];
     this.toastTimers = new Map();
     this.lastToastAt = new Map();
+    this.scrollUpdateFrame = null;
+    this.lastUploadState = { text: '', progress: null, updatedAt: 0 };
+    this.historyLoadState = { visible: false, loading: false, notice: false };
+    this.historyLoadObserver = null;
     this.nodes = {
       settingsBtn: document.getElementById('settingsBtn'),
       catPattern: document.getElementById('catPattern'),
@@ -34,10 +38,10 @@ export class ChatUi {
       chatPresence: document.getElementById('chatPresence'),
       chatPresenceDot: document.getElementById('chatPresenceDot'),
       chatMenuBtn: document.getElementById('chatMenuBtn'),
-      chatMenu: document.getElementById('chatMenu'),
-      messageList: document.getElementById('messageList'),
-      scrollBottomBtn: document.getElementById('scrollBottomBtn'),
-      emptyChatState: document.getElementById('emptyChatState'),
+        chatMenu: document.getElementById('chatMenu'),
+        messageList: document.getElementById('messageList'),
+        scrollBottomBtn: document.getElementById('scrollBottomBtn'),
+        emptyChatState: document.getElementById('emptyChatState'),
       messageInput: document.getElementById('messageInput'),
       sendBtn: document.getElementById('sendBtn'),
       fileAttachBtn: document.getElementById('fileAttachBtn'),
@@ -52,6 +56,7 @@ export class ChatUi {
       addMemberBtn: document.getElementById('addMemberBtn'),
       removeMemberBtn: document.getElementById('removeMemberBtn'),
       blockMemberBtn: document.getElementById('blockMemberBtn'),
+      unblockMemberBtn: document.getElementById('unblockMemberBtn'),
       chatOptionsPanel: document.getElementById('chatOptionsPanel'),
       chatOptionsCloseBtn: document.getElementById('chatOptionsCloseBtn'),
       statusList: document.getElementById('statusList'),
@@ -71,7 +76,7 @@ export class ChatUi {
       toastStack: this.#createToastStack()
     };
     this.#bindGlobalErrorNotifications();
-    this.#renderCatPattern();
+    this.#scheduleCatPatternRender();
   }
 
   bind(events) {
@@ -130,6 +135,7 @@ export class ChatUi {
     this.nodes.addMemberBtn.addEventListener('click', () => events.onMemberAction?.('add'));
     this.nodes.removeMemberBtn.addEventListener('click', () => events.onMemberAction?.('remove'));
     this.nodes.blockMemberBtn.addEventListener('click', () => events.onMemberAction?.('block'));
+    this.nodes.unblockMemberBtn?.addEventListener('click', () => events.onMemberAction?.('unblock'));
     this.nodes.reloadBtn.addEventListener('click', () => events.onReload?.());
     this.nodes.bootstrapKeysBtn.addEventListener('click', () => events.onBootstrapKeys?.());
     this.nodes.wsReconnectBtn.addEventListener('click', () => events.onWsReconnect?.());
@@ -183,7 +189,9 @@ export class ChatUi {
       events.onMemberSearch?.(this.nodes.memberInput.value);
     });
 
-    this.nodes.messageList.addEventListener('scroll', () => this.#updateScrollBottomButton());
+    this.nodes.messageList.addEventListener('scroll', () => {
+      this.#scheduleScrollBottomUpdate();
+    }, { passive: true });
     this.nodes.scrollBottomBtn.addEventListener('click', () => this.scrollMessagesToBottom());
 
     document.addEventListener('click', (event) => {
@@ -240,6 +248,17 @@ export class ChatUi {
       return;
     }
     this.lastToastAt.set(duplicateKey, now);
+    if (this.lastToastAt.size > 80) {
+      const cutoff = now - 60_000;
+      for (const [key, shownAt] of this.lastToastAt) {
+        if (shownAt < cutoff) {
+          this.lastToastAt.delete(key);
+        }
+      }
+      while (this.lastToastAt.size > 80) {
+        this.lastToastAt.delete(this.lastToastAt.keys().next().value);
+      }
+    }
 
     const toast = document.createElement('article');
     toast.className = `toast toast--${normalizedType}`;
@@ -371,6 +390,7 @@ export class ChatUi {
       this.nodes.messageInput.placeholder = 'Сначала выберите чат';
       this.nodes.emptyChatState.hidden = false;
       this.nodes.messageList.innerHTML = '';
+      this.setHistoryLoadVisible(false);
       this.setOptionsPanelOpen(false);
       this.showMobileChatList();
       return;
@@ -411,10 +431,25 @@ export class ChatUi {
     this.setOptionsPanelOpen(false);
   }
 
+  setHistoryLoadVisible(visible, loading = false, notice = false) {
+    this.historyLoadState = {
+      visible: Boolean(visible),
+      loading: Boolean(loading),
+      notice: Boolean(notice)
+    };
+  }
+
   renderMessages(messages, selfUserId, chat = null, options = {}) {
     const previousScrollTop = this.nodes.messageList.scrollTop;
     const previousScrollHeight = this.nodes.messageList.scrollHeight;
     const wasNearBottom = this.#isMessagesNearBottom();
+    if (options.history) {
+      this.historyLoadState = {
+        visible: Boolean(options.history.visible),
+        loading: Boolean(options.history.loading),
+        notice: Boolean(options.history.notice)
+      };
+    }
 
     this.nodes.messageList.innerHTML = '';
     this.nodes.scrollBottomBtn.hidden = true;
@@ -426,6 +461,7 @@ export class ChatUi {
     }
 
     const fragment = document.createDocumentFragment();
+    this.#appendHistoryLoader(fragment, options.history || this.historyLoadState);
     let previousDateKey = null;
     messages.forEach((message) => {
       const dateKey = this.#dateKey(message.createdAt);
@@ -468,6 +504,7 @@ export class ChatUi {
       fragment.appendChild(card);
     });
     this.nodes.messageList.appendChild(fragment);
+    this.#observeHistoryLoader();
 
     if (options.stickToBottom || (!options.preserveScroll && wasNearBottom)) {
       this.scrollMessagesToBottom();
@@ -504,6 +541,10 @@ export class ChatUi {
     this.nodes.removeMemberBtn.hidden = isPrivate || !canManage;
     this.nodes.blockMemberBtn.textContent = isPrivate ? 'Заблокировать пользователя' : 'Заблокировать в чате';
     this.nodes.blockMemberBtn.hidden = !(isPrivate || canManage);
+    if (this.nodes.unblockMemberBtn) {
+      this.nodes.unblockMemberBtn.textContent = isPrivate ? 'Разблокировать пользователя' : 'Разблокировать в чате';
+      this.nodes.unblockMemberBtn.hidden = !(isPrivate || canManage);
+    }
 
     if (!Array.isArray(members) || members.length === 0) {
       this.nodes.membersList.innerHTML = '<div class="empty-state empty-state--compact">Список участников пока пуст.</div>';
@@ -523,6 +564,49 @@ export class ChatUi {
       `;
       this.nodes.membersList.appendChild(row);
     });
+  }
+
+  #appendHistoryLoader(fragment, state) {
+    if (!state?.visible) {
+      return;
+    }
+
+    const isNotice = Boolean(state.notice || state.historyNotice);
+    const isLoading = Boolean(state.loading || state.loadingOlder);
+    const row = document.createElement('div');
+    row.className = `history-load-row ${isNotice ? 'is-notice' : ''}`;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'history-load-btn';
+    button.dataset.historyLoader = 'true';
+    button.disabled = isLoading;
+    button.textContent = isLoading
+      ? 'Загружаем старые сообщения...'
+      : isNotice
+        ? 'Не удалось загрузить более старые сообщения. Повторить'
+        : 'Загрузить более старые сообщения';
+    button.addEventListener('click', () => this.events?.onLoadOlderMessages?.({ retry: true }));
+    row.appendChild(button);
+    fragment.appendChild(row);
+  }
+
+  #observeHistoryLoader() {
+    this.historyLoadObserver?.disconnect();
+
+    const loader = this.nodes.messageList.querySelector('[data-history-loader]');
+    if (!loader || this.historyLoadState.loading || this.historyLoadState.notice) {
+      return;
+    }
+
+    this.historyLoadObserver = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        this.events?.onLoadOlderMessages?.({ retry: false });
+      }
+    }, {
+      root: this.nodes.messageList,
+      threshold: 0.65
+    });
+    this.historyLoadObserver.observe(loader);
   }
 
   renderMemberSuggestions(users, onSelect) {
@@ -692,6 +776,7 @@ export class ChatUi {
   setOptionsPanelOpen(open) {
     this.nodes.chatOptionsPanel.hidden = !open;
     this.nodes.chatContent.classList.toggle('has-options-open', Boolean(open));
+    document.body.classList.toggle('mobile-options-open', Boolean(open));
   }
 
   setComposerLocked(locked, hint = '') {
@@ -711,12 +796,26 @@ export class ChatUi {
     }
     const message = String(text || '').trim();
     if (!message) {
+      this.lastUploadState = { text: '', progress: null, updatedAt: 0 };
       this.nodes.fileUploadStatus.hidden = true;
       this.nodes.fileUploadStatus.textContent = '';
       return;
     }
+    const numericProgress = progress === null ? null : Math.max(0, Math.min(100, Math.round(Number(progress) || 0)));
+    const now = Date.now();
+    if (
+      numericProgress !== null
+      && this.lastUploadState.text === message
+      && this.lastUploadState.progress === numericProgress
+    ) {
+      return;
+    }
+    if (numericProgress !== null && now - this.lastUploadState.updatedAt < 120) {
+      return;
+    }
+    this.lastUploadState = { text: message, progress: numericProgress, updatedAt: now };
     this.nodes.fileUploadStatus.hidden = false;
-    this.nodes.fileUploadStatus.textContent = progress === null ? message : `${message} ${progress}%`;
+    this.nodes.fileUploadStatus.textContent = numericProgress === null ? message : `${message} ${numericProgress}%`;
   }
 
   openCreateChatModal() {
@@ -1100,6 +1199,16 @@ export class ChatUi {
     this.nodes.scrollBottomBtn.hidden = distanceFromBottom < 420;
   }
 
+  #scheduleScrollBottomUpdate() {
+    if (this.scrollUpdateFrame) {
+      return;
+    }
+    this.scrollUpdateFrame = window.requestAnimationFrame(() => {
+      this.scrollUpdateFrame = null;
+      this.#updateScrollBottomButton();
+    });
+  }
+
   #isMessagesNearBottom() {
     const list = this.nodes.messageList;
     return list.scrollHeight - list.scrollTop - list.clientHeight < 160;
@@ -1248,29 +1357,46 @@ export class ChatUi {
       return;
     }
 
-    const rows = 24;
-    const cols = 28;
+    const viewportWidth = window.innerWidth || 1200;
+    const viewportHeight = window.innerHeight || 800;
+    const isMobile = viewportWidth <= 760;
+    const stepX = isMobile ? 74 : 58;
+    const stepY = isMobile ? 74 : 52;
+    const rows = Math.ceil(viewportHeight / stepY) + 2;
+    const cols = Math.ceil(viewportWidth / stepX) + 2;
+    const maxSprites = isMobile ? 80 : 260;
     const variants = 10;
     const angles = [-13, 8, -5, 15, -18, 4, 11, -9, 19, -3];
     const sizes = [28, 31, 34, 29, 37, 32, 26, 35, 30, 33];
     const fragment = document.createDocumentFragment();
+    let rendered = 0;
 
     this.nodes.catPattern.innerHTML = '';
-    for (let row = 0; row < rows; row += 1) {
-      for (let col = 0; col < cols; col += 1) {
+    for (let row = 0; row < rows && rendered < maxSprites; row += 1) {
+      for (let col = 0; col < cols && rendered < maxSprites; col += 1) {
         const index = (row * 7 + col * 3) % variants;
         const cat = document.createElement('span');
         cat.className = `cat-sprite cat-sprite--${index + 1}`;
-        cat.style.left = `${row * 18 + col * 54 + ((row + col) % 3) * 5 - 26}px`;
-        cat.style.top = `${row * 48 + ((col % 2) * 6) - 18}px`;
+        cat.style.left = `${row * 16 + col * stepX + ((row + col) % 3) * 5 - 26}px`;
+        cat.style.top = `${row * stepY + ((col % 2) * 6) - 18}px`;
         cat.style.width = `${sizes[index]}px`;
         cat.style.height = `${sizes[index]}px`;
         cat.style.transform = `rotate(${angles[index]}deg)`;
         fragment.appendChild(cat);
+        rendered += 1;
       }
     }
 
     this.nodes.catPattern.appendChild(fragment);
+  }
+
+  #scheduleCatPatternRender() {
+    const render = () => this.#renderCatPattern();
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(render, { timeout: 1500 });
+      return;
+    }
+    window.setTimeout(render, 250);
   }
 
   #escapeHtml(text) {

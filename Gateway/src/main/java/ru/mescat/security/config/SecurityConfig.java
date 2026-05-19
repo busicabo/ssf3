@@ -36,8 +36,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
+                                "/about",
                                 "/error",
                                 "/favicon.ico",
+                                "/robots.txt",
+                                "/sitemap.xml",
                                 "/auth.css",
                                 "/js/auth/**",
                                 "/auth/login",

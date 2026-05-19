@@ -168,6 +168,7 @@ public class UserOnlineSyncService {
             }
             Map<String, Object> node = new HashMap<>();
             node.put("id", key.getId());
+            node.put("chatId", key.getChatId());
             node.put("userId", key.getUserId());
             node.put("userTargetId", key.getUserTargetId());
             node.put("key", key.getKey());

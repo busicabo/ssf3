@@ -15,12 +15,14 @@
   getIdByUsername: (username) => `/api/${encodeURIComponent(username)}/getId`,
   chatMembers: (chatId) => `/api/chats/${chatId}/members`,
   chatMessages: (chatId, limit = 50) => `/api/messages/${chatId}?limit=${limit}`,
+  chatMessagesRelative: (messageId, count) => `/api/getMessageInChatWithLimit/${encodeURIComponent(messageId)}/${encodeURIComponent(count)}`,
   createPersonalChat: '/api/personal_chat',
   createGroupChat: '/api/group_chat',
   deleteChat: (chatId) => `/api/chats/${chatId}`,
   addUserToChat: '/api/add_user_in_chat',
   removeUserFromChat: '/api/delete_user_in_chat',
   blockUserInChat: '/api/block_user',
+  unblockUserInChat: '/api/unblock_user',
   sendMessage: '/api/sendMessage',
   deleteMessage: '/api/delete',
   ownPublicKey: '/api/encrypt_key/',
@@ -36,7 +38,17 @@
   latestKeyUsage: (chatId) => `/api/key-usage/chats/${chatId}/latest`,
   fileUploadUrl: '/api/files/upload-url',
   fileComplete: (fileId) => `/api/files/${encodeURIComponent(fileId)}/complete`,
-  chatFiles: (chatId) => `/api/files/chats/${encodeURIComponent(chatId)}`,
+  chatFiles: (chatId, options = {}) => {
+    const params = new URLSearchParams();
+    if (options.limit) {
+      params.set('limit', String(options.limit));
+    }
+    if (options.beforeFileId) {
+      params.set('beforeFileId', String(options.beforeFileId));
+    }
+    const query = params.toString();
+    return `/api/files/chats/${encodeURIComponent(chatId)}${query ? `?${query}` : ''}`;
+  },
   fileDownloadUrl: (fileId, inline = false) => `/api/files/${encodeURIComponent(fileId)}/download-url${inline ? '?inline=true' : ''}`
 };
 
@@ -48,16 +60,19 @@ export const WS = {
 
 export const LIMITS = {
   maxMessagesPerSenderKey: 100,
-  defaultMessagePageSize: 50,
+  maxMessageChars: 500,
+  defaultMessagePageSize: 100,
+  defaultFilePageSize: 50,
   fileMaxBytes: 100 * 1024 * 1024,
   avatarMaxBytes: 5 * 1024 * 1024
 };
 
 export const DB_NAME = 'mescat_frontend_v2';
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 
 export const STORE = {
   userKeys: 'user_keys',
   senderKeys: 'sender_keys',
-  usage: 'sender_usage'
+  usage: 'sender_usage',
+  messageCache: 'message_cache'
 };

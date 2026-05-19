@@ -41,6 +41,7 @@ public class MessageService {
     private MessageDtoToMessageEntity messageDtoToMessageEntityConvert;
     ApplicationEventPublisher applicationEventPublisher;
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final int MAX_ENCRYPTED_MESSAGE_BYTES = 16384;
 
     public MessageService(MessageRepository messageRepository,
                           ChatUserService chatUserService,
@@ -77,6 +78,7 @@ public class MessageService {
 
     @Transactional
     public MessageForUser sendMessage(UUID userId, MessageDto messageDto){
+        validateMessagePayload(messageDto);
         log.info("Запрос на отправку сообщения: userId={}, chatId={}", userId, messageDto.getChatId());
 
         if(!chatUserService.existsByChatIdAndUserId(messageDto.getChatId(),userId)){
@@ -328,6 +330,25 @@ public class MessageService {
                 .filter(candidate -> !candidate.equals(userId))
                 .findFirst()
                 .orElse(null);
+    }
+
+    private void validateMessagePayload(MessageDto messageDto) {
+        if (messageDto == null) {
+            throw new IllegalArgumentException("Message body is required.");
+        }
+        if (messageDto.getChatId() == null) {
+            throw new IllegalArgumentException("Chat id is required.");
+        }
+        byte[] encryptedMessage = messageDto.getMessage();
+        if (encryptedMessage == null || encryptedMessage.length == 0) {
+            throw new IllegalArgumentException("Message is required.");
+        }
+        if (encryptedMessage.length > MAX_ENCRYPTED_MESSAGE_BYTES) {
+            throw new IllegalArgumentException("Message is too long.");
+        }
+        if (messageDto.getEncryptionName() == null || messageDto.getEncryptionName().isBlank()) {
+            throw new IllegalArgumentException("Message encryption key is required.");
+        }
     }
 
     private void ensureAddChatAllowed(UUID targetUserId) {

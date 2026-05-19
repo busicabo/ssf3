@@ -4,6 +4,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mescat.message.dto.AddUserInChatDto;
+import ru.mescat.message.dto.DeleteUserInChatDto;
 import ru.mescat.message.dto.auxiliary.ChatUserDto;
 import ru.mescat.message.entity.ChatEntity;
 import ru.mescat.message.entity.ChatUserEntity;
@@ -76,6 +77,10 @@ public class ChatUserService {
         return repository.findAllUserIdNotBlocksByChatId(chatId);
     }
 
+    public List<UUID> findAllUserIdsByChatId(Long chatId) {
+        return repository.findAllUserIdsByChatId(chatId);
+    }
+
     public List<ChatUserEntity> findAllNotBlocksByChatId(Long chatId) {
         return repository.findAllNotBlocksByChatId(chatId);
     }
@@ -118,14 +123,25 @@ public class ChatUserService {
     }
 
     @Transactional
-    public void deleteUserFromChat(AddUserInChatDto dto, UUID userId) {
+    public void deleteUserFromChat(DeleteUserInChatDto dto, UUID userId) {
         if (dto == null || dto.getChatId() == null || dto.getUserTarget() == null) {
-            throw new IllegalArgumentException("Invalid member delete request.");
+            throw new IllegalArgumentException("Запрос не валидный.");
         }
 
         ChatUserEntity target = findByUserIdAndChatId(dto.getChatId(), dto.getUserTarget());
         if (target == null) {
-            throw new NotFoundException("User is not a chat member.");
+            throw new NotFoundException("Пользователь не найден.");
+        }
+
+        ChatUserEntity initiator = repository.findByUserIdAndChatId(dto.getChatId(),userId);
+
+        if(initiator==null){
+            throw new AccessDeniedException("Вы не состоите в данном чате.");
+        }
+
+        if(!initiator.getRole().equalsIgnoreCase("ADMIN")
+                && !initiator.getRole().equalsIgnoreCase("CREATOR")){
+            throw new AccessDeniedException("У вас нету прав на исключение пользователя из чата.");
         }
 
         deleteById(target.getId());

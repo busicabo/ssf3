@@ -1,6 +1,10 @@
 ﻿import { API } from './constants.js';
 
 export class ApiClient {
+  constructor() {
+    this.refreshPromise = null;
+  }
+
   async getCurrentUserId() {
     return this.get(API.me);
   }
@@ -39,6 +43,10 @@ export class ApiClient {
 
   async getMessages(chatId, limit) {
     return this.get(API.chatMessages(chatId, limit));
+  }
+
+  async getMessagesRelative(messageId, count) {
+    return this.get(API.chatMessagesRelative(messageId, count));
   }
 
   async searchUsers(username) {
@@ -81,6 +89,10 @@ export class ApiClient {
     return this.postJson(API.blockUserInChat, { chatId, userId });
   }
 
+  async unblockUserInChat(chatId, userId) {
+    return this.postJson(API.unblockUserInChat, { chatId, userId });
+  }
+
   async sendMessage(dto) {
     return this.postJson(API.sendMessage, dto);
   }
@@ -104,8 +116,8 @@ export class ApiClient {
     return this.postJson(API.settingsAvatarComplete(uploadId), {});
   }
 
-  async getChatFiles(chatId) {
-    return this.get(API.chatFiles(chatId));
+  async getChatFiles(chatId, options = {}) {
+    return this.get(API.chatFiles(chatId, options));
   }
 
   async getFileDownloadUrl(fileId, options = {}) {
@@ -196,13 +208,16 @@ export class ApiClient {
     return this.#request(path, { method: 'DELETE' });
   }
 
-  async #request(path, init) {
+  async #request(path, init, retryAfterRefresh = true) {
     const response = await fetch(path, {
       ...init,
       credentials: 'include'
     });
 
     if (response.status === 401) {
+      if (retryAfterRefresh && this.#canRefresh(path) && await this.#refreshAuth()) {
+        return this.#request(path, init, false);
+      }
       window.location.href = '/auth/login';
       throw this.#error('Требуется авторизация.', 401);
     }
@@ -229,6 +244,27 @@ export class ApiClient {
     }
 
     return payload;
+  }
+
+  async #refreshAuth() {
+    if (!this.refreshPromise) {
+      this.refreshPromise = fetch('/auth/refresh', {
+        method: 'POST',
+        credentials: 'include'
+      })
+        .then((response) => response.ok)
+        .catch(() => false)
+        .finally(() => {
+          this.refreshPromise = null;
+        });
+    }
+
+    return this.refreshPromise;
+  }
+
+  #canRefresh(path) {
+    const normalized = String(path || '');
+    return !normalized.startsWith('/auth/');
   }
 
   #safeJson(value, fallback) {

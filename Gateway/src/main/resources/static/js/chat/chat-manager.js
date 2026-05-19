@@ -4,11 +4,12 @@ import { buildSearchResults } from './search.js';
 
 
 export class ChatManager {
-  constructor({ api, ui, keyManager, fileUploader }) {
+  constructor({ api, ui, keyManager, fileUploader, db }) {
     this.api = api;
     this.ui = ui;
     this.keyManager = keyManager;
     this.fileUploader = fileUploader;
+    this.db = db;
     this.userId = null;
     this.chats = [];
     this.activeChatId = null;
@@ -19,6 +20,7 @@ export class ChatManager {
     this.ws = null;
     this.chatListSignature = '';
     this.messageSignatures = new Map();
+    this.timelineSignatures = new Map();
     this.openChatRequestId = 0;
     this.previewCache = new Map();
     this.mediaUrlCache = new Map();
@@ -27,6 +29,8 @@ export class ChatManager {
     this.unreadCounts = new Map();
     this.unreadMessageIds = new Map();
     this.readPositions = new Map();
+    this.cachedChatsLoaded = new Set();
+    this.historyStateByChat = new Map();
   }
 
   init(userId) {
@@ -47,12 +51,9 @@ export class ChatManager {
     const previousActiveSignature = this.#chatDetailSignature(this.activeChat);
     const payload = await this.api.getSidebarChats();
     const rows = Array.isArray(payload) ? payload : [];
-    const nextChats = [];
-
-    for (const row of rows) {
-      const chat = await this.#normalizeChat(row);
+    const nextChats = await Promise.all(rows.map((row) => this.#normalizeChat(row)));
+    for (const chat of nextChats) {
       chat.unreadCount = this.unreadCounts.get(String(chat.chatId)) || 0;
-      nextChats.push(chat);
     }
     nextChats.sort((left, right) => {
       const leftTime = new Date(left.lastActivityAt || 0).getTime();
@@ -98,12 +99,21 @@ export class ChatManager {
     this.#setUnreadCount(chatId, 0);
     const chat = this.activeChat;
     this.ui.renderActiveChat(chat);
+    this.ui.setHistoryLoadVisible(false);
     this.ui.renderMembers(chat?.participants || [], chat);
     await this.keyManager.ingestPendingMessageKeys();
     if (requestId !== this.openChatRequestId) {
       return;
     }
-    await this.loadMessages(chatId, { force: true, stickToBottom: true, includeFiles: true });
+    await this.#showCachedMessages(chatId, requestId);
+    if (requestId !== this.openChatRequestId) {
+      return;
+    }
+    await this.loadMessages(chatId, { force: true, stickToBottom: true });
+    if (requestId !== this.openChatRequestId) {
+      return;
+    }
+    this.#loadFilesInBackground(chatId, requestId);
   }
 
   async loadMessages(chatId, { force = false, preserveScroll = false, stickToBottom = false, includeFiles = false } = {}) {
@@ -116,35 +126,149 @@ export class ChatManager {
     }
     const payload = await this.api.getMessages(chatId, LIMITS.defaultMessagePageSize);
     const rows = Array.isArray(payload) ? payload : [];
-    const normalizedRows = rows.map((row) => ({
-      messageId: row.messageId,
-      senderId: row.senderId,
-      senderUsername: row.senderUsername || row.sender?.username || null,
-      senderAvatarUrl: row.senderAvatarUrl || row.sender?.avatarUrl || null,
-      createdAt: row.createdAt || null,
-      chatId: row.chatId || row.chat?.chatId || chatId,
-      encryptionName: row.encryptionName || row.encryptName || null,
-      messageB64: normalizeBase64(row.message) || ''
-    }));
+    const normalizedRows = rows.map((row) => this.#normalizeMessage(row, chatId));
     const signature = this.#messagesSignature(normalizedRows);
     const key = String(chatId);
+    const currentRows = this.rawMessagesByChat.get(key) || [];
+    const state = this.#historyState(chatId);
+    if (currentRows.length > 0) {
+      state.messagesDone = state.messagesDone || normalizedRows.length < LIMITS.defaultMessagePageSize;
+      const changed = this.#mergeRawMessages(chatId, normalizedRows);
+      if (changed) {
+        await this.#cacheRawMessages(chatId, this.rawMessagesByChat.get(key) || []);
+        const result = await this.refreshVisibleMessages(chatId, { preserveScroll, stickToBottom });
+        this.#syncHistoryButton(chatId);
+        return result;
+      }
+      if (force) {
+        return this.refreshVisibleMessages(chatId, { preserveScroll, stickToBottom });
+      }
+      this.#syncHistoryButton(chatId);
+      return this.messagesByChat.get(key) || [];
+    }
     if (!force && signature === this.messageSignatures.get(key)) {
+      this.#syncHistoryButton(chatId);
       return this.messagesByChat.get(key) || [];
     }
 
+    state.messagesDone = normalizedRows.length < LIMITS.defaultMessagePageSize;
     this.messageSignatures.set(key, signature);
     this.rawMessagesByChat.set(key, normalizedRows);
-    return this.refreshVisibleMessages(chatId, { preserveScroll, stickToBottom });
+    await this.#cacheRawMessages(chatId, normalizedRows);
+    const result = await this.refreshVisibleMessages(chatId, { preserveScroll, stickToBottom });
+    this.#syncHistoryButton(chatId);
+    return result;
+  }
+
+  async #showCachedMessages(chatId, requestId) {
+    const key = String(chatId);
+    const inMemoryRows = this.messagesByChat.get(key) || [];
+    if (inMemoryRows.length > 0) {
+      this.#renderTimeline(chatId, this.#timeline(chatId, inMemoryRows), { stickToBottom: true, force: true });
+      return;
+    }
+
+    if (!this.db || !this.userId || this.cachedChatsLoaded.has(key)) {
+      return;
+    }
+
+    const cachedRows = await this.db.getCachedMessages(this.userId, chatId);
+    if (requestId !== this.openChatRequestId || cachedRows.length === 0) {
+      return;
+    }
+
+    const normalizedRows = cachedRows.map((row) => ({
+      messageId: row.messageId,
+      senderId: row.senderId,
+      senderUsername: row.senderUsername || null,
+      senderAvatarUrl: row.senderAvatarUrl || null,
+      createdAt: row.createdAt || null,
+      chatId: row.chatId || chatId,
+      encryptionName: row.encryptionName || row.encryptName || null,
+      messageB64: normalizeBase64(row.messageB64 || row.message) || ''
+    }));
+
+    this.cachedChatsLoaded.add(key);
+    this.messageSignatures.set(key, this.#messagesSignature(normalizedRows));
+    this.rawMessagesByChat.set(key, normalizedRows);
+    await this.refreshVisibleMessages(chatId, { stickToBottom: true });
+  }
+
+  async #loadFilesInBackground(chatId, requestId) {
+    try {
+      await this.loadFiles(chatId);
+      if (requestId === this.openChatRequestId && Number(chatId) === Number(this.activeChatId)) {
+        this.#renderTimeline(chatId, this.#timeline(chatId), { preserveScroll: true, force: true });
+      }
+    } catch (error) {
+      this.ui.appendStatus(`РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ С„Р°Р№Р»С‹ С‡Р°С‚Р°: ${error.message}`, 'warning');
+    }
   }
 
   async loadFiles(chatId) {
-    const payload = await this.api.getChatFiles(chatId);
+    const payload = await this.api.getChatFiles(chatId, { limit: LIMITS.defaultFilePageSize });
     const files = (Array.isArray(payload) ? payload : [])
       .map((file) => this.#normalizeFile(file, chatId))
       .filter(Boolean);
     await Promise.all(files.map((file) => this.#ensureMediaPreviewUrl(file)));
+    this.#historyState(chatId).filesDone = files.length < LIMITS.defaultFilePageSize;
     this.filesByChat.set(String(chatId), files);
+    this.#syncHistoryButton(chatId);
     return files;
+  }
+
+  async loadOlderTimeline({ retry = false } = {}) {
+    const chatId = this.activeChatId;
+    if (!chatId) {
+      return;
+    }
+
+    const state = this.#historyState(chatId);
+    if (state.loadingOlder) {
+      return;
+    }
+    if (retry && state.messagesDone && state.filesDone) {
+      state.messagesDone = false;
+      state.filesDone = false;
+    }
+    if (state.messagesDone && state.filesDone && !retry) {
+      state.historyNotice = true;
+      this.#syncHistoryButton(chatId);
+      return;
+    }
+
+    const beforeCount = this.#timeline(chatId).length;
+    state.loadingOlder = true;
+    state.historyNotice = false;
+    this.#syncHistoryButton(chatId);
+    this.#renderTimeline(chatId, this.#timeline(chatId), { preserveScroll: true, force: true });
+    try {
+      const [messagesChanged, filesChanged] = await Promise.all([
+        state.messagesDone ? Promise.resolve(false) : this.#loadOlderMessages(chatId, state),
+        state.filesDone ? Promise.resolve(false) : this.#loadOlderFiles(chatId, state)
+      ]);
+
+      if (Number(chatId) !== Number(this.activeChatId)) {
+        return;
+      }
+      if (messagesChanged) {
+        await this.refreshVisibleMessages(chatId, { preserveScroll: true });
+      } else if (filesChanged) {
+        this.#renderTimeline(chatId, this.#timeline(chatId), { preserveScroll: true, force: true });
+      }
+
+      const afterCount = this.#timeline(chatId).length;
+      state.historyNotice = afterCount <= beforeCount;
+    } catch (error) {
+      state.historyNotice = true;
+      throw error;
+    } finally {
+      state.loadingOlder = false;
+      this.#syncHistoryButton(chatId);
+      if (Number(chatId) === Number(this.activeChatId)) {
+        this.#renderTimeline(chatId, this.#timeline(chatId), { preserveScroll: true, force: true });
+      }
+    }
   }
 
   async refreshVisibleMessages(chatId = this.activeChatId, { preserveScroll = false, stickToBottom = false } = {}) {
@@ -171,12 +295,13 @@ export class ChatManager {
     });
 
     this.messagesByChat.set(String(chatId), visibleMessages);
-    if (Number(chatId) === Number(this.activeChatId)) {
-      this.ui.renderMessages(this.#timeline(chatId, visibleMessages), this.userId, this.activeChat, { preserveScroll, stickToBottom });
-      this.#markChatReadFromRows(chatId, rawRows);
+      if (Number(chatId) === Number(this.activeChatId)) {
+        this.#renderTimeline(chatId, this.#timeline(chatId, visibleMessages), { preserveScroll, stickToBottom, force: stickToBottom });
+        this.#markChatReadFromRows(chatId, rawRows);
+        this.#syncHistoryButton(chatId);
+      }
+      return visibleMessages;
     }
-    return visibleMessages;
-  }
 
   async sendMessage(text) {
     if (!this.activeChatId) {
@@ -186,6 +311,9 @@ export class ChatManager {
     const clean = String(text || '').trim();
     if (!clean) {
       throw new Error('Введите текст сообщения.');
+    }
+    if (Array.from(clean).length > LIMITS.maxMessageChars) {
+      throw new Error(`Сообщение должно быть не длиннее ${LIMITS.maxMessageChars} символов.`);
     }
 
     const members = this.#memberIds(this.activeChat);
@@ -211,6 +339,8 @@ export class ChatManager {
       messageB64: encrypted
     });
     this.rawMessagesByChat.set(String(this.activeChatId), rawCurrent);
+    this.messageSignatures.set(String(this.activeChatId), this.#messagesSignature(rawCurrent));
+    await this.#cacheRawMessages(this.activeChatId, rawCurrent);
 
     const current = this.messagesByChat.get(String(this.activeChatId)) || [];
     current.push({
@@ -223,7 +353,7 @@ export class ChatManager {
       text: clean
     });
     this.messagesByChat.set(String(this.activeChatId), current);
-    this.ui.renderMessages(this.#timeline(this.activeChatId, current), this.userId, this.activeChat, { stickToBottom: true });
+    this.#renderTimeline(this.activeChatId, this.#timeline(this.activeChatId, current), { stickToBottom: true, force: true });
     await this.refreshChats();
   }
 
@@ -242,7 +372,7 @@ export class ChatManager {
       if (normalized) {
         await this.#ensureMediaPreviewUrl(normalized);
         this.#upsertFile(normalized);
-        this.ui.renderMessages(this.#timeline(this.activeChatId), this.userId, this.activeChat, { stickToBottom: true });
+        this.#renderTimeline(this.activeChatId, this.#timeline(this.activeChatId), { stickToBottom: true, force: true });
       }
       this.ui.appendStatus('Файл загружен и отправлен в чат.', 'ok');
       await this.refreshChats();
@@ -278,8 +408,10 @@ export class ChatManager {
       .filter((row) => Number(row.messageId) !== Number(messageId));
 
     this.rawMessagesByChat.set(String(this.activeChatId), rawRows);
+    this.messageSignatures.set(String(this.activeChatId), this.#messagesSignature(rawRows));
     this.messagesByChat.set(String(this.activeChatId), visibleRows);
-    this.ui.renderMessages(this.#timeline(this.activeChatId, visibleRows), this.userId, this.activeChat, { preserveScroll: true });
+    await this.#cacheRawMessages(this.activeChatId, rawRows);
+    this.#renderTimeline(this.activeChatId, this.#timeline(this.activeChatId, visibleRows), { preserveScroll: true, force: true });
     await this.refreshChats({ force: true });
   }
 
@@ -292,11 +424,42 @@ export class ChatManager {
     this.rawMessagesByChat.delete(String(this.activeChatId));
     this.messagesByChat.delete(String(this.activeChatId));
     this.filesByChat.delete(String(this.activeChatId));
+    this.historyStateByChat.delete(String(this.activeChatId));
+    this.timelineSignatures.delete(String(this.activeChatId));
+    await this.db?.deleteCachedMessages?.(this.userId, this.activeChatId);
     this.#setUnreadCount(this.activeChatId, 0);
     this.activeChatId = null;
     this.ui.renderActiveChat(null);
     this.ui.renderMessages([], this.userId, null);
     await this.refreshChats({ force: true });
+  }
+
+  async leaveActiveGroup() {
+    const chat = this.activeChat;
+    if (!chat?.chatId) {
+      throw new Error('Сначала выберите группу.');
+    }
+    if (chat.chatType !== 'GROUP') {
+      throw new Error('Покинуть можно только групповой чат.');
+    }
+
+    const chatId = chat.chatId;
+    await this.api.removeUserInChat(chatId, this.userId);
+
+    this.rawMessagesByChat.delete(String(chatId));
+    this.messagesByChat.delete(String(chatId));
+    this.filesByChat.delete(String(chatId));
+    this.historyStateByChat.delete(String(chatId));
+    this.timelineSignatures.delete(String(chatId));
+    this.messageSignatures.delete(String(chatId));
+    await this.db?.deleteCachedMessages?.(this.userId, chatId);
+    this.#setUnreadCount(chatId, 0);
+
+    this.activeChatId = null;
+    this.ui.renderActiveChat(null);
+    this.ui.renderMessages([], this.userId, null);
+    await this.refreshChats({ force: true });
+    this.ws?.syncChats?.(this.chats.map((item) => item.chatId));
   }
 
   async searchDialogs(query) {
@@ -384,7 +547,7 @@ export class ChatManager {
     let userTarget = null;
     const clean = String(username || '').trim();
 
-    if (chat.chatType === 'PERSONAL' && action === 'block') {
+    if (chat.chatType === 'PERSONAL' && ['block', 'unblock'].includes(action)) {
       userTarget = chat.counterpartUserId;
     } else if (selectedUserId) {
       userTarget = selectedUserId;
@@ -406,6 +569,8 @@ export class ChatManager {
       await this.api.removeUserInChat(chat.chatId, userTarget);
     } else if (action === 'block') {
       await this.api.blockUserInChat(chat.chatId, userTarget);
+    } else if (action === 'unblock') {
+      await this.api.unblockUserInChat(chat.chatId, userTarget);
     }
 
     await this.refreshChats({ force: true });
@@ -445,9 +610,11 @@ export class ChatManager {
     if (type === 'SEND') {
       this.#trackUnreadFromRealtime(payload);
       await this.#requestMissingSenderKeyForRealtimeMessage(payload, ws);
+      await this.#upsertRealtimeMessage(payload);
     }
     if (type === 'USER_SYNC') {
       this.#trackUnreadFromUserSync(payload);
+      await this.#upsertRealtimeMessages(payload?.payload?.messages);
     }
     if (type === 'MESSAGE_KEY_REQUEST') {
       await this.#answerMessageKeyRequest(payload);
@@ -472,6 +639,119 @@ export class ChatManager {
       && ['ADMIN', 'CREATOR'].includes(String(chat.currentUserRole || '').toUpperCase());
   }
 
+  async #upsertRealtimeMessage(payload) {
+    const rawMessage = payload?.payload?.message || payload?.message;
+    if (!rawMessage) {
+      return false;
+    }
+
+    const chatId = rawMessage?.chat?.chatId || rawMessage?.chatId || payload?.payload?.chatId || payload?.chatId;
+    if (!chatId) {
+      return false;
+    }
+
+    const row = this.#normalizeMessage(rawMessage, chatId);
+    if (!row.messageId || !row.messageB64) {
+      return false;
+    }
+
+    const changed = this.#mergeRawMessages(chatId, [row]);
+    if (!changed) {
+      return false;
+    }
+
+    await this.#cacheRawMessages(chatId, this.rawMessagesByChat.get(String(chatId)) || []);
+    if (Number(chatId) === Number(this.activeChatId)) {
+      await this.refreshVisibleMessages(chatId);
+    }
+    return true;
+  }
+
+  async #upsertRealtimeMessages(messages) {
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return false;
+    }
+
+    const rowsByChat = new Map();
+    for (const message of messages) {
+      const chatId = message?.chat?.chatId || message?.chatId;
+      if (!chatId) {
+        continue;
+      }
+      const row = this.#normalizeMessage(message, chatId);
+      if (!row.messageId || !row.messageB64) {
+        continue;
+      }
+      const key = String(chatId);
+      rowsByChat.set(key, [...(rowsByChat.get(key) || []), row]);
+    }
+
+    let changed = false;
+    for (const [chatKey, rows] of rowsByChat) {
+      const chatId = Number(chatKey);
+      if (this.#mergeRawMessages(chatId, rows)) {
+        changed = true;
+        await this.#cacheRawMessages(chatId, this.rawMessagesByChat.get(chatKey) || []);
+        if (Number(chatId) === Number(this.activeChatId)) {
+          await this.refreshVisibleMessages(chatId, { preserveScroll: true });
+        }
+      }
+    }
+    return changed;
+  }
+
+  async #loadOlderMessages(chatId, state) {
+    const current = this.rawMessagesByChat.get(String(chatId)) || [];
+    const oldest = current
+      .filter((message) => message.messageId)
+      .sort((left, right) => Number(left.messageId) - Number(right.messageId))[0];
+    if (!oldest?.messageId) {
+      state.messagesDone = true;
+      return false;
+    }
+
+    const payload = await this.api.getMessagesRelative(oldest.messageId, -LIMITS.defaultMessagePageSize);
+    const olderRows = (Array.isArray(payload) ? payload : [])
+      .map((row) => this.#normalizeMessage(row, chatId))
+      .filter((row) => row.messageId);
+    state.messagesDone = olderRows.length < LIMITS.defaultMessagePageSize;
+    if (olderRows.length === 0) {
+      return false;
+    }
+
+    const changed = this.#mergeRawMessages(chatId, olderRows);
+    if (changed) {
+      await this.#cacheRawMessages(chatId, this.rawMessagesByChat.get(String(chatId)) || []);
+    }
+    return changed;
+  }
+
+  async #loadOlderFiles(chatId, state) {
+    const current = this.filesByChat.get(String(chatId)) || [];
+    const oldest = current
+      .filter((file) => file.fileId && file.createdAt)
+      .sort((left, right) => new Date(left.createdAt || 0).getTime() - new Date(right.createdAt || 0).getTime())[0];
+    if (!oldest?.fileId) {
+      state.filesDone = true;
+      return false;
+    }
+
+    const payload = await this.api.getChatFiles(chatId, {
+      limit: LIMITS.defaultFilePageSize,
+      beforeFileId: oldest.fileId
+    });
+    const olderFiles = (Array.isArray(payload) ? payload : [])
+      .map((file) => this.#normalizeFile(file, chatId))
+      .filter(Boolean);
+    state.filesDone = olderFiles.length < LIMITS.defaultFilePageSize;
+    if (olderFiles.length === 0) {
+      return false;
+    }
+
+    await Promise.all(olderFiles.map((file) => this.#ensureMediaPreviewUrl(file)));
+    return this.#mergeFiles(chatId, olderFiles);
+  }
+
   #validateChatFile(file) {
     if (!file) {
       throw new Error('Выберите файл для отправки.');
@@ -479,6 +759,19 @@ export class ChatManager {
     if (file.size > LIMITS.fileMaxBytes) {
       throw new Error('Файл должен быть не больше 100 МБ.');
     }
+  }
+
+  #normalizeMessage(row, fallbackChatId = null) {
+    return {
+      messageId: row.messageId,
+      senderId: row.senderId,
+      senderUsername: row.senderUsername || row.sender?.username || null,
+      senderAvatarUrl: row.senderAvatarUrl || row.sender?.avatarUrl || null,
+      createdAt: row.createdAt || null,
+      chatId: row.chatId || row.chat?.chatId || fallbackChatId,
+      encryptionName: row.encryptionName || row.encryptName || null,
+      messageB64: normalizeBase64(row.messageB64 || row.message) || ''
+    };
   }
 
   #normalizeFile(file, fallbackChatId = null) {
@@ -508,7 +801,93 @@ export class ChatManager {
     const current = this.filesByChat.get(key) || [];
     const next = current.filter((item) => String(item.fileId) !== String(file.fileId));
     next.push(file);
+    this.filesByChat.set(key, this.#sortFiles(next));
+  }
+
+  #mergeRawMessages(chatId, rows) {
+    const key = String(chatId);
+    const byId = new Map((this.rawMessagesByChat.get(key) || [])
+      .filter((message) => message.messageId)
+      .map((message) => [String(message.messageId), message]));
+    for (const row of rows) {
+      byId.set(String(row.messageId), row);
+    }
+    const next = this.#sortMessages(Array.from(byId.values()));
+    const nextSignature = this.#messagesSignature(next);
+    if (nextSignature === this.messageSignatures.get(key)) {
+      return false;
+    }
+    this.messageSignatures.set(key, nextSignature);
+    this.rawMessagesByChat.set(key, next);
+    return true;
+  }
+
+  #mergeFiles(chatId, files) {
+    const key = String(chatId);
+    const byId = new Map((this.filesByChat.get(key) || [])
+      .filter((file) => file.fileId)
+      .map((file) => [String(file.fileId), file]));
+    for (const file of files) {
+      byId.set(String(file.fileId), file);
+    }
+    const currentSignature = this.#filesSignature(this.filesByChat.get(key) || []);
+    const next = this.#sortFiles(Array.from(byId.values()));
+    const nextSignature = this.#filesSignature(next);
+    if (nextSignature === currentSignature) {
+      return false;
+    }
     this.filesByChat.set(key, next);
+    return true;
+  }
+
+  #sortMessages(messages) {
+    return [...(messages || [])].sort((left, right) => {
+      const leftTime = new Date(left.createdAt || 0).getTime();
+      const rightTime = new Date(right.createdAt || 0).getTime();
+      return leftTime - rightTime || Number(left.messageId || 0) - Number(right.messageId || 0);
+    });
+  }
+
+  #sortFiles(files) {
+    return [...(files || [])].sort((left, right) => {
+      const leftTime = new Date(left.createdAt || 0).getTime();
+      const rightTime = new Date(right.createdAt || 0).getTime();
+      if (leftTime !== rightTime) {
+        return leftTime - rightTime;
+      }
+      return String(left.fileId || '').localeCompare(String(right.fileId || ''));
+    });
+  }
+
+  #historyState(chatId) {
+    const key = String(chatId);
+    if (!this.historyStateByChat.has(key)) {
+      this.historyStateByChat.set(key, {
+        loadingOlder: false,
+        messagesDone: false,
+        filesDone: false,
+        historyNotice: false
+      });
+    }
+    return this.historyStateByChat.get(key);
+  }
+
+  #syncHistoryButton(chatId = this.activeChatId) {
+    if (!chatId || Number(chatId) !== Number(this.activeChatId)) {
+      this.ui.setHistoryLoadVisible(false);
+      return;
+    }
+    const state = this.#historyUiState(chatId);
+    this.ui.setHistoryLoadVisible(state.visible, state.loading, state.notice);
+  }
+
+  #historyUiState(chatId = this.activeChatId) {
+    const state = this.#historyState(chatId);
+    return {
+      visible: state.historyNotice || !(state.messagesDone && state.filesDone),
+      loading: state.loadingOlder,
+      notice: state.historyNotice
+    };
   }
 
   #timeline(chatId, messages = null) {
@@ -525,6 +904,60 @@ export class ChatManager {
       const rightId = right.kind === 'file' ? String(right.fileId || '') : String(right.messageId || right.eventId || '');
       return leftId.localeCompare(rightId);
     });
+  }
+
+  #renderTimeline(chatId, timeline, options = {}) {
+    const key = String(chatId);
+    const signature = this.#timelineSignature(timeline);
+    if (!options.force && !options.stickToBottom && signature === this.timelineSignatures.get(key)) {
+      return;
+    }
+    this.timelineSignatures.set(key, signature);
+    this.ui.renderMessages(timeline, this.userId, this.activeChat, {
+      ...options,
+      history: this.#historyUiState(chatId)
+    });
+  }
+
+  async #cacheRawMessages(chatId, rawRows) {
+    if (!this.db || !this.userId || !chatId) {
+      return;
+    }
+    try {
+      await this.db.setCachedMessages(this.userId, chatId, rawRows);
+    } catch (error) {
+      this.ui.appendStatus(`РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ Р»РѕРєР°Р»СЊРЅС‹Р№ РєСЌС€ С‡Р°С‚Р°: ${error.message}`, 'warning');
+    }
+  }
+
+  #timelineSignature(items) {
+    return (items || [])
+      .map((item) => [
+        item.kind || 'message',
+        item.messageId || item.fileId || item.eventId || '',
+        item.senderId || '',
+        item.createdAt || '',
+        item.text || '',
+        item.encryptionName || '',
+        item.status || '',
+        item.originalFileName || '',
+        item.sizeBytes || 0,
+        item.previewUrl || ''
+      ].join('|'))
+      .join('~');
+  }
+
+  #filesSignature(files) {
+    return (files || [])
+      .map((file) => [
+        file.fileId,
+        file.createdAt,
+        file.status,
+        file.originalFileName,
+        file.sizeBytes,
+        file.previewUrl
+      ].join('|'))
+      .join('~');
   }
 
   #trackNewUserInChat(payload) {
@@ -559,7 +992,7 @@ export class ChatManager {
     this.systemEventsByChat.set(key, current.slice(-80));
 
     if (Number(chatId) === Number(this.activeChatId)) {
-      this.ui.renderMessages(this.#timeline(chatId), this.userId, this.activeChat, { preserveScroll: true });
+      this.#renderTimeline(chatId, this.#timeline(chatId), { preserveScroll: true });
     }
   }
 
@@ -571,7 +1004,7 @@ export class ChatManager {
     await this.#ensureMediaPreviewUrl(file);
     this.#upsertFile(file);
     if (Number(file.chatId) === Number(this.activeChatId)) {
-      this.ui.renderMessages(this.#timeline(file.chatId), this.userId, this.activeChat, { preserveScroll: true });
+      this.#renderTimeline(file.chatId, this.#timeline(file.chatId), { preserveScroll: true });
       return;
     }
     this.#incrementUnreadCount(file.chatId, file.fileId);

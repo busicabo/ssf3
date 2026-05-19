@@ -89,10 +89,7 @@ public class ChatSidebarService {
         dto.setOnlineCount((int) participantDtos.stream().filter(SidebarParticipantDto::isOnline).count());
 
         if (chat.getChatType() == ChatType.PERSONAL) {
-            SidebarParticipantDto counterpart = participantDtos.stream()
-                    .filter(participant -> !participant.getUserId().equals(currentUserId))
-                    .findFirst()
-                    .orElse(null);
+            SidebarParticipantDto counterpart = findPersonalCounterpart(currentUserId, chat.getChatId(), participantDtos);
 
             dto.setTitle(counterpart != null ? counterpart.getUsername() : chat.getTitle());
             dto.setAvatarUrl(counterpart != null ? counterpart.getAvatarUrl() : chat.getAvatarUrl());
@@ -108,6 +105,39 @@ public class ChatSidebarService {
         }
 
         return dto;
+    }
+
+    private SidebarParticipantDto findPersonalCounterpart(UUID currentUserId,
+                                                          Long chatId,
+                                                          List<SidebarParticipantDto> participantDtos) {
+        SidebarParticipantDto visibleCounterpart = participantDtos.stream()
+                .filter(participant -> !participant.getUserId().equals(currentUserId))
+                .findFirst()
+                .orElse(null);
+        if (visibleCounterpart != null) {
+            return visibleCounterpart;
+        }
+
+        List<UUID> allParticipantIds = chatUserService.findAllUserIdsByChatId(chatId);
+        UUID counterpartId = allParticipantIds.stream()
+                .filter(candidate -> !candidate.equals(currentUserId))
+                .findFirst()
+                .orElse(null);
+        if (counterpartId == null) {
+            return null;
+        }
+
+        User user = userService.findById(counterpartId);
+        if (user == null) {
+            return null;
+        }
+
+        return new SidebarParticipantDto(
+                user.getId(),
+                user.getUsername(),
+                user.getAvatarUrl(),
+                user.isOnline()
+        );
     }
 
     private boolean hasManagePermissions(String role) {

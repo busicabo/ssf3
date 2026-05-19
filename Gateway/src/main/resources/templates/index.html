@@ -1,243 +1,31 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mescat — мессенджер</title>
-    <style>
-        :root{
-          --bg1:#eaf6ff;
-          --bg2:#f7fbff;
-          --blue:#1e6fff;
-          --blue2:#0b3ea8;
-          --text:#0b1b3a;
-          --card:rgba(255,255,255,.75);
-          --border:rgba(30,111,255,.18);
-          --shadow: 0 18px 50px rgba(11, 62, 168, .10);
-        }
-
-        *{box-sizing:border-box}
-        body{
-          margin:0;
-          font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-          color:var(--text);
-          min-height:100vh;
-          background:
-            radial-gradient(1200px 600px at 20% 10%, rgba(30,111,255,.16), transparent 55%),
-            radial-gradient(900px 500px at 80% 15%, rgba(11,62,168,.14), transparent 50%),
-            linear-gradient(180deg, var(--bg1), var(--bg2));
-          overflow-x:hidden;
-        }
-
-        /* Top bar */
-        header{
-          position:sticky;
-          top:0;
-          z-index:10;
-          backdrop-filter: blur(10px);
-          background: rgba(255,255,255,.55);
-          border-bottom: 1px solid rgba(30,111,255,.12);
-        }
-        .nav{
-          max-width:1100px;
-          margin:0 auto;
-          padding:14px 16px;
-          display:flex;
-          align-items:center;
-          justify-content:space-between;
-          gap:12px;
-        }
-        .brand{
-          display:flex;
-          align-items:center;
-          gap:10px;
-          user-select:none;
-        }
-        .logo{
-          width:34px;
-          height:34px;
-          border-radius:10px;
-          background:
-            radial-gradient(circle at 30% 25%, #ffffff 0 28%, transparent 29%),
-            linear-gradient(135deg, var(--blue), var(--blue2));
-          box-shadow: 0 10px 30px rgba(30,111,255,.25);
-        }
-        .brand b{
-          font-size:18px;
-          letter-spacing:.2px;
-        }
-
-        .actions{
-          display:flex;
-          gap:10px;
-          align-items:center;
-        }
-        .btn{
-          border:1px solid var(--border);
-          background: rgba(255,255,255,.75);
-          color: var(--blue2);
-          padding:10px 14px;
-          border-radius:12px;
-          font-weight:600;
-          cursor:pointer;
-          transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
-        }
-        .btn:hover{
-          transform: translateY(-1px);
-          box-shadow: 0 12px 30px rgba(11,62,168,.12);
-          background: rgba(255,255,255,.9);
-        }
-        .btn.primary{
-          border-color: rgba(30,111,255,.35);
-          background: linear-gradient(135deg, rgba(30,111,255,.95), rgba(11,62,168,.95));
-          color:#fff;
-        }
-
-        /* Hero */
-        main{
-          max-width:1100px;
-          margin:0 auto;
-          padding:48px 16px 72px;
-        }
-        .hero{
-          display:grid;
-          grid-template-columns: 1.1fr .9fr;
-          gap:22px;
-          align-items:stretch;
-        }
-        .card{
-          border:1px solid var(--border);
-          background: var(--card);
-          border-radius:22px;
-          box-shadow: var(--shadow);
-          padding:28px;
-        }
-        h1{
-          margin:0 0 10px;
-          font-size:42px;
-          line-height:1.05;
-        }
-        .sub{
-          margin:0 0 18px;
-          font-size:16px;
-          opacity:.85;
-          max-width:54ch;
-        }
-        .pill{
-          display:inline-flex;
-          align-items:center;
-          gap:8px;
-          padding:8px 12px;
-          border-radius:999px;
-          border:1px solid rgba(30,111,255,.22);
-          background: rgba(255,255,255,.65);
-          font-weight:600;
-          color: var(--blue2);
-          margin-bottom:14px;
-          width: fit-content;
-        }
-
-        /* Right preview box (minimal) */
-        .preview{
-          position:relative;
-          overflow:hidden;
-          min-height:280px;
-        }
-        .bubble{
-          position:absolute;
-          border-radius:18px;
-          padding:12px 14px;
-          font-weight:600;
-          border:1px solid rgba(30,111,255,.18);
-          background: rgba(255,255,255,.75);
-          box-shadow: 0 12px 40px rgba(11,62,168,.10);
-          max-width:78%;
-        }
-        .bubble.one{ top:34px; left:18px; }
-        .bubble.two{ top:108px; right:18px; background: rgba(30,111,255,.10); }
-        .bubble.three{ bottom:36px; left:18px; opacity:.9; }
-
-        .hint{
-          margin-top:14px;
-          font-size:13px;
-          opacity:.7;
-        }
-
-footer{
-          max-width:1100px;
-          margin:0 auto;
-          padding:0 16px 24px;
-          opacity:.7;
-          font-size:13px;
-        }
-        footer a{
-          color:var(--blue2);
-          font-weight:700;
-          text-decoration:none;
-        }
-        footer a:hover{
-          text-decoration:underline;
-        }
-
-        @media (max-width: 860px){
-          .hero{ grid-template-columns:1fr; }
-          h1{ font-size:36px; }
-        }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="index, follow">
+    <meta name="description" content="Mescat - безопасный мессенджер, для анонимного общения.">
+    <meta name="keywords" content="mescat, Mescat, MesCat, mescat мессенджер, мессенджер mescat, безопасный мессенджер, анонимный мессенджер">
+    <link rel="canonical" href="https://mescat.ru/about">
+    <title>Mescat - безопасный мессенджер, для анонимного общения</title>
 </head>
 <body>
-<header>
-    <div class="nav">
-        <div class="brand" aria-label="Mescat">
-            <div class="logo" aria-hidden="true"></div>
-            <b>Mescat</b>
-        </div>
-
-        <div class="actions">
-            <button class="btn" id="loginBtn">Войти</button>
-            <button class="btn primary" id="regBtn">Зарегистрироваться</button>
-        </div>
-    </div>
-</header>
-
 <main>
-    <section class="hero">
-        <div class="card">
-            <div class="pill">💬 Мессенджер</div>
-            <h1>Общайся быстро и просто.</h1>
-            <p class="sub">
-                Mescat — минимальный старт. Скоро здесь появятся чаты, контакты и всё остальное.
-            </p>
+    <h1>Mescat - безопасный мессенджер, для анонимного общения.</h1>
 
-            <div class="hint">
-                Сейчас кнопки ведут на <b>/auth/login</b> и <b>/auth/reg</b>.
-            </div>
-        </div>
+    <p>
+        Mescat - безопасный мессенджер, для анонимного общения.
+    </p>
 
-        <div class="card preview" aria-label="Превью чата">
-            <div class="bubble one">Привет! Это Mescat 👋</div>
-            <div class="bubble two">Сине-голубой стиль ✅</div>
-            <div class="bubble three">Деталей пока минимум 🙂</div>
-        </div>
-    </section>
+    <p>
+        Также проект можно найти по запросам: mescat, Mescat, MesCat, mescat мессенджер,
+        мессенджер mescat, безопасный мессенджер, анонимный мессенджер.
+    </p>
+
+    <p>
+        Основное приложение доступно на <a href="https://mescat.ru/">mescat.ru</a>.
+        Исходный код проекта: <a href="https://github.com/busicabo/messenger" rel="noopener noreferrer">GitHub messenger</a>.
+    </p>
 </main>
-
-<footer>
-    © <span id="year"></span> Mescat · <a href="https://github.com/busicabo/messenger" target="_blank" rel="noopener noreferrer">GitHub проекта</a>
-</footer>
-
-<script>
-    // Навигация
-    document.getElementById('loginBtn').addEventListener('click', () => {
-      window.location.href = '/auth/login';
-    });
-
-    document.getElementById('regBtn').addEventListener('click', () => {
-      window.location.href = '/auth/reg';
-    });
-
-    // Год в футере
-    document.getElementById('year').textContent = new Date().getFullYear();
-</script>
 </body>
 </html>

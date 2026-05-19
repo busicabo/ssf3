@@ -53,6 +53,13 @@ public interface ChatUserRepository extends JpaRepository<ChatUserEntity, Long> 
     List<UUID> findAllUserIdNotBlocksByChatId(@Param("chatId") Long chatId);
 
     @Query("""
+        select cu.userId
+        from ChatUserEntity cu
+        where cu.chat.chatId = :chatId
+    """)
+    List<UUID> findAllUserIdsByChatId(@Param("chatId") Long chatId);
+
+    @Query("""
         select cu
         from ChatUserEntity cu
         left join UsersBlackListEntity ub

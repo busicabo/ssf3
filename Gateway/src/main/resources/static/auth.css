@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --bg: #eef7ff;
   --panel: rgba(255, 255, 255, 0.92);
   --line: rgba(96, 145, 198, 0.22);
@@ -45,7 +45,7 @@ body {
 .auth-cat--left {
   left: max(-22px, 1.5vw);
   top: 6%;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'%3E%3Cg fill='none' stroke='%235a3d24' stroke-linecap='round' stroke-linejoin='round' stroke-width='6'%3E%3Cpath d='M42 46 78 24l16 34M178 45 142 24l-12 35' fill='%23cfc5bb'/%3E%3Cpath d='M49 61c0-27 25-42 60-42s60 15 60 42v87c0 35-18 49-60 49s-60-14-60-49Z' fill='%23cfc5bb'/%3E%3Cpath d='M61 100H25m37 15H22m133-15h35m-39 15h41M85 46h51' stroke='%235a3d24'/%3E%3Ccircle cx='89' cy='88' r='4' fill='%235a3d24'/%3E%3Ccircle cx='129' cy='88' r='4' fill='%235a3d24'/%3E%3Cpath d='m103 100 6-7 7 7m-9 7c4 0 9 3 10 9'/%3E%3Cpath d='M92 128c11 5 18 13 20 24M55 164c11 2 21 10 24 17M163 164c-6 7-8 14-8 23'/%3E%3Cpath d='M47 196v14m107-14v14M55 164c-16 0-28 12-28 27'/%3E%3Cpath d='M59 52h17m61 0h15' stroke='%23745f53'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 220'%3E%3Cg fill='none' stroke='%235a3d24' stroke-linecap='round' stroke-linejoin='round' stroke-width='6'%3E%3Cpath d='M42 46 78 24l16 34M178 45 142 24l-12 35' fill='%23cfc5bb'/%3E%3Cpath d='M49 61c0-27 25-42 60-42s60 15 60 42v87c0 35-18 49-60 49s-60-14-60-49Z' fill='%23cfc5bb'/%3E%3Cpath d='M61 100H25m37 15H22m133-15h35m-39 15h41M85 46h51'/%3E%3Ccircle cx='89' cy='88' r='4' fill='%235a3d24'/%3E%3Ccircle cx='129' cy='88' r='4' fill='%235a3d24'/%3E%3Cpath d='m103 100 6-7 7 7m-9 7c4 0 9 3 10 9'/%3E%3Cpath d='M92 128c11 5 18 13 20 24M55 164c11 2 21 10 24 17M163 164c-6 7-8 14-8 23'/%3E%3Cpath d='M47 196v14m107-14v14M55 164c-16 0-28 12-28 27'/%3E%3Cpath d='M59 52h17m61 0h15' stroke='%23745f53'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 .auth-cat--right {
@@ -220,7 +220,8 @@ button:hover {
   border: 1px solid rgba(96, 145, 198, 0.18);
 }
 
-.auth-footer a:hover {
+.auth-footer a:hover,
+.auth-link a:hover {
   text-decoration: underline;
 }
 
@@ -261,5 +262,30 @@ button:hover {
 
   .auth-cat {
     display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  body {
+    padding: 16px 14px 58px;
+  }
+
+  .auth-aside,
+  .auth-card {
+    padding: 22px;
+    border-radius: 26px;
+  }
+
+  .auth-copy {
+    font-size: 16px;
+  }
+
+  .auth-note {
+    padding: 14px;
+  }
+
+  .auth-footer {
+    width: calc(100% - 28px);
+    text-align: center;
   }
 }

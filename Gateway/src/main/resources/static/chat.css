@@ -103,6 +103,7 @@ body::before {
   pointer-events: none;
   overflow: hidden;
   opacity: 0.2;
+  contain: strict;
 }
 
 .cat-sprite {
@@ -112,6 +113,7 @@ body::before {
   background-position: center;
   background-size: contain;
   filter: drop-shadow(0 6px 12px rgba(56, 77, 98, 0.1));
+  contain: layout style paint;
 }
 
 .cat-sprite--1 {
@@ -494,6 +496,8 @@ textarea {
 .member-list,
 .status-list {
   gap: 4px;
+  align-content: start;
+  overscroll-behavior: contain;
 }
 
 .dialog-card {
@@ -753,6 +757,7 @@ textarea {
 }
 
 .chat-content {
+  position: relative;
   min-height: 0;
   overflow: hidden;
   display: grid;
@@ -772,9 +777,12 @@ textarea {
   border-left: 1px solid var(--line);
   background: rgba(250, 253, 255, 0.96);
   padding: 20px;
+  height: 100%;
+  min-height: 0;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto auto auto;
   gap: 16px;
+  overflow: hidden;
 }
 
 .chat-content.has-options-open .chat-options {
@@ -788,6 +796,7 @@ textarea {
   justify-content: space-between;
   gap: 12px;
   align-items: start;
+  min-height: 0;
 }
 
 .chat-options__header h3 {
@@ -803,6 +812,7 @@ textarea {
 .chat-options__form {
   display: grid;
   gap: 8px;
+  min-height: 0;
 }
 
 .chat-options__form label,
@@ -849,6 +859,41 @@ textarea {
   cursor: pointer;
   box-shadow: 0 18px 30px rgba(45, 114, 201, 0.3);
   transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+}
+
+.history-load-row {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0 8px;
+}
+
+.history-load-row.is-notice {
+  padding-top: 2px;
+}
+
+.history-load-btn {
+  padding: 10px 18px;
+  border: 1px solid rgba(45, 114, 201, 0.28);
+  border-radius: 999px;
+  background: rgba(245, 251, 255, 0.88);
+  color: #205ca8;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 14px 34px rgba(45, 114, 201, 0.16);
+  backdrop-filter: blur(12px);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.history-load-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 38px rgba(45, 114, 201, 0.22);
+}
+
+.history-load-btn:disabled {
+  cursor: wait;
+  opacity: 0.72;
 }
 
 .scroll-bottom-btn:hover {
@@ -2178,6 +2223,9 @@ textarea {
   }
 
   .chat-header {
+    position: relative;
+    z-index: 40;
+    overflow: visible;
     min-height: 66px;
     max-height: 66px;
     flex-basis: 66px;
@@ -2212,17 +2260,28 @@ textarea {
     border-radius: 15px;
   }
 
+  .chat-header__actions {
+    position: relative;
+    z-index: 60;
+  }
+
   .chat-content {
     min-height: 0;
     grid-template-columns: 1fr;
   }
 
   .chat-options {
+    position: absolute;
+    inset: 0;
+    z-index: 35;
     width: 100%;
     height: 100%;
     border: 0;
     padding: 14px;
     background: rgba(250, 253, 255, 0.96);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+    overflow: hidden;
   }
 
   .message-list {
@@ -2307,6 +2366,13 @@ textarea {
     border-radius: 16px;
   }
 
+  .history-load-btn {
+    max-width: calc(100% - 24px);
+    padding: 9px 14px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
   .settings-modal,
   .create-chat-modal,
   .project-info-modal {
@@ -2346,12 +2412,26 @@ textarea {
   }
 
   .menu {
+    z-index: 120;
     min-width: min(280px, calc(100vw - 24px));
   }
 
   .chat-menu {
+    position: fixed;
     right: 10px;
-    top: 66px;
+    top: calc(66px + env(safe-area-inset-top));
+  }
+
+  body.mobile-options-open .composer {
+    display: none;
+  }
+
+  body.mobile-options-open .chat-content {
+    grid-template-columns: 1fr;
+  }
+
+  body.mobile-options-open .chat-content.has-options-open .message-area {
+    display: none;
   }
 
   .chat-project-link {

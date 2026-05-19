@@ -39,8 +39,23 @@ public class FileController {
 
     @GetMapping("/chats/{chatId}")
     public ResponseEntity<?> getReadyFilesInChat(@PathVariable Long chatId,
+                                                 @RequestParam(required = false) Integer limit,
+                                                 @RequestParam(required = false) UUID beforeFileId,
                                                  Authentication authentication) {
-        return proxy.get("/api/files/chats/" + chatId, userId(authentication));
+        StringBuilder path = new StringBuilder("/api/files/chats/" + chatId);
+        if (limit != null || beforeFileId != null) {
+            path.append("?");
+            if (limit != null) {
+                path.append("limit=").append(limit);
+            }
+            if (beforeFileId != null) {
+                if (limit != null) {
+                    path.append("&");
+                }
+                path.append("beforeFileId=").append(beforeFileId);
+            }
+        }
+        return proxy.get(path.toString(), userId(authentication));
     }
 
     @GetMapping("/{fileId}/download-url")

@@ -11,6 +11,11 @@ public class MainController {
         return "redirect:/message";
     }
 
+    @GetMapping("/about")
+    public String about() {
+        return "index";
+    }
+
     @GetMapping("/auth/login")
     public String login() {
         return "auth";

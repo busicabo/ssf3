@@ -16,7 +16,7 @@ const ui = new ChatUi();
 const settingsUi = new SettingsUi();
 const keyManager = new KeyManager({ api, db, crypto, ui });
 const fileUploader = new FileUploader({ api });
-const chatManager = new ChatManager({ api, ui, keyManager, fileUploader });
+const chatManager = new ChatManager({ api, ui, keyManager, fileUploader, db });
 const settingsManager = new SettingsManager({ api, ui, settingsUi, keyManager, fileUploader });
 
 let userId = null;
@@ -103,14 +103,25 @@ function bindUi() {
     },
     onSendMessage: async () => {
       await runAction(async () => {
-        const text = ui.nodes.messageInput.value;
+        const input = ui.nodes.messageInput;
+        const text = input.value;
+        if (String(text || '').trim()) {
+          input.value = '';
+          input.focus();
+        }
         const imported = await keyManager.ingestPendingMessageKeys();
         if (imported.importedCount > 0 && chatManager.activeChatId) {
           await chatManager.refreshVisibleMessages(chatManager.activeChatId);
         }
         await keyManager.retryFailedSenderKeyDeliveries();
-        await chatManager.sendMessage(text);
-        ui.nodes.messageInput.value = '';
+        try {
+          await chatManager.sendMessage(text);
+        } catch (error) {
+          if (!input.value.trim()) {
+            input.value = text;
+          }
+          throw error;
+        }
         ui.appendStatus('Сообщение отправлено.', 'ok');
       });
     },
@@ -122,6 +133,11 @@ function bindUi() {
     onOpenFile: async (fileId) => {
       await runAction(async () => {
         await chatManager.openFile(fileId);
+      });
+    },
+    onLoadOlderMessages: (options = {}) => {
+      void runAction(async () => {
+        await chatManager.loadOlderTimeline(options);
       });
     },
     onCreateGroupChat: async () => {
@@ -203,8 +219,28 @@ function bindUi() {
               ui.appendStatus('Пользователь заблокирован в этом диалоге.', 'ok');
             });
           }
+        }, {
+          label: 'Разблокировать пользователя',
+          onClick: () => {
+            void runAction(async () => {
+              await chatManager.memberAction('unblock', '');
+              ui.appendStatus('Пользователь разблокирован в этом диалоге.', 'ok');
+            });
+          }
         });
       } else {
+        items.push({
+          label: 'Покинуть группу',
+          danger: true,
+          onClick: () => {
+            void runAction(async () => {
+              await chatManager.leaveActiveGroup();
+              ui.appendStatus('Вы покинули группу.', 'ok');
+              syncWsChats();
+            });
+          }
+        });
+
         if (chat.canManageMembers) {
           items.push(
             {
@@ -228,6 +264,14 @@ function bindUi() {
               onClick: () => {
                 ui.setOptionsPanelOpen(true);
                 ui.nodes.memberInput.placeholder = 'Username для блокировки';
+                ui.nodes.memberInput.focus();
+              }
+            },
+            {
+              label: 'Разблокировать участника',
+              onClick: () => {
+                ui.setOptionsPanelOpen(true);
+                ui.nodes.memberInput.placeholder = 'Username для разблокировки';
                 ui.nodes.memberInput.focus();
               }
             }
@@ -344,6 +388,7 @@ async function processRealtimeBatch() {
     }
 
     const userKeysSynced = await syncUserPrivateKeysIfNeeded(payloads);
+    const importedFromPayload = await ingestPendingMessageKeysFromPayload(payloads);
     const imported = await keyManager.ingestPendingMessageKeys();
     for (const payload of payloads) {
       await chatManager.handleRealtimeEvent(payload, ws);
@@ -351,24 +396,19 @@ async function processRealtimeBatch() {
     await keyManager.retryFailedSenderKeyDeliveries();
 
     const activeChatId = chatManager.activeChatId;
-    const touchedActiveChat = activeChatId && payloads.some((payload) => {
-      const chatId = getRealtimeChatId(payload);
-      return (!chatId || Number(chatId) === Number(activeChatId)) && !isOwnRealtimePayload(payload);
-    });
 
-    if (imported.importedCount > 0 && activeChatId) {
+    const importedCount = Number(imported.importedCount || 0) + Number(importedFromPayload.importedCount || 0);
+    if (importedCount > 0 && activeChatId) {
       await chatManager.refreshVisibleMessages(activeChatId, { preserveScroll: true });
     }
     if (userKeysSynced) {
       ui.appendStatus('Новый пользовательский ключ получен и сохранён локально.', 'ok');
     }
 
-    if (touchedActiveChat) {
-      await chatManager.loadMessages(activeChatId, { preserveScroll: true });
+    if (shouldRefreshChatsAfterRealtime(payloads)) {
+      await chatManager.refreshChats();
+      syncWsChats();
     }
-
-    await chatManager.refreshChats();
-    syncWsChats();
   } catch (error) {
     ui.appendStatus(`Не удалось обработать realtime-синхронизацию: ${error.message}`, 'error');
   } finally {
@@ -377,6 +417,20 @@ async function processRealtimeBatch() {
       void processRealtimeBatch();
     }
   }
+}
+
+async function ingestPendingMessageKeysFromPayload(payloads) {
+  const pendingKeys = payloads
+    .flatMap((payload) => {
+      const keys = payload?.payload?.pendingMessageKeys;
+      return Array.isArray(keys) ? keys : [];
+    });
+
+  if (pendingKeys.length === 0) {
+    return { importedCount: 0, encryptNames: [] };
+  }
+
+  return keyManager.ingestMessageKeyItems(pendingKeys);
 }
 
 async function syncUserPrivateKeysIfNeeded(payloads) {
@@ -420,6 +474,31 @@ function getRealtimeSenderId(payload) {
 function isOwnRealtimePayload(payload) {
   const senderId = getRealtimeSenderId(payload);
   return senderId && String(senderId) === String(userId);
+}
+
+function shouldRefreshChatsAfterRealtime(payloads) {
+  const chatChangingTypes = new Set([
+    'SEND',
+    'FILE_READY',
+    'NEW_USER_IN_CHAT',
+    'USER_SYNC',
+    'DELETE',
+    'DELETE_MESSAGE',
+    'DELETE_CHAT',
+    'BLOCK_USER_IN_CHAT',
+    'NEW_USER_BLOCK_IN_CHAT',
+    'NEW_USER_UNBLOCK_IN_CHAT',
+    'REMOVE_USER_IN_CHAT',
+    'ADD_USER_IN_CHAT',
+    'CREATE_CHAT'
+  ]);
+
+  return payloads.some((payload) => {
+    const type = String(payload?.type || '').toUpperCase();
+    const body = payload?.payload || {};
+    return chatChangingTypes.has(type)
+      || Boolean(body.message || body.file || body.chat || body.chatUserEntity || body.usersBlackListEntity);
+  });
 }
 
 function syncWsChats() {
